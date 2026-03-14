@@ -22,7 +22,13 @@ sqlConnectionStringBuilder.MultipleActiveResultSets = false;
 var sqlConnectionString = sqlConnectionStringBuilder.ConnectionString;
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(sqlConnectionString));
+    options.UseSqlServer(sqlConnectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    }));
 
 // ── Localization ──
 var appCulture = (CultureInfo)CultureInfo.GetCultureInfo("vi-VN").Clone();

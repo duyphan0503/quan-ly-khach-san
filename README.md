@@ -114,21 +114,22 @@ git clone <REPO_URL>
 cd quan-ly-khach-san
 ```
 
-### Bước 2: Cài SQL Server trên máy Windows
+### Bước 2: Cài SQL Server trên Windows
 
 1. Cài SQL Server 2022/2025.
 2. Tạo database `HotelManagementDB`.
-3. Tạo tài khoản SQL đăng nhập cho ứng dụng (không dùng tài khoản mặc định).
+3. Tạo tài khoản SQL riêng cho ứng dụng.
 
 ### Bước 3: Kiểm tra connection string
 
 Mặc định trong `HotelManagement/appsettings.json`:
 
 ```json
-"DefaultConnection": "Server=localhost,1433;Database=HotelManagementDB;User Id=sa;Password=Hotel@123;TrustServerCertificate=True;MultipleActiveResultSets=False"
+"DefaultConnection": "Server=.\\SQLEXPRESS;Database=HotelManagementDB;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=False"
 ```
 
-Nếu bạn dùng password/port khác, cập nhật lại tương ứng.
+Khi triển khai production, đặt lại `DefaultConnection` theo SQL Server thực tế của khách hàng
+trong `appsettings.Production.json` hoặc biến môi trường hệ điều hành.
 
 ### Bước 4: Restore và chạy ứng dụng lần đầu
 
@@ -150,19 +151,19 @@ dotnet run --project HotelManagement --urls http://localhost:5037
 
 ## 6. Cấu hình môi trường
 
-Hệ thống dùng file cấu hình `appsettings.json` và `appsettings.Production.json` khi vận hành thực tế.
+Hệ thống dùng cấu hình `appsettings.json` + `appsettings.Production.json`.
 
 ### Cấu hình chính
 
 | Key | Mô tả | Ví dụ |
 |---|---|---|
-| `ConnectionStrings:DefaultConnection` | Chuỗi kết nối SQL Server | `Server=localhost,1433;Database=HotelManagementDB;User Id=sa;Password=...` |
+| `ConnectionStrings:DefaultConnection` | Chuỗi kết nối SQL Server | `Server=.\\SQLEXPRESS;Database=HotelManagementDB;Trusted_Connection=True;...` |
 | `HotelSettings:NoShowThresholdHours` | Ngưỡng auto-hủy no-show | `6` |
 | `HotelSettings:CheckInTime` | Giờ check-in chuẩn | `14:00` |
 | `HotelSettings:CheckOutTime` | Giờ check-out chuẩn | `12:00` |
 | `WebsiteSettings:*` | Branding/Thông tin hiển thị website | logo, slogan, contact info |
 
-Khuyến nghị lưu thông tin nhạy cảm (chuỗi kết nối, tài khoản SMTP, API key) ở biến môi trường hệ thống.
+Khuyến nghị: với production, ưu tiên dùng biến môi trường hệ thống để lưu thông tin nhạy cảm.
 
 ## 7. Tài khoản mặc định sau seed
 
@@ -271,9 +272,9 @@ Smoke test thủ công quan trọng:
 
 ### Khuyến nghị triển khai production
 
-- Máy khách hàng dùng Windows + SQL Server cài trực tiếp (không phụ thuộc Docker).
-- Chạy app ASP.NET Core riêng (IIS/Kestrel service) và trỏ tới SQL Server production.
-- Thiết lập biến môi trường production cho `ConnectionStrings`.
+- Máy khách hàng dùng Windows + SQL Server cài trực tiếp.
+- Chạy app ASP.NET Core trên IIS hoặc Windows Service.
+- Thiết lập `ConnectionStrings:DefaultConnection` theo production.
 - Bật HTTPS, giám sát logs, backup database định kỳ.
 
 ### Checklist triển khai cho máy khách hàng (Windows)
@@ -285,19 +286,15 @@ Smoke test thủ công quan trọng:
 dotnet publish HotelManagement/HotelManagement.csproj -c Release -o ./publish
 ```
 
-3. Cấu hình connection string production trong `appsettings.Production.json` hoặc biến môi trường Windows.
-4. Chạy migration từ bản deploy đầu tiên.
-5. Cấu hình host app bằng IIS hoặc Windows Service (Kestrel + reverse proxy).
-6. Đổi toàn bộ tài khoản/mật khẩu seed mặc định trước khi bàn giao.
-7. Bật cơ chế sao lưu dữ liệu SQL Server theo lịch.
+Sau đó chạy output publish bằng `dotnet HotelManagement.dll` hoặc cấu hình IIS để host ứng dụng.
 
 ## 13. Troubleshooting
 
 ### 1) Không kết nối được SQL Server
 
 - Kiểm tra SQL Server service đang chạy trên Windows.
-- Kiểm tra lại thông tin `Server`, `Database`, `User Id`, `Password` trong connection string.
-- Đảm bảo firewall cho phép kết nối SQL Server nếu ứng dụng và DB khác máy.
+- Kiểm tra lại `Server`, `Database`, `User Id`/`Trusted_Connection` trong connection string.
+- Kiểm tra quyền truy cập database của tài khoản ứng dụng.
 
 ### 2) Lỗi migration/model mismatch
 
@@ -318,4 +315,7 @@ Trong môi trường không truy cập được `nuget.org`, có thể thấy wa
 - Toàn bộ định dạng locale đã chuẩn hóa cho Việt Nam:
   - tiền tệ: phân cách nghìn bằng `,`, không hiển thị `.00`
   - ngày tháng: `dd/MM/yyyy`
-- Mục tiêu phát hành cho khách hàng: chỉ cung cấp phần cần thiết để vận hành production.
+
+---
+
+Tài liệu này là bản bàn giao production cho khách hàng.
