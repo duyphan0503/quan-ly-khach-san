@@ -1,0 +1,95 @@
+@page "/admin/settings"
+@model HotelManagement.Areas.Admin.Pages.Settings.IndexModel
+@{
+    ViewData["Title"] = "Cài Đặt Hệ Thống";
+}
+
+<div class="mb-6 space-y-6">
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h2",
+        Icon = "solar:settings-bold-duotone",
+        Title = "Cài Đặt Hệ Thống",
+        Subtitle = "Quản lý thông tin thương hiệu và liên hệ dùng chung cho toàn website"
+    }' />
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+<div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl backdrop-blur-md">
+    <div class="card-body p-6 md:p-8">
+        <form method="post" enctype="multipart/form-data" class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
+                <div class="form-control">
+                    <label class="label"><span class="label-text text-content-secondary font-medium">Logo hiện tại</span></label>
+                    <div class="h-32 rounded-2xl border border-bdr-strong bg-surface-1 flex items-center justify-center p-4">
+                        <img src="@(string.IsNullOrWhiteSpace(Model.Input.LogoUrl) ? "/images/logo.svg" : Model.Input.LogoUrl)" alt="Logo website" class="max-h-20 w-auto object-contain" />
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="form-control">
+                        <label asp-for="Input.LogoUrl" class="label"><span class="label-text text-content-secondary font-medium">Đường dẫn logo</span></label>
+                        <input asp-for="Input.LogoUrl" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="/images/logo.svg hoặc URL ảnh" />
+                    </div>
+                    <div class="form-control">
+                        <label for="LogoFile" class="label"><span class="label-text text-content-secondary font-medium">Tải logo mới</span></label>
+                        <input asp-for="LogoFile" type="file" accept=".svg,.png,.jpg,.jpeg,.webp" class="file-input file-input-bordered bg-surface-1 border-bdr-strong text-content-primary" />
+                        <label class="label"><span class="label-text-alt text-content-muted">Hỗ trợ SVG, PNG, JPG, JPEG, WEBP. Tối đa 2MB.</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-control">
+                    <label asp-for="Input.BrandMain" class="label"><span class="label-text text-content-secondary font-medium">Brand chính</span></label>
+                    <input asp-for="Input.BrandMain" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="MINH QUANG" />
+                </div>
+                <div class="form-control">
+                    <label asp-for="Input.BrandHighlight" class="label"><span class="label-text text-content-secondary font-medium">Brand nhấn</span></label>
+                    <input asp-for="Input.BrandHighlight" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="HOTEL" />
+                </div>
+                <div class="form-control lg:col-span-2">
+                    <label asp-for="Input.BrandFullName" class="label"><span class="label-text text-content-secondary font-medium">Tên thương hiệu đầy đủ</span></label>
+                    <input asp-for="Input.BrandFullName" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="Minh Quang Hotel" />
+                </div>
+                <div class="form-control lg:col-span-2">
+                    <label asp-for="Input.BrandSlogan" class="label"><span class="label-text text-content-secondary font-medium">Slogan</span></label>
+                    <input asp-for="Input.BrandSlogan" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="Luxury Hotel & Resort" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="form-control">
+                    <label asp-for="Input.ContactPhone" class="label"><span class="label-text text-content-secondary font-medium">Số điện thoại</span></label>
+                    <input asp-for="Input.ContactPhone" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="+84 123 456 789" />
+                </div>
+                <div class="form-control">
+                    <label asp-for="Input.ContactEmail" class="label"><span class="label-text text-content-secondary font-medium">Email liên hệ</span></label>
+                    <input asp-for="Input.ContactEmail" type="email" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="reservation@minhquang.vn" />
+                </div>
+                <div class="form-control lg:col-span-2">
+                    <label asp-for="Input.ContactAddress" class="label"><span class="label-text text-content-secondary font-medium">Địa chỉ</span></label>
+                    <input asp-for="Input.ContactAddress" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="123 Đại lộ Hòa Bình, Quận Ninh Kiều, Thành phố Cần Thơ" />
+                </div>
+            </div>
+
+            <div class="form-control">
+                <label asp-for="Input.FooterMapEmbedUrl" class="label"><span class="label-text text-content-secondary font-medium">URL Embed Minimap Footer</span></label>
+                <input asp-for="Input.FooterMapEmbedUrl" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary" placeholder="https://www.google.com/maps/embed?pb=..." />
+                <label class="label"><span class="label-text-alt text-content-muted">Dán link Embed từ Google Maps để cập nhật vị trí bản đồ ở footer.</span></label>
+            </div>
+
+            <div class="form-control">
+                <label asp-for="Input.FooterDescription" class="label"><span class="label-text text-content-secondary font-medium">Mô tả chân trang</span></label>
+                <textarea asp-for="Input.FooterDescription" rows="4" class="textarea textarea-bordered bg-surface-1 border-bdr-strong text-content-primary"></textarea>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="btn btn-luxury-outline border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-400/70 hover:text-emerald-300 h-11 px-6">
+                    <iconify-icon icon="solar:diskette-bold-duotone" class="h-5 w-5"></iconify-icon>
+                    Lưu Cài Đặt
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

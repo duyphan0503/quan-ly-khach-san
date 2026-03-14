@@ -1,0 +1,238 @@
+@page "/"
+@model IndexModel
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+<!-- HERO SECTION -->
+<div class="relative h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <picture>
+            <source srcset="/images/hero_hotel.webp" type="image/webp">
+            <img src="/images/hero_hotel.jpg" 
+                 alt="Luxury Hotel" 
+                 width="1920" height="1080"
+                 fetchpriority="high"
+                 loading="eager"
+                 class="absolute inset-0 w-full h-full object-cover filter brightness-[0.4]" />
+        </picture>
+        <div class="absolute inset-0 hero-overlay"></div>
+    </div>
+    
+    <div class="relative z-10 text-center px-4 max-w-5xl mx-auto mt-20 reveal-up">
+        <p class="text-accent tracking-[0.3em] uppercase text-[10px] md:text-sm font-semibold mb-6 animate-fade-in-up">Chào mừng đến với hệ sinh thái nghỉ dưỡng</p>
+        <h1 class="text-4xl md:text-6xl lg:text-8xl font-outfit font-extrabold text-white/95 mb-8 leading-tight tracking-tighter drop-shadow-lg">
+            Nơi Mọi Cảm Xúc <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#e6d0a7]">Được Thăng Hoa</span>
+        </h1>
+        <p class="text-white/80 text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-12 font-light">
+            Không gian riêng tư, dịch vụ cá nhân hóa và những trải nghiệm vượt giới hạn tại Minh Quang Luxury.
+        </p>
+        
+        <form method="get" asp-page="/Rooms/Index" class="bg-surface-2/40 backdrop-blur-3xl border border-white/10 p-6 drop-shadow-2xl flex flex-col md:flex-row gap-6 items-end max-w-5xl mx-auto justify-center rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]">
+            <div class="form-control w-full text-left">
+                <label class="label mb-1"><span class="label-text text-white/80 uppercase tracking-[0.2em] text-[10px] font-bold ml-1">Nhận Phòng</span></label>
+                <div class="relative group/input">
+                    <iconify-icon icon="solar:calendar-mark-bold-duotone" class="absolute left-4 top-1/2 -translate-y-1/2 text-accent text-xl"></iconify-icon>
+                    <input name="CheckIn" type="date" class="input bg-surface-1/60 border border-white/5 text-white w-full pl-12 focus:border-accent/50 focus:ring-4 focus:ring-accent/5 rounded-2xl transition-all" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="form-control w-full text-left">
+                <label class="label mb-1"><span class="label-text text-white/80 uppercase tracking-[0.2em] text-[10px] font-bold ml-1">Trả Phòng</span></label>
+                <div class="relative group/input">
+                    <iconify-icon icon="solar:calendar-send-bold-duotone" class="absolute left-4 top-1/2 -translate-y-1/2 text-accent text-xl"></iconify-icon>
+                    <input name="CheckOut" type="date" class="input bg-surface-1/60 border border-white/5 text-white w-full pl-12 focus:border-accent/50 focus:ring-4 focus:ring-accent/5 rounded-2xl transition-all" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+            <div class="form-control w-full text-left">
+                <label class="label mb-1"><span class="label-text text-white/80 uppercase tracking-[0.2em] text-[10px] font-bold ml-1">Khách</span></label>
+                <div class="relative group/input">
+                    <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="absolute left-4 top-1/2 -translate-y-1/2 text-accent text-xl"></iconify-icon>
+                    <select name="Guests" class="select bg-surface-1/60 border border-white/5 text-white w-full pl-12 focus:border-accent/50 focus:ring-4 focus:ring-accent/5 rounded-2xl transition-all appearance-none">
+                        <option value="1" class="bg-surface-2">1 Người</option>
+                        <option value="2" selected class="bg-surface-2">2 Người</option>
+                        <option value="3" class="bg-surface-2">3 Người</option>
+                        <option value="4" class="bg-surface-2">4+ Người</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn bg-[#d8b47a] hover:bg-[#e3c28d] text-[#16233e] border border-[#efd6a8]/80 px-8 font-outfit font-black uppercase tracking-widest h-14 w-full md:w-auto rounded-2xl shadow-[0_12px_28px_rgba(205,168,115,0.30)] hover:shadow-[0_16px_34px_rgba(205,168,115,0.45)] transition-all hover:-translate-y-1 active:scale-95 active:translate-y-0">
+                Tìm Phòng
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ABOUT SECTION -->
+<section class="py-24 bg-surface-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="reveal-up">
+                <h2 class="text-accent tracking-[0.2em] uppercase text-sm font-semibold mb-4">Câu chuyện của chúng tôi</h2>
+                <h3 class="text-4xl font-outfit font-bold text-content-primary mb-6 leading-tight">Tuyệt Tác Nghệ Thuật <br>Giữa Lòng Phố Thị</h3>
+                <p class="text-content-muted mb-6 leading-relaxed">
+                    Ra đời từ khát vọng mang đến một định nghĩa mới về sự xa xỉ, Minh Quang Hotel kết hợp giữa lối kiến trúc tối giản hiện đại và những đường nét cổ điển vượt thời gian. 
+                </p>
+                <p class="text-content-muted mb-8 leading-relaxed">
+                    Mỗi căn phòng, mỗi góc không gian đều được chúng tôi chăm chút tỉ mỉ để tạo nên một bộ sưu tập những trải nghiệm khó quên dành riêng cho những vị khách tinh tế nhất.
+                </p>
+                <a href="#explore" class="inline-flex items-center text-content-primary hover:text-accent font-outfit tracking-widest uppercase text-sm transition-colors group">
+                    Khám phá thêm 
+                    <iconify-icon icon="fluent-emoji-flat:right-arrow" class="h-5 w-5 ml-2 transform group-hover:translate-x-2 transition-transform"></iconify-icon>
+                </a>
+            </div>
+            <div class="relative reveal-up delay-200">
+                <picture>
+                    <source srcset="/images/about_lobby.webp" type="image/webp">
+                    <img src="/images/about_lobby.jpg" 
+                         alt="Luxury Lobby" 
+                         width="800" height="600"
+                         loading="lazy"
+                         class="w-full h-full object-cover rounded-2xl skew-y-2 transform -rotate-1 hover:rotate-0 transition-transform duration-700 filter brightness-75 hover:brightness-100" />
+                </picture>
+                <div class="absolute -bottom-6 -left-6 w-48 h-48 bg-accent/20 -z-10 blur-2xl"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURED ROOMS SECTION -->
+<section id="rooms" class="py-24 bg-surface-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 reveal-up">
+            <h2 class="text-accent tracking-[0.2em] uppercase text-sm font-semibold mb-4">Lựa chọn lưu trú</h2>
+            <h3 class="text-4xl font-outfit font-bold text-content-primary">Phòng & Suites Tinh Tế</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            @foreach (var rType in Model.FeaturedRoomTypes)
+            {
+                var imgUrl = rType.ImageUrl ?? "/images/room_deluxe.jpg";
+                var webpUrl = imgUrl.EndsWith(".jpg") ? imgUrl.Replace(".jpg", ".webp") : imgUrl;
+                
+                <div class="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 reveal-up">
+                    <div class="relative h-64 overflow-hidden">
+                        <picture>
+                            <source srcset="@webpUrl" type="image/webp">
+                            <img src="@imgUrl" 
+                                 alt="@rType.Name Room" 
+                                 width="400" height="300"
+                                 loading="lazy"
+                                 class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700 filter brightness-75 group-hover:brightness-100" />
+                        </picture>
+                    </div>
+                    <div class="p-6 relative z-10 bg-gradient-to-t from-[var(--surface-1)] via-[var(--surface-1)] to-transparent -mt-20 pt-20">
+                        <div class="flex justify-between items-end border-b border-bdr-strong/50 pb-4 mb-4">
+                            <h4 class="text-xl font-bold text-content-primary font-outfit group-hover:text-accent transition-colors duration-300">@rType.Name</h4>
+                            <span class="text-accent font-mono font-bold">@rType.BasePrice.ToString("N0") ₫ <span class="text-xs text-content-muted font-sans">/ đêm</span></span>
+                        </div>
+                        <p class="text-content-muted text-sm line-clamp-2 mb-6">@rType.Description</p>
+                        <ul class="flex gap-4 text-content-muted text-sm mb-6">
+                            <li class="flex items-center gap-1"><iconify-icon icon="fluent-emoji-flat:straight-ruler" class="text-lg text-accent"></iconify-icon> @rType.MaxOccupancy người</li>
+                            <li class="flex items-center gap-1"><iconify-icon icon="fluent-emoji-flat:star" class="text-lg text-accent"></iconify-icon> Cao cấp</li>
+                        </ul>
+                        <a asp-page="/Rooms/Index" 
+                           asp-route-RoomTypeFilter="@rType.Name" 
+                           asp-route-CheckIn="@DateTime.Today.ToString("yyyy-MM-dd")" 
+                           asp-route-CheckOut="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" 
+                           asp-route-Guests="2" 
+                           class="btn btn-outline w-full rounded-xl border-bdr-strong text-content-secondary group-hover:bg-accent group-hover:text-brand-900 group-hover:border-accent uppercase tracking-widest text-xs">
+                            Đặt Ngay
+                        </a>
+                    </div>
+                </div>
+            }
+            @if(!Model.FeaturedRoomTypes.Any())
+            {
+                <div class="col-span-3 text-center text-content-muted py-10">Đang cập nhật dữ liệu phòng...</div>
+            }
+        </div>
+        
+        <div class="text-center mt-12">
+            <a asp-page="/Rooms/Index" class="inline-flex items-center text-content-secondary hover:text-content-primary font-outfit tracking-widest uppercase text-sm transition-colors border-b border-accent pb-1">
+                Xem Toàn Bộ Danh Sách Phòng
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES HIGHLIGHT -->
+<section id="services" class="py-24 bg-surface-1 relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-1/2 h-full bg-surface-2/20 transform skew-x-12"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="mb-16 reveal-up">
+            <h2 class="text-accent tracking-[0.2em] uppercase text-sm font-semibold mb-4">Dịch vụ đặc quyền</h2>
+            <h3 class="text-4xl font-outfit font-bold text-content-primary">Nâng Tầm Trải Nghiệm</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- S1: Spa -->
+            <div class="h-[450px] group relative overflow-hidden rounded-3xl border border-white/5 shadow-2xl reveal-up stagger-1">
+                <picture>
+                    <source srcset="/images/service_spa.webp" type="image/webp">
+                    <img src="/images/service_spa.jpg" 
+                         alt="Zen Spa" 
+                         width="600" height="450"
+                         loading="lazy"
+                         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 filter brightness-90 group-hover:brightness-100" />
+                </picture>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-700"></div>
+                <div class="absolute inset-0 bg-surface-2/95 backdrop-blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 p-12 flex flex-col justify-center text-center">
+                    <iconify-icon icon="solar:lotus-bold-duotone" class="text-5xl text-accent mx-auto mb-6 transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-700"></iconify-icon>
+                    <h4 class="text-white text-3xl font-bold font-outfit mb-4">Zen Spa & Wellness</h4>
+                    <p class="text-white/60 text-sm leading-relaxed mb-10">Hành trình tái tạo thân-tâm-trí với những liệu pháp bí truyền trong không gian tĩnh mịch tuyệt đối.</p>
+                    <a href="#" class="btn btn-outline border-accent text-accent hover:bg-accent hover:text-brand-900 rounded-full w-fit mx-auto px-8 py-3 h-auto uppercase tracking-widest text-[10px] font-bold">Tìm hiểu thêm</a>
+                </div>
+                <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity duration-500">
+                    <p class="text-accent text-xs uppercase tracking-[0.3em] font-bold mb-2">Health & Beauty</p>
+                    <h4 class="text-white text-3xl font-bold font-outfit tracking-tight">Zen Spa</h4>
+                </div>
+            </div>
+
+            <!-- S2: Restaurant -->
+            <div class="h-[450px] group relative overflow-hidden rounded-3xl border border-white/5 shadow-2xl reveal-up stagger-2">
+                <picture>
+                    <source srcset="/images/service_restaurant.webp" type="image/webp">
+                    <img src="/images/service_restaurant.jpg" 
+                         alt="Restaurant" 
+                         width="600" height="450"
+                         loading="lazy"
+                         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 filter brightness-90 group-hover:brightness-100" />
+                </picture>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-700"></div>
+                <div class="absolute inset-0 bg-surface-2/95 backdrop-blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 p-12 flex flex-col justify-center text-center">
+                    <iconify-icon icon="solar:wineglass-triangle-bold-duotone" class="text-5xl text-accent mx-auto mb-6 transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-700"></iconify-icon>
+                    <h4 class="text-white text-3xl font-bold font-outfit mb-4">Lumière Restaurant</h4>
+                    <p class="text-white/60 text-sm leading-relaxed mb-10">Trình diễn nghệ thuật ẩm thực đa giác quan bởi các đầu bếp danh tiếng thế giới.</p>
+                    <a href="#" class="btn btn-outline border-accent text-accent hover:bg-accent hover:text-brand-900 rounded-full w-fit mx-auto px-8 py-3 h-auto uppercase tracking-widest text-[10px] font-bold">Menu & Đặt chỗ</a>
+                </div>
+                <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity duration-500">
+                    <p class="text-accent text-xs uppercase tracking-[0.3em] font-bold mb-2">Gastronomy</p>
+                    <h4 class="text-white text-3xl font-bold font-outfit tracking-tight">Nhà Hàng</h4>
+                </div>
+            </div>
+
+            <!-- S3: Pool -->
+            <div class="h-[450px] group relative overflow-hidden rounded-3xl border border-white/5 shadow-2xl reveal-up stagger-3">
+                <picture>
+                    <source srcset="/images/service_pool.webp" type="image/webp">
+                    <img src="/images/service_pool.jpg" 
+                         alt="Infinity Pool" 
+                         width="600" height="450"
+                         loading="lazy"
+                         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 filter brightness-90 group-hover:brightness-100" />
+                </picture>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-700"></div>
+                <div class="absolute inset-0 bg-surface-2/95 backdrop-blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 p-12 flex flex-col justify-center text-center">
+                    <iconify-icon icon="solar:swimming-bold-duotone" class="text-5xl text-accent mx-auto mb-6 transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-700"></iconify-icon>
+                    <h4 class="text-white text-3xl font-bold font-outfit mb-4">Infinity Sky Pool</h4>
+                    <p class="text-white/60 text-sm leading-relaxed mb-10">Bơi lội giữa ngàn sao và ngắm nhìn hoàng hôn rực rỡ từ hồ bơi vô cực trên tầng cao nhất.</p>
+                    <a href="#" class="btn btn-outline border-accent text-accent hover:bg-accent hover:text-brand-900 rounded-full w-fit mx-auto px-8 py-3 h-auto uppercase tracking-widest text-[10px] font-bold">Khám phá ngay</a>
+                </div>
+                <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity duration-500">
+                    <p class="text-accent text-xs uppercase tracking-[0.3em] font-bold mb-2">Leisure</p>
+                    <h4 class="text-white text-3xl font-bold font-outfit tracking-tight">Hồ Bơi</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

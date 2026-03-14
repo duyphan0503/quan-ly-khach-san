@@ -1,0 +1,66 @@
+@page "/admin/invoices/split/{id:int}"
+@model HotelManagement.Areas.Admin.Pages.Invoices.SplitModel
+@{
+    ViewData["Title"] = "Tách Chứng Từ";
+}
+
+<div class="mb-6 space-y-3">
+    <a asp-page="./Details" asp-route-id="@Model.SourceInvoice.Id" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+        <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+        <span>Quay lại chi tiết hóa đơn</span>
+    </a>
+    <h1 class="text-3xl font-bold text-content-primary font-outfit tracking-tight">Tách Chứng Từ #@Model.SourceInvoice.InvoiceNumber</h1>
+    <p class="text-content-muted">Chọn các dòng chi tiết cần tách sang hóa đơn mới.</p>
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+<div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden backdrop-blur-md">
+    <div class="card-body">
+        <form method="post" class="space-y-4">
+            <input asp-for="Input.InvoiceId" type="hidden" />
+
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr class="text-content-muted">
+                            <th class="w-16 text-center">Chọn</th>
+                            <th>Mô tả</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-right">Đơn giá</th>
+                            <th class="text-right">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in Model.SourceInvoice.InvoiceDetails.OrderBy(d => d.Id))
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" name="Input.SelectedDetailIds" value="@detail.Id" class="checkbox checkbox-primary" />
+                                </td>
+                                <td>@detail.Description</td>
+                                <td class="text-center">@detail.Quantity</td>
+                                <td class="text-right font-mono">@detail.UnitPrice.ToString("N0")</td>
+                                <td class="text-right font-mono font-semibold">@detail.LineTotal.ToString("N0") ₫</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <span asp-validation-for="Input.SelectedDetailIds" class="text-error text-sm"></span>
+
+            <div class="flex justify-end gap-2">
+                <a asp-page="./Details" asp-route-id="@Model.SourceInvoice.Id" class="btn btn-ghost rounded-xl">Hủy</a>
+                <button type="submit" class="btn bg-primary hover:bg-primary/90 text-content-primary border-none rounded-xl">
+                    <iconify-icon icon="solar:documents-bold-duotone" width="18" height="18"></iconify-icon>
+                    Tách Chứng Từ
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

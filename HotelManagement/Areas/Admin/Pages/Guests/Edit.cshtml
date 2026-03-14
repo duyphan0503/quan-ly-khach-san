@@ -1,0 +1,215 @@
+@page "{id:int}"
+@model HotelManagement.Areas.Admin.Pages.Guests.EditModel
+@{
+    ViewData["Title"] = "Chỉnh sửa khách hàng";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/guests/edit.css" asp-append-version="true" />
+}
+
+<div class="space-y-6">
+    <div class="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_auto_1fr] xl:items-center">
+        <a asp-page="./Index" class="inline-flex w-fit justify-self-start items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+            <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+            <span>Quay lại danh sách khách hàng</span>
+        </a>
+        <div class="text-center xl:justify-self-center">
+            <h1 class="flex items-center justify-center gap-2 text-3xl font-bold text-content-primary sm:text-4xl">
+                <iconify-icon icon="solar:user-circle-bold-duotone" class="text-primary"></iconify-icon>
+                Cập Nhật Hồ Sơ Khách Hàng
+            </h1>
+            <p class="mt-1 text-sm text-content-muted">Điều chỉnh thông tin nhận diện, liên hệ và hồ sơ ảnh đại diện.</p>
+        </div>
+        <div class="hidden xl:block"></div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="guest-edit-form" class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <input type="hidden" asp-for="Input.Id" />
+        <input type="hidden" asp-for="Input.AvatarUrl" />
+        <input type="file" asp-for="Input.AvatarFile" id="avatar-upload" class="hidden" accept="image/*" />
+
+        <div class="xl:col-span-8">
+            <div class="rounded-3xl border border-bdr-strong bg-surface-2/40 p-6 shadow-xl sm:p-8">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly" class="mb-6 rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"></div>
+                }
+
+                <div class="space-y-8">
+                    <section class="space-y-5">
+                        <div class="flex items-center gap-3">
+                            <span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary">
+                                <iconify-icon icon="solar:user-id-bold-duotone" class="text-xl"></iconify-icon>
+                            </span>
+                            <div>
+                                <h2 class="text-lg font-semibold text-content-primary">Thông tin cá nhân</h2>
+                                <p class="text-sm text-content-muted">Thông tin này được sử dụng trong đặt phòng và hóa đơn.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="form-control w-full md:col-span-2">
+                                <label class="label" asp-for="Input.FullName">
+                                    <span class="label-text text-content-secondary font-medium">Họ và tên <span class="text-danger">*</span></span>
+                                </label>
+                                <input asp-for="Input.FullName" placeholder="Nhập họ và tên" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.FullName" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label class="label" asp-for="Input.Gender">
+                                    <span class="label-text text-content-secondary font-medium">Giới tính</span>
+                                </label>
+                                <select asp-for="Input.Gender" class="select select-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label class="label" asp-for="Input.DateOfBirth">
+                                    <span class="label-text text-content-secondary font-medium">Ngày sinh</span>
+                                </label>
+                                <input asp-for="Input.DateOfBirth" type="date" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.DateOfBirth" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full md:col-span-2">
+                                <label class="label" asp-for="Input.CCCD">
+                                    <span class="label-text text-content-secondary font-medium">CMND / CCCD / Hộ chiếu</span>
+                                </label>
+                                <input asp-for="Input.CCCD" placeholder="012345678901" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.CCCD" class="mt-1 text-xs text-danger"></span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-5 border-t border-bdr-strong/50 pt-6">
+                        <div class="flex items-center gap-3">
+                            <span class="grid h-10 w-10 place-items-center rounded-xl bg-info/15 text-info">
+                                <iconify-icon icon="solar:phone-calling-rounded-bold-duotone" class="text-xl"></iconify-icon>
+                            </span>
+                            <div>
+                                <h2 class="text-lg font-semibold text-content-primary">Thông tin liên lạc</h2>
+                                <p class="text-sm text-content-muted">Dùng để xác nhận giao dịch và gửi thông báo.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="form-control w-full">
+                                <label class="label" asp-for="Input.PhoneNumber">
+                                    <span class="label-text text-content-secondary font-medium">Số điện thoại <span class="text-danger">*</span></span>
+                                </label>
+                                <input asp-for="Input.PhoneNumber" placeholder="0901234567" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.PhoneNumber" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label class="label" asp-for="Input.Email">
+                                    <span class="label-text text-content-secondary font-medium">Email</span>
+                                </label>
+                                <input asp-for="Input.Email" placeholder="guest@example.com" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.Email" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label class="label" asp-for="Input.Nationality">
+                                    <span class="label-text text-content-secondary font-medium">Quốc tịch</span>
+                                </label>
+                                <input asp-for="Input.Nationality" placeholder="Việt Nam" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.Nationality" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full md:col-span-2">
+                                <label class="label" asp-for="Input.Address">
+                                    <span class="label-text text-content-secondary font-medium">Địa chỉ thường trú</span>
+                                </label>
+                                <textarea asp-for="Input.Address" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..." class="textarea textarea-bordered h-28 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary"></textarea>
+                                <span asp-validation-for="Input.Address" class="mt-1 text-xs text-danger"></span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <aside class="space-y-4 xl:col-span-4">
+            <div class="rounded-3xl border border-bdr-strong bg-surface-2/40 p-6 shadow-xl">
+                <h3 class="flex items-center gap-2 text-lg font-semibold text-content-primary">
+                    <iconify-icon icon="solar:user-square-bold-duotone" class="text-primary"></iconify-icon>
+                    Ảnh đại diện & hồ sơ
+                </h3>
+
+                <div class="mt-4 flex flex-col items-center gap-4">
+                    <div class="group relative">
+                        <div class="avatar">
+                            <div class="w-36 rounded-3xl border-2 border-bdr-strong bg-surface-1 shadow-xl">
+                                @{
+                                    var avatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(Model.Input.AvatarUrl);
+                                }
+                                @if (!string.IsNullOrEmpty(avatarUrl))
+                                {
+                                    <img src="@avatarUrl" id="avatar-preview" alt="Avatar" class="h-36 w-36 object-cover" data-avatar-image data-avatar-default-src="@HotelManagement.Helpers.AvatarUrlHelper.DefaultAvatar" />
+                                }
+                                else
+                                {
+                                    <img src="@HotelManagement.Helpers.AvatarUrlHelper.DefaultAvatar" id="avatar-preview" class="hidden h-36 w-36 object-cover" />
+                                    <div id="avatar-placeholder" class="grid h-36 w-36 place-items-center text-4xl text-content-muted">
+                                        <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <label for="avatar-upload" class="absolute inset-0 cursor-pointer rounded-3xl bg-slate-900/50 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                            <span class="grid h-full place-items-center text-center text-xs font-semibold text-white">
+                                <span>
+                                    <iconify-icon icon="solar:camera-bold-duotone" class="mx-auto mb-1 text-xl"></iconify-icon>
+                                    Đổi ảnh
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="w-full space-y-2 rounded-2xl border border-bdr-strong/60 bg-surface-1/70 p-4 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-muted">Mã khách</span>
+                            <strong class="font-mono text-content-primary">#GST-@Model.Input.Id.ToString("D4")</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-muted">Trạng thái</span>
+                            <strong class="text-emerald-300">Đang hoạt động</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 rounded-2xl border border-primary/25 bg-primary/10 p-4 text-sm text-content-secondary">
+                    <div class="flex items-start gap-3">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="mt-0.5 text-lg text-primary"></iconify-icon>
+                        <p>Cập nhật số điện thoại và CCCD chính xác để tránh nhầm hồ sơ khi check-in.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border border-bdr-strong bg-surface-2/40 p-4 shadow-xl">
+                <div class="grid grid-cols-1 gap-3">
+                    <button type="submit" id="save-button" class="btn h-12 rounded-xl border-none bg-primary text-white shadow-lg shadow-primary/25 hover:bg-primary/90">
+                        <iconify-icon icon="solar:diskette-bold-duotone" class="text-lg"></iconify-icon>
+                        <span id="save-button-label">Lưu cập nhật</span>
+                    </button>
+                    <a asp-page="./Index" class="btn btn-ghost h-12 rounded-xl border border-bdr-strong text-content-secondary hover:text-content-primary">
+                        Hủy và quay lại
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/pages/admin/guests/edit.js" asp-append-version="true" defer></script>
+}

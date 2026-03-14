@@ -1,0 +1,169 @@
+@page
+@model HotelManagement.Areas.Admin.Pages.Guests.CreateModel
+@{
+    ViewData["Title"] = "Thêm khách hàng mới";
+    Layout = "_AdminLayout";
+}
+
+<div class="space-y-6">
+    <div class="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_auto_1fr] xl:items-center">
+        <a asp-page="./Index" class="inline-flex w-fit justify-self-start items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+            <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+            <span>Quay lại danh sách khách hàng</span>
+        </a>
+        <div class="text-center xl:justify-self-center">
+            <h1 class="flex items-center justify-center gap-2 text-3xl font-bold text-content-primary sm:text-4xl">
+                <iconify-icon icon="solar:user-plus-bold-duotone" class="text-primary"></iconify-icon>
+                Tạo Hồ Sơ Khách Hàng
+            </h1>
+            <p class="mt-1 text-sm text-content-muted">Nhập thông tin cơ bản để phục vụ quy trình đặt phòng và chăm sóc khách.</p>
+        </div>
+        <div class="hidden xl:block"></div>
+    </div>
+
+    <form method="post" class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <div class="xl:col-span-8">
+            <div class="rounded-3xl border border-bdr-strong bg-surface-2/40 p-6 shadow-xl sm:p-8">
+                <div asp-validation-summary="ModelOnly" class="mb-6 rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger"></div>
+
+                <div class="space-y-8">
+                    <section class="space-y-5">
+                        <div class="flex items-center gap-3">
+                            <span class="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary">
+                                <iconify-icon icon="solar:user-id-bold-duotone" class="text-xl"></iconify-icon>
+                            </span>
+                            <div>
+                                <h2 class="text-lg font-semibold text-content-primary">Thông tin cá nhân</h2>
+                                <p class="text-sm text-content-muted">Dùng để định danh và hỗ trợ check-in nhanh.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="form-control w-full md:col-span-2">
+                                <label asp-for="Input.FullName" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Họ và tên <span class="text-danger">*</span></span>
+                                </label>
+                                <input asp-for="Input.FullName" placeholder="Nguyễn Văn A" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.FullName" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="Input.Gender" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Giới tính</span>
+                                </label>
+                                <select asp-for="Input.Gender" class="select select-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="Input.DateOfBirth" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Ngày sinh</span>
+                                </label>
+                                <input asp-for="Input.DateOfBirth" type="date" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                            </div>
+
+                            <div class="form-control w-full md:col-span-2">
+                                <label asp-for="Input.CCCD" class="label">
+                                    <span class="label-text text-content-secondary font-medium">CMND / CCCD / Hộ chiếu</span>
+                                </label>
+                                <input asp-for="Input.CCCD" placeholder="012345678901" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.CCCD" class="mt-1 text-xs text-danger"></span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-5 border-t border-bdr-strong/50 pt-6">
+                        <div class="flex items-center gap-3">
+                            <span class="grid h-10 w-10 place-items-center rounded-xl bg-info/15 text-info">
+                                <iconify-icon icon="solar:phone-calling-rounded-bold-duotone" class="text-xl"></iconify-icon>
+                            </span>
+                            <div>
+                                <h2 class="text-lg font-semibold text-content-primary">Thông tin liên lạc</h2>
+                                <p class="text-sm text-content-muted">Phục vụ xác nhận đặt phòng và gửi thông báo giao dịch.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div class="form-control w-full">
+                                <label asp-for="Input.PhoneNumber" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Số điện thoại <span class="text-danger">*</span></span>
+                                </label>
+                                <input asp-for="Input.PhoneNumber" placeholder="0901234567" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.PhoneNumber" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="Input.Email" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Email</span>
+                                </label>
+                                <input asp-for="Input.Email" placeholder="guest@example.com" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                                <span asp-validation-for="Input.Email" class="mt-1 text-xs text-danger"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="Input.Nationality" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Quốc tịch</span>
+                                </label>
+                                <input asp-for="Input.Nationality" placeholder="Việt Nam" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary" />
+                            </div>
+
+                            <div class="form-control w-full md:col-span-2">
+                                <label asp-for="Input.Address" class="label">
+                                    <span class="label-text text-content-secondary font-medium">Địa chỉ thường trú</span>
+                                </label>
+                                <textarea asp-for="Input.Address" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..." class="textarea textarea-bordered h-28 w-full border-bdr-strong bg-surface-1 text-content-primary focus:border-primary"></textarea>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <aside class="space-y-4 xl:col-span-4">
+            <div class="rounded-3xl border border-bdr-strong bg-surface-2/40 p-6 shadow-xl">
+                <h3 class="flex items-center gap-2 text-lg font-semibold text-content-primary">
+                    <iconify-icon icon="solar:clipboard-list-bold-duotone" class="text-primary"></iconify-icon>
+                    Tóm tắt hồ sơ
+                </h3>
+                <p class="mt-2 text-sm text-content-muted">Hồ sơ mới sẽ sẵn sàng sử dụng trong đặt phòng và hóa đơn ngay sau khi lưu.</p>
+
+                <div class="mt-5 space-y-3 rounded-2xl border border-bdr-strong/60 bg-surface-1/70 p-4 text-sm">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-content-muted">Ngôn ngữ giao diện</span>
+                        <strong class="text-content-primary">Tiếng Việt</strong>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-content-muted">Trạng thái</span>
+                        <strong class="text-emerald-300">Sẵn sàng tạo mới</strong>
+                    </div>
+                </div>
+
+                <div class="mt-4 rounded-2xl border border-primary/25 bg-primary/10 p-4 text-sm text-content-secondary">
+                    <div class="flex items-start gap-3">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="mt-0.5 text-lg text-primary"></iconify-icon>
+                        <p>Hãy kiểm tra số điện thoại trước khi lưu để tránh tạo trùng hồ sơ khách hàng.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border border-bdr-strong bg-surface-2/40 p-4 shadow-xl">
+                <div class="grid grid-cols-1 gap-3">
+                    <button type="submit" class="btn h-12 rounded-xl border-none bg-primary text-white shadow-lg shadow-primary/25 hover:bg-primary/90">
+                        <iconify-icon icon="solar:diskette-bold-duotone" class="text-lg"></iconify-icon>
+                        Lưu hồ sơ khách hàng
+                    </button>
+                    <a asp-page="./Index" class="btn btn-ghost h-12 rounded-xl border border-bdr-strong text-content-secondary hover:text-content-primary">
+                        Hủy và quay lại
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

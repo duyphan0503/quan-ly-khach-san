@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" class="mq-theme-dark">
+@inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
+@{
+    var websiteSettings = await WebsiteSettingsService.GetCurrentAsync();
+    var logoUrl = string.IsNullOrWhiteSpace(websiteSettings.LogoUrl) ? "/images/logo.svg" : websiteSettings.LogoUrl;
+    var brandMain = string.IsNullOrWhiteSpace(websiteSettings.BrandMain) ? HotelManagement.Core.Constants.BrandingConstants.BrandMain : websiteSettings.BrandMain;
+    var brandHighlight = string.IsNullOrWhiteSpace(websiteSettings.BrandHighlight) ? HotelManagement.Core.Constants.BrandingConstants.BrandHighlight : websiteSettings.BrandHighlight;
+    var brandSlogan = string.IsNullOrWhiteSpace(websiteSettings.BrandSlogan) ? HotelManagement.Core.Constants.BrandingConstants.BrandSlogan : websiteSettings.BrandSlogan;
+    var brandFullName = string.IsNullOrWhiteSpace(websiteSettings.BrandFullName) ? HotelManagement.Core.Constants.BrandingConstants.BrandFullName : websiteSettings.BrandFullName;
+}
+<head>
+    <!-- Iconify (solar bold-duotone icon set) -->
+    <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản Trị @brandFullName</title>
+    <link rel="icon" href="@logoUrl">
+    
+    <!-- Google Fonts: Luxury Pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS: Tailwind, DaisyUI, Flowbite -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="~/js/layout/admin-tailwind-config.js" asp-append-version="true"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/ui-extracted.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout/admin-layout.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="antialiased">
+
+<nav class="fixed top-0 z-50 w-full glass-nav">
+  <div class="px-4 py-3 lg:px-6 lg:pl-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center justify-start rtl:justify-end">
+        <button id="sidebar-toggle" type="button" class="inline-flex items-center p-2 text-content-muted rounded-lg sm:hidden hover:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-primary/30" aria-label="Mở thanh điều hướng">
+            <iconify-icon icon="solar:menu-bold-duotone" class="w-6 h-6 text-accent"></iconify-icon>
+        </button>
+        <a asp-area="Admin" asp-page="/Dashboard/Index" class="flex items-center ms-2 md:me-24 gap-3">
+          <img src="@logoUrl" alt="@($"{brandFullName} Logo")" class="w-10 h-10 mq-logo-block mq-logo-min-40" />
+          <div class="flex flex-col leading-none">
+              <span class="self-center flex text-xl font-outfit font-bold sm:text-2xl whitespace-nowrap text-content-primary">
+                  @brandMain <span class="text-primary ml-1">@brandHighlight</span>
+              </span>
+              <span class="text-[10px] text-accent font-medium tracking-[0.3em] uppercase mt-1 hidden lg:block">@brandSlogan</span>
+          </div>
+        </a>
+      </div>
+      <div class="flex items-center gap-6">
+          <a asp-area="Public" asp-page="/Index" class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-blue-500/40 bg-blue-500/10 text-blue-200 hover:text-blue-100 hover:bg-blue-500/15 hover:border-blue-400/70 shadow-lg shadow-blue-500/15 hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300">
+            <span class="inline-flex h-5 w-5 items-center justify-center">
+                <iconify-icon icon="solar:home-angle-bold-duotone" class="h-5 w-5 text-blue-300"></iconify-icon>
+            </span>
+            <span class="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">Về trang chủ</span>
+            <iconify-icon icon="solar:alt-arrow-right-linear" class="h-4 w-4 text-blue-300 hidden sm:inline"></iconify-icon>
+          </a>
+
+          <div class="h-8 w-px bg-white/10"></div>
+          
+@using Microsoft.AspNetCore.Identity
+@using HotelManagement.Core.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var finalAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(currentUser?.AvatarUrl);
+    var fullName = currentUser?.FullName ?? User.Identity?.Name;
+}
+
+          <div class="flex items-center gap-3">
+              <div class="hidden md:flex flex-col text-right">
+                  <span class="text-xs font-bold text-content-primary uppercase tracking-tighter">@fullName</span>
+                  <span class="text-[10px] text-content-muted font-medium">Quản trị viên</span>
+              </div>
+              <a asp-area="Identity" asp-page="/Account/Manage/Index" class="avatar online ring ring-primary/30 ring-offset-base-100 ring-offset-2 rounded-full cursor-pointer hover:scale-110 transition-transform" title="Hồ sơ cá nhân">
+                  <div class="w-10 rounded-full overflow-hidden bg-surface-3 flex items-center justify-center">
+                      @if (!string.IsNullOrEmpty(finalAvatarUrl))
+                      {
+                          <img src="@finalAvatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-fallback="#admin-layout-avatar-fallback" />
+                          <div id="admin-layout-avatar-fallback" class="mq-avatar-fallback items-center justify-center w-full h-full bg-primary/20 text-primary uppercase font-bold text-xs">
+                              @(fullName?.FirstOrDefault() ?? 'A')
+                          </div>
+                      }
+                      else
+                      {
+                          <div class="flex items-center justify-center w-full h-full bg-primary/20 text-primary uppercase font-bold text-xs">
+                              @(fullName?.FirstOrDefault() ?? 'A')
+                          </div>
+                      }
+                  </div>
+              </a>
+          </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+<partial name="_Sidebar" />
+
+<div class="p-4 sm:ml-64 bg-surface-1 min-h-screen">
+   <div class="p-4 mt-14 max-w-7xl mx-auto">
+       @RenderBody()
+   </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/ui-extracted.js" asp-append-version="true" defer></script>
+    <script src="~/js/layout/admin-layout.js" asp-append-version="true" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

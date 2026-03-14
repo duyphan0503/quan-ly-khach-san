@@ -1,0 +1,29 @@
+@model string
+
+@if (!string.IsNullOrEmpty(Model))
+{
+    var isError = Model.StartsWith("Error");
+    var message = isError ? Model.Replace("Error: ", "") : Model;
+    
+    <div id="status-toast" data-status-toast class="fixed top-[100px] left-1/2 -translate-x-1/2 z-[10000] animate-slide-in-down group">
+        <div class="flex items-center gap-4 p-4 rounded-[1.5rem] bg-surface-2/90 backdrop-blur-3xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] min-w-[380px] transition-all duration-300">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center @(isError ? "bg-danger/20 text-danger" : "bg-success/20 text-success") bg-surface-3 shadow-inner">
+                <iconify-icon icon="@(isError ? "solar:danger-bold-duotone" : "solar:check-circle-bold-duotone")" class="text-2xl"></iconify-icon>
+            </div>
+            
+            <div class="flex-1 pr-4">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted mb-0.5">Thông báo</p>
+                <p class="text-sm font-medium text-content-primary">@message</p>
+            </div>
+
+            <button type="button" data-status-close class="text-content-muted hover:text-content-primary transition-colors p-1">
+                <iconify-icon icon="solar:close-circle-bold" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        
+        <!-- Progress bar timer -->
+        <div class="absolute bottom-0 left-4 right-4 h-0.5 bg-white/5 rounded-full overflow-hidden">
+            <div id="toast-progress" data-status-progress class="h-full @(isError ? "bg-danger" : "bg-primary") transition-all duration-[5000ms] linear w-full"></div>
+        </div>
+    </div>
+}

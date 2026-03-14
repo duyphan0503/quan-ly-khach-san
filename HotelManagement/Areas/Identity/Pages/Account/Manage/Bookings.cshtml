@@ -1,0 +1,98 @@
+@page
+@model BookingsModel
+@using HotelManagement.Core.Models.Enums
+@{
+    ViewData["Title"] = "Lịch sử đặt phòng";
+    ViewData["ActivePage"] = "Bookings";
+    Layout = "_Layout.cshtml";
+}
+
+<div class="relative animate-fade-in">
+    @section PageActions {
+        <a href="/rooms" class="btn bg-accent hover:bg-accent-soft text-brand font-bold border-none rounded-2xl shadow-xl h-11 px-6 hidden sm:flex items-center gap-2.5 transition-all duration-300 hover:scale-[1.02] active:scale-95">
+            <iconify-icon icon="solar:calendar-add-bold-duotone" class="text-xl"></iconify-icon>
+            <span class="text-xs text-brand">Đặt phòng mới</span>
+        </a>
+    }
+
+    <!-- Căn chỉnh mô tả -->
+    <div class="-mt-8 mb-10 text-left">
+        <p class="text-content-muted text-sm italic font-medium opacity-80 leading-relaxed">
+            Quản lý và xem lại toàn bộ hành trình lưu trú của bạn tại Minh Quang Luxury
+        </p>
+    </div>
+
+    @if (!Model.MyBookings.Any())
+    {
+        <div class="bg-surface-2/40 backdrop-blur-xl border border-bdr-strong/50 rounded-3xl p-12 text-center">
+            <div class="w-20 h-20 bg-surface-3 rounded-full flex items-center justify-center mx-auto mb-6">
+                <iconify-icon icon="solar:calendar-search-bold-duotone" class="text-4xl text-content-muted"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-bold text-content-primary mb-2">Chưa có lịch sử đặt phòng</h3>
+            <p class="text-content-muted max-w-sm mx-auto mb-8">Bạn chưa thực hiện yêu cầu đặt phòng nào. Hãy khám phá các hạng phòng tuyệt mỹ của chúng tôi.</p>
+            <a href="/rooms" class="btn btn-outline border-accent text-accent hover:bg-accent hover:text-brand rounded-2xl px-10">Khám phá ngay</a>
+        </div>
+    }
+    else
+    {
+        <div data-booking-scroll-area class="mq-booking-scroll-area max-h-[720px] overflow-y-auto pr-4 -mr-4 space-y-6 lg:space-y-8">
+            @foreach (var booking in Model.MyBookings)
+            {
+                var statusClass = booking.Status switch
+                {
+                    BookingStatus.Confirmed => "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                    BookingStatus.Cancelled => "bg-danger/10 text-danger border-danger/20",
+                    BookingStatus.CheckedIn => "bg-primary/10 text-primary border-primary/20",
+                    BookingStatus.CheckedOut => "bg-slate-500/10 text-slate-400 border-slate-500/20",
+                    _ => "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                };
+
+                var statusText = booking.Status switch
+                {
+                    BookingStatus.Confirmed => "Đã xác nhận",
+                    BookingStatus.Cancelled => "Đã hủy",
+                    BookingStatus.CheckedIn => "Đang lưu trú",
+                    BookingStatus.CheckedOut => "Đã hoàn tất",
+                    BookingStatus.Pending => "Chờ duyệt",
+                    _ => booking.Status.ToString()
+                };
+
+                <div data-booking-card class="mq-booking-card group bg-surface-2/40 backdrop-blur-xl border border-white/5 rounded-3xl p-6 hover:border-accent/30 transition-all duration-500 shadow-sm hover:shadow-xl">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="flex items-center gap-6">
+                            <div class="w-24 h-24 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                                <img src="@(booking.Room?.RoomType?.ImageUrl ?? "/images/room_standard.jpg")" 
+                                     loading="lazy"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <h4 class="text-xl font-bold text-content-primary font-outfit">Phòng @booking.Room?.RoomNumber</h4>
+                                    <span class="badge @statusClass border px-3 py-3 font-bold text-[10px] uppercase tracking-widest">@statusText</span>
+                                </div>
+                                <p class="text-sm text-content-muted">Mã đặt phòng: <span class="text-content-secondary font-mono">#MQ-@booking.Id.ToString("D4")</span></p>
+                                <div class="flex flex-wrap gap-4 pt-1">
+                                    <div class="flex items-center gap-2 text-xs text-content-secondary">
+                                        <iconify-icon icon="solar:calendar-mark-bold-duotone" class="text-accent"></iconify-icon>
+                                        <span>@booking.CheckIn.ToString("dd/MM/yyyy") - @booking.CheckOut.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-content-secondary">
+                                        <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="text-accent"></iconify-icon>
+                                        <span>@booking.NumberOfGuests Người</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-3 justify-center min-w-[200px]">
+                            <p class="text-[10px] uppercase tracking-widest text-content-muted font-bold">Tổng thanh toán</p>
+                            <p class="text-2xl font-black text-accent tracking-tighter">@booking.TotalAmount.ToString("N0")₫</p>
+                            <a href="/rooms/@booking.RoomId" class="text-accent hover:text-accent-soft text-sm font-bold flex items-center gap-1 transition-colors">
+                                Chi tiết hạng phòng <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

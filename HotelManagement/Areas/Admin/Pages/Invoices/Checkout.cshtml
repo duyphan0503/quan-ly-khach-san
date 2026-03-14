@@ -1,0 +1,169 @@
+@page "/admin/invoices/checkout/{id:int?}"
+@model HotelManagement.Areas.Admin.Pages.Invoices.CheckoutModel
+@using HotelManagement.Core.Models.Enums
+@{
+    ViewData["Title"] = "Trả Phòng & Thanh Toán";
+}
+
+<div class="mb-8 flex items-center gap-4">
+    <a asp-page="/Bookings/Details" asp-route-id="@Model.Booking.Id" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+        <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+        <span>Quay lại chi tiết đặt phòng</span>
+    </a>
+    <div>
+        <h2 class="text-3xl font-bold text-content-primary font-outfit tracking-tight flex items-center gap-3">
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary/15 border border-primary/30">
+                <iconify-icon icon="solar:card-send-bold-duotone" class="h-5 w-5 text-primary"></iconify-icon>
+            </span>
+            Thanh Toán Trả Phòng
+        </h2>
+        <p class="text-content-muted mt-1">Review hóa đơn và tiến hành xuất biên lai cho phòng <span class="text-primary font-bold">@Model.Booking.Room?.RoomNumber</span></p>
+    </div>
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        @if (Model.IsGroupCheckoutAvailable)
+        {
+            <div class="mb-5 rounded-2xl border border-primary/30 bg-primary/10 px-5 py-4 text-sm text-content-secondary">
+                <p class="font-semibold text-primary mb-1">Đợt đặt phòng này có thể checkout cùng lúc @Model.GroupCheckedInBookings.Count phòng</p>
+                <p class="opacity-90">Nếu bật tùy chọn thanh toán nhóm, hệ thống sẽ thu tiền toàn bộ phòng đang lưu trú trong cùng đợt đặt và tự checkout đồng thời.</p>
+            </div>
+        }
+        <div class="card overflow-hidden rounded-3xl bg-gradient-to-br from-surface-2 to-surface-2/85 border border-white/10 ring-1 ring-white/5 shadow-[0_18px_45px_rgba(5,10,30,0.35)] backdrop-blur-xl">
+            <div class="card-body p-0">
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.03]">
+                    <h3 class="text-lg font-bold text-content-primary flex items-center gap-2">
+                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 border border-primary/30 shrink-0">
+                            <iconify-icon icon="solar:bill-list-bold-duotone" class="h-4 w-4 text-primary"></iconify-icon>
+                        </span>
+                        Chi Tiết Hóa Đơn Nháp #@Model.DraftInvoice.InvoiceNumber
+                    </h3>
+                </div>
+                
+                <div class="p-6 overflow-x-auto bg-gradient-to-b from-transparent to-black/5">
+                    <table class="table w-full text-content-secondary">
+                        <thead>
+                            <tr class="text-content-muted border-bdr-strong bg-surface-1/50 uppercase text-xs">
+                                <th>Mô tả</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-right">Đơn giá</th>
+                                <th class="text-right">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in Model.DraftInvoice.InvoiceDetails)
+                            {
+                                <tr class="border-bdr-strong/50 hover:bg-surface-3/20">
+                                    <td class="font-medium">
+                                        @detail.Description
+                                        @if(detail.ServiceId == null)
+                                        {
+                                            <span class="badge ml-2 border border-primary/30 bg-primary/15 text-primary">Phòng</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge ml-2 border border-emerald-500/30 bg-emerald-500/15 text-emerald-300">Dịch vụ</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">@detail.Quantity</td>
+                                    <td class="text-right tracking-tight">@detail.UnitPrice.ToString("N0")</td>
+                                    <td class="text-right font-mono text-content-primary text-base">@detail.LineTotal.ToString("N0") ₫</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-bdr-strong">
+                                <td colspan="3" class="text-right text-content-muted font-bold uppercase text-sm">Cộng tiền hàng:</td>
+                                <td class="text-right font-mono text-xl text-content-primary">@Model.DraftInvoice.SubTotal.ToString("N0") ₫</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-1">
+         <div class="card sticky top-24 overflow-hidden rounded-3xl bg-gradient-to-br from-surface-2 to-surface-2/85 border border-white/10 ring-1 ring-white/5 shadow-[0_18px_45px_rgba(5,10,30,0.35)] backdrop-blur-xl">
+            <div class="card-body p-6">
+                <h3 class="text-lg font-bold text-content-primary mb-4 border-b border-white/10 pb-2 flex items-center gap-2">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 border border-primary/30 shrink-0">
+                        <iconify-icon icon="solar:wallet-money-bold-duotone" class="h-4 w-4 text-primary"></iconify-icon>
+                    </span>
+                    Tổng Kết & Thanh Toán
+                </h3>
+
+                <form method="post" id="checkoutForm">
+                    <input type="hidden" asp-for="Input.BookingId" />
+                    
+                    <div class="space-y-4 rounded-2xl border border-white/5 bg-black/10 p-4">
+                        <div class="form-control">
+                            <label asp-for="Input.Tax" class="label text-content-muted font-medium text-sm pb-1 inline-flex items-center gap-2">
+                                <iconify-icon icon="solar:percent-circle-bold-duotone" class="h-4 w-4 text-amber-300"></iconify-icon>
+                                Thuế / Phụ thu (VNĐ)
+                            </label>
+                            <input asp-for="Input.Tax" asp-format="{0:0}" type="number" min="0" step="1000" class="input input-bordered h-11 bg-surface-1 border-bdr-strong text-content-primary w-full text-right font-mono calculate-total" />
+                            <span asp-validation-for="Input.Tax" class="text-error text-xs mt-1"></span>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label asp-for="Input.Discount" class="label text-content-muted font-medium text-sm pb-1 inline-flex items-center gap-2">
+                                <iconify-icon icon="solar:ticket-sale-bold-duotone" class="h-4 w-4 text-emerald-300"></iconify-icon>
+                                Giảm giá (VNĐ)
+                            </label>
+                            <input asp-for="Input.Discount" asp-format="{0:0}" type="number" min="0" step="1000" class="input input-bordered h-11 bg-surface-1 border-bdr-strong text-content-primary w-full text-right font-mono text-emerald-300 calculate-total" />
+                            <span asp-validation-for="Input.Discount" class="text-error text-xs mt-1"></span>
+                        </div>
+
+                        <div class="form-control mt-4">
+                            <label asp-for="Input.PaymentMethod" class="label text-content-muted font-medium text-sm pb-1 inline-flex items-center gap-2">
+                                <iconify-icon icon="solar:card-transfer-bold-duotone" class="h-4 w-4 text-primary"></iconify-icon>
+                                Hình thức thanh toán
+                            </label>
+                            <select asp-for="Input.PaymentMethod" class="select select-bordered h-11 bg-surface-1 border-bdr-strong text-content-primary w-full" asp-items="Html.GetEnumSelectList<PaymentMethod>()"></select>
+                        </div>
+
+                        @if (Model.IsGroupCheckoutAvailable)
+                        {
+                            <label class="mt-4 flex items-start gap-3 rounded-xl border border-white/10 bg-surface-1/60 p-3 cursor-pointer">
+                                <input asp-for="Input.CheckoutWholeGroup" class="checkbox checkbox-primary mt-0.5" />
+                                <span class="text-sm text-content-secondary leading-relaxed">
+                                    Thanh toán toàn bộ nhóm phòng (checkout cùng lúc @Model.GroupCheckedInBookings.Count phòng)
+                                </span>
+                            </label>
+                        }
+                    </div>
+
+                    <div class="divider border-white/10"></div>
+                    
+                    <div class="flex justify-between items-end mb-6">
+                        <span class="text-content-secondary font-bold uppercase tracking-wide">Thanh Toán</span>
+                        <div class="text-right">
+                            <input type="hidden" id="SubTotalVal" value="@Model.DraftInvoice.SubTotal" />
+                            <input type="hidden" id="GroupSubTotalVal" value="@Model.GroupSubTotal" />
+                            <div id="GrandTotalDisplay" class="text-4xl font-bold text-emerald-300 tracking-tighter">
+                                @Model.DraftInvoice.GrandTotal.ToString("N0") <span class="text-xl">₫</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-luxury-outline w-full text-lg h-12 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-400/70 hover:text-emerald-300 transition-all duration-300">
+                        <span class="inline-flex h-5 w-5 items-center justify-center">
+                            <iconify-icon icon="solar:bill-list-bold-duotone" class="h-5 w-5"></iconify-icon>
+                        </span>
+                        Xác Nhận Thu Tiền
+                    </button>
+                    <p class="text-center text-xs text-content-muted mt-4 leading-relaxed">Sau khi Xác nhận, hóa đơn sẽ được lập và Phòng sẽ chuyển sang trạng thái trống (Available/Trống).</p>
+                </form>
+            </div>
+         </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/pages/admin/invoices/checkout.js" asp-append-version="true" defer></script>
+}

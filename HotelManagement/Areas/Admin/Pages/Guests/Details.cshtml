@@ -1,0 +1,308 @@
+@page "/admin/guests/details/{id:int}"
+@model HotelManagement.Areas.Admin.Pages.Guests.DetailsModel
+@{
+    ViewData["Title"] = "Chi Tiết Khách Hàng";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/guests/details.css" asp-append-version="true" />
+}
+
+<div class="mb-8 grid grid-cols-1 gap-6 px-1 xl:grid-cols-[1fr_auto_1fr] xl:items-center">
+    <div class="flex justify-center xl:justify-self-start xl:justify-start">
+        <a asp-page="./Index"
+           class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+            <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+            <span>Quay lại danh sách khách hàng</span>
+        </a>
+    </div>
+
+    <div class="text-center xl:justify-self-center">
+        <h2 class="text-4xl font-extrabold text-white font-outfit tracking-tighter">Hồ Sơ Khách Hàng</h2>
+        <div class="text-slate-400 mt-1.5 flex items-center justify-center gap-2 text-sm font-medium">
+            <iconify-icon icon="lucide:calendar" class="text-indigo-400"></iconify-icon>
+            <span>Hội viên từ @Model.Guest.CreatedAt.ToString("dd/MM/yyyy")</span>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-center gap-3 xl:justify-self-end xl:justify-end">
+        <a asp-page="./Edit" asp-route-id="@Model.Guest.Id" 
+           class="btn btn-ghost bg-slate-800/40 border border-slate-700/50 hover:bg-slate-700/60 text-white gap-2 px-6 rounded-2xl normal-case transition-all">
+            <iconify-icon icon="lucide:edit-3" class="text-lg text-indigo-400"></iconify-icon>
+            Chỉnh Sửa
+        </a>
+        <a asp-Area="Admin" asp-page="/Bookings/Create" 
+           class="btn btn-primary bg-gradient-to-r from-indigo-600 to-violet-600 border-none hover:from-indigo-500 hover:to-violet-500 text-white gap-2 px-8 rounded-2xl shadow-lg shadow-indigo-600/20 normal-case transition-all hover:-translate-y-1">
+            <iconify-icon icon="lucide:plus-circle" class="text-xl"></iconify-icon>
+            Tạo Đặt Phòng
+        </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: Profile & Info -->
+    <div class="space-y-8 animate-in fade-in slide-in-from-left duration-700">
+        <!-- Profile Card -->
+        <div class="card bg-slate-900/40 border border-slate-800/60 shadow-2xl overflow-hidden backdrop-blur-xl group">
+            <div class="profile-card-header h-32 w-full transition-all group-hover:h-36 duration-500"></div>
+            <div class="card-body pt-0 relative px-8 pb-10">
+                <div class="avatar absolute -top-16 left-8 details-avatar-container">
+                    <div class="w-32 rounded-3xl border-4 border-slate-900 shadow-2xl relative group-hover:ring-4 ring-indigo-500/30 transition-all duration-500 overflow-hidden bg-slate-800">
+                        @{
+                            var normalizedAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(Model.Guest.AvatarUrl);
+                        }
+                        @if (!string.IsNullOrEmpty(normalizedAvatarUrl))
+                        {
+                            <img src="@normalizedAvatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-default-src="@HotelManagement.Helpers.AvatarUrlHelper.DefaultAvatar" />
+                        }
+                        else
+                        {
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 text-4xl font-bold">
+                                @(Model.Guest.FullName?.FirstOrDefault() ?? 'G')
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <div class="mt-20">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-2xl font-black text-white font-outfit tracking-tight">@Model.Guest.FullName</h3>
+                        <span class="badge badge-primary bg-indigo-500/10 border-indigo-500/30 text-indigo-400 py-3.5 px-4 font-bold text-xs">#GUEST-@Model.Guest.Id.ToString("D4")</span>
+                    </div>
+                    
+                    <div class="space-y-4 mt-8">
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/30 hover:border-indigo-500/30 transition-all shadow-inner">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shadow-sm">
+                                <iconify-icon icon="lucide:id-card" class="text-xl"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-0.5">CCCD / Passport</p>
+                                <p class="text-white font-mono text-sm tracking-widest">@(string.IsNullOrEmpty(Model.Guest.CCCD) ? "N/A" : Model.Guest.CCCD)</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/30 hover:border-emerald-500/30 transition-all shadow-inner">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shadow-sm">
+                                <iconify-icon icon="lucide:phone" class="text-xl"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-0.5">Số Điện Thoại</p>
+                                <p class="text-white font-mono text-sm tracking-widest">@Model.Guest.PhoneNumber</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/30 hover:border-violet-500/30 transition-all shadow-inner">
+                            <div class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 shadow-sm">
+                                <iconify-icon icon="lucide:mail" class="text-xl"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-0.5">Địa chỉ Email</p>
+                                <p class="text-white text-sm font-medium truncate max-w-[180px]">@(string.IsNullOrEmpty(Model.Guest.Email) ? "Chưa cung cấp" : Model.Guest.Email)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info Card -->
+        <div class="card bg-slate-900/40 border border-slate-800/60 shadow-2xl backdrop-blur-xl overflow-hidden p-1">
+            <div class="card-body p-8 space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-800/50 pb-4">
+                    <iconify-icon icon="lucide:info" class="text-pink-500 text-xl"></iconify-icon>
+                    <h4 class="font-black text-white uppercase tracking-wider text-sm">Thông Tin Bổ Sung</h4>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="space-y-1">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                            <iconify-icon icon="lucide:user" class="text-slate-600"></iconify-icon> Giới tính
+                        </div>
+                        <p class="text-indigo-100 font-semibold px-1">@Model.Guest.Gender</p>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                            <iconify-icon icon="lucide:gift" class="text-slate-600"></iconify-icon> Ngày sinh
+                        </div>
+                        <p class="text-indigo-100 font-semibold px-1">@(Model.Guest.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa rõ")</p>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                            <iconify-icon icon="lucide:globe" class="text-slate-600"></iconify-icon> Quốc tịch
+                        </div>
+                        <p class="text-indigo-100 font-semibold px-1">@(string.IsNullOrEmpty(Model.Guest.Nationality) ? "Việt Nam" : Model.Guest.Nationality)</p>
+                    </div>
+                    <div class="col-span-2 space-y-2 mt-2">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                            <iconify-icon icon="lucide:map-pin" class="text-slate-600"></iconify-icon> Địa chỉ thường trú
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed bg-slate-800/40 p-3 rounded-xl border border-slate-800/50 italic">
+                            @(string.IsNullOrEmpty(Model.Guest.Address) ? "Khách hàng chưa cung cấp thông tin địa chỉ cụ thể." : Model.Guest.Address)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Transactions & History -->
+    <div class="lg:col-span-2 space-y-8 animate-in fade-in slide-in-from-right duration-700">
+        <!-- Stats Widgets -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="card stat-card bg-slate-900/40 border border-slate-800/60 shadow-xl overflow-hidden group">
+                <div class="card-body p-6 relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                        <iconify-icon icon="lucide:calendar-range" class="text-9xl text-indigo-400"></iconify-icon>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shadow-lg glow-primary">
+                            <iconify-icon icon="lucide:calendar-check-2" class="text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Tổng Lần Thuê Phòng</p>
+                            <h3 class="text-4xl font-black text-white font-outfit">@(Model.Guest.Bookings?.Count ?? 0) <span class="text-sm font-medium text-slate-500 uppercase ml-1">lần</span></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card stat-card bg-slate-900/40 border border-slate-800/60 shadow-xl overflow-hidden group">
+                <div class="card-body p-6 relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                        <iconify-icon icon="lucide:moon" class="text-9xl text-emerald-400"></iconify-icon>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shadow-lg glow-success">
+                            <iconify-icon icon="lucide:cloud-moon" class="text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Tổng Đêm Lưu Trú</p>
+                            <h3 class="text-4xl font-black text-white font-outfit">
+                                @{
+                                    var nightCount = Model.Guest.Bookings?.Sum(b => (b.CheckOut - b.CheckIn).Days) ?? 0;
+                                }
+                                @nightCount <span class="text-sm font-medium text-slate-500 uppercase ml-1">đêm</span>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings History Table -->
+        <div class="card bg-slate-900/40 border border-slate-800/60 shadow-2xl backdrop-blur-xl overflow-hidden">
+            <div class="px-8 py-6 border-b border-slate-800/60 flex items-center justify-between bg-slate-800/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-8 bg-indigo-500 rounded-full"></div>
+                    <h3 class="font-extrabold text-xl text-white font-outfit">Lịch Sử Hoạt Động</h3>
+                </div>
+                <div class="text-slate-500 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    <iconify-icon icon="lucide:history" class="text-indigo-400"></iconify-icon>
+                    Cập nhật thời gian thực
+                </div>
+            </div>
+            
+            <div class="h-[640px] overflow-y-auto overflow-x-auto"
+                 data-activity-scroll
+                 data-endpoint="@Url.Page("./Details", new { id = Model.Guest.Id, handler = "ActivityPage" })"
+                 data-booking-details-base-url="/admin/bookings/details/"
+                 data-page-size="@Model.ActivityPageSize">
+                <table class="table w-full text-slate-300">
+                    <thead class="sticky top-0 z-10">
+                        <tr class="text-slate-500 border-none bg-slate-900/95 h-14">
+                            <th class="pl-8 text-[10px] uppercase tracking-widest font-bold">Mã Đặt</th>
+                            <th class="text-[10px] uppercase tracking-widest font-bold">Thông Tin Phòng</th>
+                            <th class="text-[10px] uppercase tracking-widest font-bold">Nhận / Trả</th>
+                            <th class="text-[10px] uppercase tracking-widest font-bold">Trạng Thái</th>
+                            <th class="pr-8 text-right text-[10px] uppercase tracking-widest font-bold">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/40" data-activity-body>
+                        @if (Model.ActivityBookings.Any())
+                        {
+                            foreach (var booking in Model.ActivityBookings)
+                            {
+                                <tr class="booking-history-row border-none hover:bg-slate-800/20 h-20 transition-all">
+                                    <td class="pl-8 font-mono text-xs font-bold text-indigo-400">#@booking.Id.ToString("D4")</td>
+                                    <td>
+                                        @if (booking.Room != null)
+                                        {
+                                            <div class="font-bold text-white text-base">Phòng @booking.Room.RoomNumber</div>
+                                            <div class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">@booking.Room.RoomType?.Name</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="text-right">
+                                                <div class="text-sm font-semibold text-slate-200">@booking.CheckIn.ToString("dd/MM/yyyy")</div>
+                                                <div class="text-[10px] text-slate-600 font-bold text-right uppercase italic">Check-in</div>
+                                            </div>
+                                            <iconify-icon icon="lucide:arrow-right" class="text-slate-700"></iconify-icon>
+                                            <div>
+                                                <div class="text-sm font-semibold text-slate-200">@booking.CheckOut.ToString("dd/MM/yyyy")</div>
+                                                <div class="text-[10px] text-slate-600 font-bold uppercase italic">Check-out</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var (badgeClass, icon, label) = booking.Status switch
+                                            {
+                                                HotelManagement.Core.Models.Enums.BookingStatus.Confirmed => ("bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-blue-500/5", "lucide:circle-check", "Đã Xác Nhận"),
+                                                HotelManagement.Core.Models.Enums.BookingStatus.CheckedIn => ("bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-indigo-500/5", "lucide:key", "Đang Lưu Trú"),
+                                                HotelManagement.Core.Models.Enums.BookingStatus.CheckedOut => ("bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/5", "lucide:log-out", "Hoàn Thành"),
+                                                HotelManagement.Core.Models.Enums.BookingStatus.Cancelled => ("bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-rose-500/5", "lucide:x-circle", "Đã Hủy"),
+                                                _ => ("bg-slate-500/10 text-slate-400 border-slate-500/20", "lucide:help-circle", booking.Status.ToString())
+                                            };
+                                        }
+                                        <span class="badge-glass inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border @badgeClass text-[11px] font-black uppercase tracking-wider">
+                                            <iconify-icon icon="@icon" class="text-sm"></iconify-icon>
+                                            @label
+                                        </span>
+                                    </td>
+                                    <td class="pr-8 text-right">
+                                        <a asp-Area="Admin" asp-page="/Bookings/Details" asp-route-id="@booking.Id"
+                                           class="btn btn-sm btn-ghost hover:bg-white/5 rounded-xl group transition-all">
+                                            <span class="text-indigo-400 group-hover:text-white transition-colors">Chi tiết</span>
+                                            <iconify-icon icon="lucide:chevron-right" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="py-20 text-center">
+                                    <div class="flex flex-col items-center gap-4 opacity-50">
+                                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center">
+                                            <iconify-icon icon="lucide:inbox" class="text-3xl"></iconify-icon>
+                                        </div>
+                                        <p class="text-slate-500 font-medium italic">Không tìm thấy lịch sử lưu trú của khách hàng này.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.ActivityTotalCount > 0)
+            {
+                <div class="p-6 bg-slate-900/30 text-center border-t border-slate-800/60">
+                    <p data-activity-hint class="text-[10px] text-slate-600 font-bold uppercase tracking-[0.2em]"
+                       data-total="@Model.ActivityTotalCount"
+                       data-visible="@Model.ActivityBookings.Count">
+                        @(Model.ActivityTotalCount > Model.ActivityBookings.Count
+                            ? $"ĐANG HIỂN THỊ {Model.ActivityBookings.Count}/{Model.ActivityTotalCount} - CUỘN TRONG KHUNG ĐỂ TẢI THÊM"
+                            : "ĐÃ HIỂN THỊ TOÀN BỘ LỊCH SỬ HOẠT ĐỘNG")
+                    </p>
+                    <div data-activity-loading class="hidden mt-3 text-xs text-slate-500 font-semibold">Đang tải thêm dữ liệu...</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/pages/admin/guests/details.js" asp-append-version="true" defer></script>
+}

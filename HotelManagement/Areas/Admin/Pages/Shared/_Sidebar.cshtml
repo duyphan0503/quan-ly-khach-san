@@ -1,0 +1,64 @@
+<aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-surface-1 border-r border-bdr-default sm:translate-x-0" aria-label="Sidebar">
+   <div class="h-full px-3 pb-4 overflow-y-auto bg-surface-1 flex flex-col">
+      <ul class="space-y-1 font-medium flex-1">
+         <li>
+            <a asp-area="Admin" asp-page="/Dashboard/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Bảng điều khiển" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:widget-add-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="ms-3">Bảng điều khiển</span>
+            </a>
+         </li>
+         <li>
+            <a asp-area="Admin" asp-page="/Rooms/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Quản lý Phòng" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:bed-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="flex-1 ms-3 whitespace-nowrap">Phòng</span>
+            </a>
+         </li>
+         <li>
+            <a asp-area="Admin" asp-page="/RoomTypes/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Quản Lý Loại Phòng" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:checklist-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="flex-1 ms-3 whitespace-nowrap">Loại Phòng</span>
+            </a>
+         </li>
+         <li>
+            <a asp-area="Admin" asp-page="/Bookings/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @((ViewData["Title"]?.ToString() == "Danh Sách Đặt Phòng" || ViewData["Title"]?.ToString() == "Quản Lý Đặt Phòng") ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:calendar-mark-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="flex-1 ms-3 whitespace-nowrap">Đặt Phòng</span>
+            </a>
+         </li>
+         <li>
+            <a asp-area="Admin" asp-page="/Guests/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Quản Lý Khách Hàng" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:users-group-rounded-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="flex-1 ms-3 whitespace-nowrap">Khách Hàng</span>
+            </a>
+         </li>
+         <li>
+            <a asp-area="Admin" asp-page="/Services/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Danh Mục Dịch Vụ" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:bell-bing-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="flex-1 ms-3 whitespace-nowrap">Dịch Vụ</span>
+            </a>
+         </li>
+         <li>
+            <a asp-area="Admin" asp-page="/Invoices/Index" class="flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Quản Lý Hóa Đơn" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:bill-list-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+               <span class="flex-1 ms-3 whitespace-nowrap">Hóa Đơn</span>
+            </a>
+         </li>
+      </ul>
+      
+      <div class="pt-4 mt-4 border-t border-bdr-default">
+         @if (User.IsInRole("Manager"))
+         {
+            <a asp-area="Admin" asp-page="/Settings/Index" class="mb-2 flex items-center p-3 text-content-secondary rounded-xl hover:bg-surface-2 hover:text-content-primary transition-all group @(ViewData["Title"]?.ToString() == "Cài Đặt Hệ Thống" ? "bg-primary/10 text-primary font-bold" : "")">
+                <iconify-icon icon="solar:settings-bold-duotone" inline class="text-2xl mr-3 group-hover:scale-110 transition-transform text-accent"></iconify-icon>
+                <span class="flex-1 ms-3 whitespace-nowrap">Cài Đặt</span>
+            </a>
+         }
+         <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "Public" })">
+            <button type="submit" class="flex items-center p-3 w-full text-content-muted rounded-xl hover:bg-danger/10 hover:text-danger transition-all group">
+                <iconify-icon icon="solar:logout-3-bold-duotone" inline class="text-xl mr-3 group-hover:scale-110 transition-transform text-danger"></iconify-icon>
+               <span class="ms-3">Đăng xuất</span>
+            </button>
+         </form>
+      </div>
+   </div>
+</aside>

@@ -1,0 +1,115 @@
+@model List<HotelManagement.Core.Models.Booking>
+@using HotelManagement.Core.Models.Enums
+
+@if (Model != null && Model.Any())
+{
+    foreach (var booking in Model)
+    {
+        var (badgeColor, dotColor, statusVn) = booking.Status switch
+        {
+            BookingStatus.Pending => ("bg-warning/10 text-amber-400 border-amber-400/30", "bg-amber-400", "Chờ duyệt"),
+            BookingStatus.Confirmed => ("bg-success/10 text-emerald-400 border-emerald-400/30", "bg-emerald-400", "Đã xác nhận"),
+            BookingStatus.CheckedIn => ("bg-info/10 text-cyan-300 border-cyan-400/30", "bg-cyan-400", "Đang ở"),
+            BookingStatus.CheckedOut => ("bg-surface-3 text-content-muted border-bdr-strong", "bg-slate-500", "Đã trả phòng"),
+            BookingStatus.Cancelled => ("bg-error/10 text-red-300 border-red-400/30", "bg-red-400", "Đã hủy"),
+            _ => ("bg-surface-3 text-content-muted border-bdr-strong", "bg-slate-500", booking.Status.ToString())
+        };
+
+        <tr class="hover:bg-surface-3/20 transition-colors duration-300 group">
+            <td class="py-4 pl-8 font-mono font-medium text-primary">#@booking.Id.ToString("D4")</td>
+            <th scope="row" class="py-4 font-semibold text-content-primary whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center text-[10px] text-primary border border-primary/20 overflow-hidden shrink-0 shadow-sm">
+                        @{
+                            var normalizedAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(booking.Guest?.AvatarUrl);
+                        }
+                        @if (!string.IsNullOrEmpty(normalizedAvatarUrl))
+                        {
+                            <img src="@normalizedAvatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-fallback="#booking-row-avatar-@booking.Id" />
+                            <span id="booking-row-avatar-@booking.Id" class="mq-avatar-fallback-block">@(booking.Guest?.FullName?.FirstOrDefault('G') ?? 'G')</span>
+                        }
+                        else
+                        {
+                            <span>@(booking.Guest?.FullName?.FirstOrDefault('G') ?? 'G')</span>
+                        }
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="hover:text-primary transition-colors cursor-default">@booking.Guest?.FullName</span>
+                        <span class="text-[10px] font-normal text-content-muted uppercase tracking-tighter">@booking.Guest?.CCCD</span>
+                    </div>
+                </div>
+            </th>
+            <td class="py-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary border border-primary/20">
+                        @booking.Room?.RoomNumber
+                    </span>
+                    <div class="flex flex-col">
+                        <span class="text-content-primary font-medium text-xs">@booking.Room?.RoomType?.Name</span>
+                        <span class="text-[9px] text-content-muted uppercase tracking-tighter">@("Tầng " + booking.Room?.Floor)</span>
+                    </div>
+                </div>
+            </td>
+            <td class="py-4 whitespace-nowrap">
+                <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center gap-1.5 text-xs text-content-primary font-medium">
+                        <iconify-icon icon="solar:calendar-arrow-down-linear" class="text-emerald-400"></iconify-icon>
+                        @booking.CheckIn.ToString("dd/MM/yyyy")
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-content-primary font-medium">
+                        <iconify-icon icon="solar:calendar-arrow-up-linear" class="text-rose-400"></iconify-icon>
+                        @booking.CheckOut.ToString("dd/MM/yyyy")
+                    </div>
+                </div>
+            </td>
+            <td class="py-4 text-content-primary font-bold tracking-tight">
+                @booking.TotalAmount.ToString("N0")₫
+            </td>
+            <td class="py-4 text-center">
+                <span class="inline-flex items-center justify-center @badgeColor min-w-[110px] text-[10px] font-bold px-2.5 py-1.5 rounded-full uppercase tracking-widest border opacity-90 transition-all hover:opacity-100">
+                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full @dotColor shadow-[0_0_8px_rgba(0,0,0,0.3)]"></span>
+                    @statusVn
+                </span>
+            </td>
+            <td class="py-4 pr-8 text-right">
+                <div class="inline-flex justify-end items-center gap-1 p-1 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl">
+                    @if (booking.Status == BookingStatus.Pending)
+                    {
+                        <form method="post" asp-page-handler="Confirm" asp-route-id="@booking.Id" class="inline">
+                            <button type="submit" class="btn btn-ghost btn-square btn-sm rounded-xl text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all duration-300" title="Xác nhận đặt phòng" aria-label="Xác nhận đặt phòng">
+                                <iconify-icon icon="solar:check-circle-bold-duotone" width="18" height="18"></iconify-icon>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="Cancel" asp-route-id="@booking.Id" class="inline">
+                            <button type="submit" class="btn btn-ghost btn-square btn-sm rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-all duration-300" title="Hủy yêu cầu" aria-label="Hủy yêu cầu">
+                                <iconify-icon icon="solar:close-circle-bold-duotone" width="18" height="18"></iconify-icon>
+                            </button>
+                        </form>
+                    }
+                    else if (booking.Status == BookingStatus.Confirmed)
+                    {
+                        <form method="post" asp-page-handler="CheckIn" asp-route-id="@booking.Id" class="inline">
+                            <button type="submit" class="btn btn-ghost btn-square btn-sm rounded-xl text-primary hover:text-primary hover:bg-primary/10 transition-all duration-300" title="Nhận phòng" aria-label="Nhận phòng">
+                                <iconify-icon icon="solar:key-minimalistic-bold-duotone" width="18" height="18"></iconify-icon>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="Cancel" asp-route-id="@booking.Id" class="inline">
+                            <button type="submit" class="btn btn-ghost btn-square btn-sm rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-all duration-300" title="Hủy đặt phòng" aria-label="Hủy đặt phòng">
+                                <iconify-icon icon="solar:close-circle-bold-duotone" width="18" height="18"></iconify-icon>
+                            </button>
+                        </form>
+                    }
+                    else if (booking.Status == BookingStatus.CheckedIn)
+                    {
+                        <a asp-page="/Invoices/Checkout" asp-route-bookingId="@booking.Id" class="btn btn-ghost btn-square btn-sm rounded-xl text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 transition-all duration-300" title="Trả phòng & thanh toán" aria-label="Trả phòng & thanh toán">
+                            <iconify-icon icon="solar:logout-bold-duotone" width="18" height="18"></iconify-icon>
+                        </a>
+                    }
+                    <a asp-page="Details" asp-route-id="@booking.Id" class="btn btn-ghost btn-square btn-sm rounded-xl text-content-secondary hover:text-primary hover:bg-primary/10 transition-all duration-300" title="Xem chi tiết" aria-label="Xem chi tiết">
+                        <iconify-icon icon="solar:eye-bold-duotone" width="18" height="18"></iconify-icon>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    }
+}

@@ -1,0 +1,225 @@
+@page "/admin/services/create"
+@model HotelManagement.Areas.Admin.Pages.Services.CreateModel
+@{
+    ViewData["Title"] = "Thêm Dịch Vụ Mới";
+}
+
+<div class="mb-8 space-y-4">
+    <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+        <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+        <span>Quay lại danh sách dịch vụ</span>
+    </a>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h2",
+        Icon = "solar:cup-hot-bold-duotone",
+        Title = "Thêm Dịch Vụ Mới",
+        Subtitle = "Thiết lập thông tin dịch vụ, đơn giá và trạng thái cung cấp"
+    }' />
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+<form method="post" class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+    <div class="space-y-6 xl:col-span-8">
+        <div class="card overflow-hidden rounded-3xl border border-bdr-strong/60 bg-surface-2/70 shadow-2xl backdrop-blur-xl">
+            <div class="card-body p-6 md:p-7">
+                <div class="mb-6 flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/15 text-primary">
+                        <iconify-icon icon="solar:document-add-bold-duotone" class="h-5 w-5"></iconify-icon>
+                    </span>
+                    <div>
+                        <h3 class="text-lg font-bold text-content-primary">Thông tin dịch vụ</h3>
+                        <p class="text-sm text-content-muted">Nhập tên dịch vụ, đơn giá, đơn vị tính và trạng thái hoạt động.</p>
+                    </div>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="mb-5 rounded-xl border border-error/40 bg-error/10 p-3 text-sm text-error"></div>
+
+                <div class="space-y-5">
+                    <div class="form-control w-full">
+                        <label asp-for="Input.Name" class="label">
+                            <span class="label-text text-content-secondary font-medium">Tên dịch vụ <span class="text-danger">*</span></span>
+                        </label>
+                        <input asp-for="Input.Name" id="Input_Name" placeholder="VD: Buffet sáng, Giặt ủi, Đưa đón sân bay..." class="input input-bordered h-12 bg-surface-1 border-bdr-strong text-content-primary focus:border-primary transition-colors" />
+                        <span asp-validation-for="Input.Name" class="text-error mt-1 text-sm"></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div class="form-control w-full">
+                            <label asp-for="Input.Price" class="label">
+                                <span class="label-text text-content-secondary font-medium">Đơn giá (VNĐ) <span class="text-danger">*</span></span>
+                            </label>
+                            <div class="relative">
+                                <input asp-for="Input.Price" asp-format="{0:0}" id="Input_Price" type="number" min="0" step="1000" placeholder="0" class="input input-bordered h-12 w-full border-bdr-strong bg-surface-1 pr-16 text-content-primary font-mono [appearance:textfield] focus:border-primary" />
+                                <span class="pointer-events-none absolute inset-y-0 right-4 inline-flex items-center text-sm font-medium text-content-secondary">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="Input.Price" class="text-error mt-1 text-sm"></span>
+                        </div>
+
+                        <div class="form-control w-full">
+                            <label asp-for="Input.Unit" class="label">
+                                <span class="label-text text-content-secondary font-medium">Đơn vị tính</span>
+                            </label>
+                            <input asp-for="Input.Unit" id="Input_Unit" placeholder="VD: Lần, Giờ, Suất, Chai..." class="input input-bordered h-12 bg-surface-1 border-bdr-strong text-content-primary focus:border-primary transition-colors" />
+                            <span asp-validation-for="Input.Unit" class="text-error mt-1 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-white/10 bg-surface-1/35 p-4">
+                        <div class="mb-3">
+                            <p class="text-sm font-semibold text-content-primary">Trạng thái cung cấp</p>
+                            <p class="text-xs text-content-muted">Chọn trạng thái để xác định dịch vụ có thể sử dụng khi lập hóa đơn.</p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <label data-status-card data-status-value="true" class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-surface-2/30 p-3 transition-all duration-200">
+                                <input type="radio" name="Input.IsActive" value="true" checked class="sr-only" />
+                                <span>
+                                    <span data-status-title class="block text-sm font-semibold">Đang bán</span>
+                                    <span class="text-xs text-content-muted">Hiển thị và cho phép chọn khi lập hóa đơn.</span>
+                                </span>
+                            </label>
+                            <label data-status-card data-status-value="false" class="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-surface-2/30 p-3 transition-all duration-200">
+                                <input type="radio" name="Input.IsActive" value="false" class="sr-only" />
+                                <span>
+                                    <span data-status-title class="block text-sm font-semibold">Ngưng bán</span>
+                                    <span class="text-xs text-content-muted">Ẩn khỏi luồng bán, vẫn giữ dữ liệu lịch sử.</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="xl:col-span-4">
+        <div class="sticky top-24 space-y-5">
+            <div class="card overflow-hidden rounded-3xl border border-bdr-strong/60 bg-gradient-to-br from-surface-2 to-surface-2/80 shadow-2xl backdrop-blur-xl">
+                <div class="card-body p-6">
+                    <h3 class="mb-4 flex items-center gap-2 text-lg font-bold text-content-primary">
+                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/15 text-primary">
+                            <iconify-icon icon="solar:eye-bold-duotone" class="h-4 w-4"></iconify-icon>
+                        </span>
+                        Tóm tắt dịch vụ
+                    </h3>
+
+                    <div class="space-y-3 rounded-2xl border border-white/10 bg-black/10 p-4 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Tên dịch vụ</span>
+                            <strong id="summary-name" class="text-content-primary text-right">Chưa nhập</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Đơn giá</span>
+                            <strong id="summary-price" class="text-content-primary">0 VNĐ</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Đơn vị</span>
+                            <strong id="summary-unit" class="text-content-primary">Lần</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Trạng thái</span>
+                            <strong id="summary-status" class="text-emerald-300">Đang bán</strong>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-content-secondary">
+                        <p class="font-semibold text-primary">Quy trình gợi ý</p>
+                        <p class="mt-1">Đặt tên rõ ràng, chuẩn hóa đơn vị tính và xác nhận trạng thái trước khi lưu để tránh nhầm khi lập hóa đơn.</p>
+                    </div>
+
+                    <div class="mt-6 flex flex-col gap-3 border-t border-bdr-strong/50 pt-5">
+                        <button type="submit" class="btn bg-primary text-content-primary border-none shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-primary/40">
+                            <iconify-icon icon="solar:diskette-bold-duotone" class="h-5 w-5"></iconify-icon>
+                            Lưu Dịch Vụ
+                        </button>
+                        <a asp-page="./Index" class="btn btn-ghost border border-bdr-strong text-content-secondary transition-all duration-300 hover:-translate-y-0.5 hover:text-content-primary">
+                            Hủy và quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const nameInput = document.getElementById('Input_Name');
+            const priceInput = document.getElementById('Input_Price');
+            const unitInput = document.getElementById('Input_Unit');
+            const statusInputs = document.querySelectorAll('input[name="Input.IsActive"]');
+            const statusCards = document.querySelectorAll('[data-status-card]');
+
+            const summaryName = document.getElementById('summary-name');
+            const summaryPrice = document.getElementById('summary-price');
+            const summaryUnit = document.getElementById('summary-unit');
+            const summaryStatus = document.getElementById('summary-status');
+
+            function formatVnd(rawValue) {
+                const value = Number(rawValue || 0);
+                if (!Number.isFinite(value) || value <= 0) {
+                    return '0 VNĐ';
+                }
+                return `${value.toLocaleString('en-US')} VNĐ`;
+            }
+
+            function updateSummary() {
+                if (summaryName && nameInput) {
+                    summaryName.textContent = nameInput.value?.trim() || 'Chưa nhập';
+                }
+                if (summaryPrice && priceInput) {
+                    summaryPrice.textContent = formatVnd(priceInput.value);
+                }
+                if (summaryUnit && unitInput) {
+                    summaryUnit.textContent = unitInput.value?.trim() || 'Lần';
+                }
+                if (summaryStatus && statusInputs.length) {
+                    const activeInput = Array.from(statusInputs).find((input) => input.checked);
+                    const isActive = activeInput ? activeInput.value === 'true' : true;
+                    summaryStatus.textContent = isActive ? 'Đang bán' : 'Ngưng bán';
+                    summaryStatus.classList.toggle('text-emerald-300', isActive);
+                    summaryStatus.classList.toggle('text-amber-300', !isActive);
+                }
+                syncStatusCards();
+            }
+
+            function syncStatusCards() {
+                const selectedInput = Array.from(statusInputs).find((input) => input.checked);
+                const selectedValue = selectedInput ? selectedInput.value : 'true';
+
+                statusCards.forEach((card) => {
+                    const isActiveCard = card.getAttribute('data-status-value') === selectedValue;
+                    const isSellingCard = card.getAttribute('data-status-value') === 'true';
+                    const title = card.querySelector('[data-status-title]');
+
+                    card.classList.remove('border-emerald-400/35', 'bg-emerald-500/12', 'border-amber-400/35', 'bg-amber-500/12', 'border-white/10', 'bg-surface-2/30');
+
+                    if (isActiveCard && isSellingCard) {
+                        card.classList.add('border-emerald-400/35', 'bg-emerald-500/12');
+                        title?.classList.remove('text-content-secondary', 'text-amber-300');
+                        title?.classList.add('text-emerald-300');
+                    } else if (isActiveCard && !isSellingCard) {
+                        card.classList.add('border-amber-400/35', 'bg-amber-500/12');
+                        title?.classList.remove('text-content-secondary', 'text-emerald-300');
+                        title?.classList.add('text-amber-300');
+                    } else {
+                        card.classList.add('border-white/10', 'bg-surface-2/30');
+                        title?.classList.remove('text-emerald-300', 'text-amber-300');
+                        title?.classList.add('text-content-secondary');
+                    }
+                });
+            }
+
+            nameInput?.addEventListener('input', updateSummary);
+            priceInput?.addEventListener('input', updateSummary);
+            unitInput?.addEventListener('input', updateSummary);
+            statusInputs.forEach((input) => input.addEventListener('change', updateSummary));
+
+            updateSummary();
+        })();
+    </script>
+}

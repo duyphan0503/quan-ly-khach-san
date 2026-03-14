@@ -1,0 +1,68 @@
+@model List<HotelManagement.Core.Models.Invoice>
+@using HotelManagement.Core.Models.Enums
+
+@foreach (var invoice in Model)
+{
+    <tr class="border-bdr-strong/50 hover:bg-surface-3/20 transition-colors">
+        <td>
+            <div class="font-bold text-content-primary tracking-tight">#@invoice.InvoiceNumber</div>
+        </td>
+        <td class="text-sm">@invoice.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</td>
+        <td>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center text-[10px] text-primary border border-primary/20 overflow-hidden shrink-0 shadow-lg">
+                    @{
+                        var normalizedAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(invoice.Booking?.Guest?.AvatarUrl);
+                    }
+                    @if (!string.IsNullOrEmpty(normalizedAvatarUrl))
+                    {
+                        <img src="@normalizedAvatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-fallback="#invoice-avatar-@invoice.Id" />
+                        <span id="invoice-avatar-@invoice.Id" class="mq-avatar-fallback-block">@(invoice.Booking?.Guest?.FullName?.FirstOrDefault() ?? 'G')</span>
+                    }
+                    else
+                    {
+                        <span>@(invoice.Booking?.Guest?.FullName?.FirstOrDefault() ?? 'G')</span>
+                    }
+                </div>
+                <div class="flex flex-col">
+                    <div class="font-medium text-primary/70">@invoice.Booking?.Guest?.FullName</div>
+                    <div class="text-xs text-content-muted opacity-80">Phòng: @invoice.Booking?.Room?.RoomNumber</div>
+                </div>
+            </div>
+        </td>
+        <td class="text-right">
+            <div class="font-mono text-success font-bold">@invoice.GrandTotal.ToString("N0") ₫</div>
+            <div class="text-xs text-content-muted mt-1">
+                @(invoice.PaymentMethod switch {
+                    PaymentMethod.Cash => "Tiền mặt",
+                    PaymentMethod.Card => "Thẻ ngân hàng",
+                    PaymentMethod.Transfer => "Chuyển khoản",
+                    _ => invoice.PaymentMethod.ToString()
+                })
+            </div>
+        </td>
+        <td class="text-center">
+            @{
+                var (statusClass, statusText) = invoice.Status switch
+                {
+                    InvoiceStatus.Pending => ("badge bg-warning/10 border-warning/20 text-warning", "Chờ thanh toán"),
+                    InvoiceStatus.Paid => ("badge bg-success/10 border-success/20 text-success", "Đã thanh toán"),
+                    InvoiceStatus.Refunded => ("badge bg-orange-500/10 border-orange-500/20 text-orange-400", "Đã hoàn tiền"),
+                    _ => ("badge badge-ghost text-content-muted", invoice.Status.ToString())
+                };
+            }
+            <span class="@statusClass">@statusText</span>
+        </td>
+        <td class="text-right">
+            <div class="flex justify-end items-center">
+                <div class="flex items-center gap-1 p-1 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl">
+                    <a asp-page="./Details" asp-route-id="@invoice.Id"
+                       class="btn btn-ghost btn-square btn-sm rounded-xl text-content-secondary hover:text-primary hover:bg-primary/10 transition-all duration-300"
+                       title="Xem Chi Tiết">
+                        <iconify-icon icon="solar:eye-bold-duotone" width="18" height="18"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+        </td>
+    </tr>
+}

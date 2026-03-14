@@ -1,0 +1,150 @@
+@page "/admin/guests"
+@model HotelManagement.Areas.Admin.Pages.Guests.IndexModel
+@{
+    ViewData["Title"] = "Quản Lý Khách Hàng";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/guests/index.css" asp-append-version="true" />
+}
+
+<div class="mb-6 space-y-6">
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h2",
+        Icon = "solar:user-speak-bold-duotone",
+        Title = "Hồ Sơ Khách Hàng",
+        Subtitle = "Quản lý và tra cứu thông tin khách hàng tinh hoa trong hệ thống"
+    }' />
+
+    <div class="w-full">
+        <div class="flex w-full flex-wrap items-center gap-3">
+            <form method="get" class="flex min-w-0 flex-wrap items-center gap-2">
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <iconify-icon icon="solar:minimalistic-magnifer-linear" width="20" height="20" class="text-content-muted group-focus-within:text-primary transition-all duration-300"></iconify-icon>
+                </div>
+                <input type="text" asp-for="SearchQuery" placeholder="Tìm Tên, SĐT, CCCD..."
+                       class="input input-bordered bg-white/5 backdrop-blur-xl border-white/10 text-content-primary focus:border-primary/50 focus:ring-4 focus:ring-primary/10 pl-11 pr-4 w-80 transition-all rounded-2xl hover:bg-white/10 shadow-inner" />
+            </div>
+
+            <button type="submit" class="btn btn-square rounded-xl bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/30 transition-all duration-300" title="Tìm kiếm và lọc" aria-label="Tìm kiếm và lọc">
+                <iconify-icon icon="solar:filter-bold-duotone" width="18" height="18"></iconify-icon>
+            </button>
+
+            @if (!string.IsNullOrEmpty(Model.SearchQuery))
+            {
+                <a asp-page="./Index" class="btn btn-square rounded-xl border border-white/10 hover:border-red-400/40 hover:bg-red-500/10 text-content-muted hover:text-red-400 transition-all" title="Xóa bộ lọc">
+                    <iconify-icon icon="solar:close-circle-bold-duotone" width="18" height="18"></iconify-icon>
+                </a>
+            }
+            </form>
+
+            <form method="post" asp-page-handler="MergeDuplicates" class="md:ml-auto">
+                <button type="submit" class="btn rounded-2xl border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-300/50 transition-all duration-300 inline-flex items-center gap-2">
+                    <iconify-icon icon="solar:magic-stick-3-bold-duotone" width="18" height="18"></iconify-icon>
+                    <span class="hidden sm:inline">Gộp Hồ Sơ Trùng</span>
+                    <span class="sm:hidden">Gộp</span>
+                </button>
+            </form>
+
+            <a asp-page="./Create" class="btn bg-gradient-to-br from-primary to-primary-700 hover:from-primary/90 hover:to-primary text-white border-none shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 rounded-2xl px-6 inline-flex items-center gap-2">
+            <iconify-icon icon="solar:add-circle-bold-duotone" width="18" height="18"></iconify-icon>
+            <span class="hidden sm:inline">Thêm Khách Mới</span>
+            <span class="sm:hidden">Thêm</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+<div class="card bg-surface-2/40 backdrop-blur-xl border border-bdr-strong shadow-2xl rounded-2xl flex flex-col overflow-hidden">
+    <div class="flex-grow">
+        <table class="table w-full border-separate border-spacing-0">
+            <thead>
+                <tr class="text-content-muted uppercase text-[11px] tracking-[0.2em] font-black border-b border-white/5">
+                    <th class="py-6 pl-10 text-left bg-surface-2/40 backdrop-blur-md first:rounded-tl-2xl">KHÁCH HÀNG</th>
+                    <th class="py-6 text-left bg-surface-2/40 backdrop-blur-md">ĐỊNH DANH (CCCD)</th>
+                    <th class="py-6 text-left bg-surface-2/40 backdrop-blur-md">LIÊN HỆ</th>
+                    <th class="py-6 text-left bg-surface-2/40 backdrop-blur-md">NGÀY THAM GIA</th>
+                    <th class="py-6 text-right pr-10 bg-surface-2/40 backdrop-blur-md last:rounded-tr-2xl">THAO TÁC</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-bdr-strong/30">
+                @if (Model.Guests != null && Model.Guests.Any())
+                {
+                    <partial name="_GuestRows" model="Model.Guests" />
+                }
+                else
+                {
+                    <partial name="~/Areas/Admin/Pages/Shared/_AdminTableEmptyState.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminTableEmptyStateModel
+                    {
+                        ColSpan = 5,
+                        Icon = "solar:users-group-two-rounded-bold-duotone",
+                        Title = "Chưa có khách hàng nào",
+                        Description = "Hệ thống chưa ghi nhận thông tin khách hàng nào phù hợp với tìm kiếm của bạn.",
+                        CreatePage = "./Create",
+                        CreateText = "Thêm Khách Ngay"
+                    }' />
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPagination.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPaginationModel
+    {
+        AspPage = "./Index",
+        PageNumber = Model.PageNumber,
+        TotalPages = Model.TotalPages,
+        CurrentCount = Model.Guests?.Count ?? 0,
+        TotalCount = Model.TotalCount,
+        ItemLabel = "khách hàng",
+        ContainerClass = "px-6 py-4 bg-surface-2/60 backdrop-blur-2xl border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["searchQuery"] = Model.SearchQuery
+        }
+    }' />
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminListMetaFooter.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminListMetaFooterModel
+{
+    SortText = "Mới nhất"
+}' />
+
+<dialog id="delete_modal" class="modal modal-bottom sm:modal-middle backdrop-blur-md">
+    <div class="modal-box bg-surface-1 border border-bdr-strong rounded-3xl shadow-2xl">
+        <div class="flex items-center gap-4 text-error mb-6">
+            <div class="p-4 bg-red-500/10 rounded-2xl">
+                <iconify-icon icon="solar:danger-bold-duotone" width="30" height="30"></iconify-icon>
+            </div>
+            <div>
+                <h3 class="font-bold text-xl text-content-primary">Xác nhận xóa khách hàng</h3>
+                <p class="text-sm text-content-muted">Hành động này không thể hoàn tác</p>
+            </div>
+        </div>
+        <p class="py-2 text-content-secondary leading-relaxed">
+            Bạn có chắc chắn muốn xóa hồ sơ của khách hàng <span id="delete_guest_name" class="font-bold text-content-primary decoration-primary decoration-2"></span>?
+            Tất cả dữ liệu liên quan sẽ bị gỡ bỏ khỏi hệ thống.
+        </p>
+        <div class="modal-action gap-3">
+            <form method="dialog">
+                <button class="btn btn-ghost rounded-xl px-6 transition-all">Hủy bỏ</button>
+            </form>
+            <form method="post" asp-page-handler="Delete">
+                <input type="hidden" name="id" id="delete_guest_id" />
+                <button type="submit" class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-xl px-8 shadow-lg shadow-red-500/20 transition-all hover:scale-105">
+                    Xác nhận xóa
+                </button>
+            </form>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-black/60 backdrop-blur-sm">
+        <button>close</button>
+    </form>
+</dialog>
+
+@section Scripts {
+    <script src="~/js/pages/admin/guests/index.js" asp-append-version="true" defer></script>
+}

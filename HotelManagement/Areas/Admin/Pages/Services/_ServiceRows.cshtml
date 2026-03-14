@@ -1,0 +1,38 @@
+@model List<HotelManagement.Core.Models.Service>
+
+@foreach (var service in Model)
+{
+    <tr class="border-bdr-strong/50 hover:bg-surface-3/20 transition-colors">
+        <td class="font-mono text-sm opacity-70">#@service.Id</td>
+        <td>
+            <div class="font-bold text-content-primary">@service.Name</div>
+        </td>
+        <td class="font-mono text-primary/70 font-medium">@service.Price.ToString("N0") ₫</td>
+        <td class="text-center">
+            <span class="inline-flex h-8 w-20 items-center justify-center rounded-xl border border-bdr-strong bg-surface-3 px-2 text-xs font-medium text-content-secondary uppercase">
+                <span class="truncate">@service.Unit</span>
+            </span>
+        </td>
+        <td class="text-center">
+            @if (service.IsActive)
+            {
+                <span class="badge bg-success/10 border-success/20 text-success">Đang bán</span>
+            }
+            else
+            {
+                <span class="badge bg-danger/10 border-danger/20 text-danger">Ngưng bán</span>
+            }
+        </td>
+        <td class="text-right">
+            <div class="flex justify-end items-center">
+                <div class="flex items-center gap-1 p-1 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl">
+                    <a asp-page="./Edit" asp-route-id="@service.Id"
+                       class="btn btn-ghost btn-square btn-sm rounded-xl text-content-secondary hover:text-accent hover:bg-accent/10 transition-all duration-300"
+                       title="Chỉnh Sửa">
+                        <iconify-icon icon="solar:pen-new-square-bold-duotone" width="18" height="18"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+        </td>
+    </tr>
+}

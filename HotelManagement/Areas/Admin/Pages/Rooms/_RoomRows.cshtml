@@ -1,0 +1,89 @@
+@model List<HotelManagement.Core.Models.Room>
+@using HotelManagement.Core.Models.Enums
+
+@foreach (var room in Model)
+{
+    var statusClass = room.Status switch
+    {
+        RoomStatus.Available => "badge-success",
+        RoomStatus.Occupied => "badge-error",
+        RoomStatus.Maintenance => "badge-warning",
+        RoomStatus.Reserved => "badge-info",
+        _ => "badge-ghost"
+    };
+
+    <div class="card bg-surface-2 border border-bdr-strong shadow-xl overflow-hidden group hover:border-primary transition-all duration-300" data-room-item>
+        <figure class="relative h-48 bg-surface-3">
+            @{
+                var displayImage = !string.IsNullOrEmpty(room.ImageUrl) ? room.ImageUrl : room.RoomType?.ImageUrl;
+            }
+            @if (!string.IsNullOrEmpty(displayImage))
+            {
+                <picture>
+                    @{
+                        var adminRoomWebp = displayImage.EndsWith(".jpg") ? displayImage.Replace(".jpg", ".webp") : displayImage;
+                    }
+                    <source srcset="@adminRoomWebp" type="image/webp">
+                    <img src="@displayImage"
+                         width="400" height="192"
+                         loading="lazy"
+                         alt="Room @room.RoomNumber"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                </picture>
+            }
+            else
+            {
+                <div class="flex items-center justify-center w-full h-full text-content-muted text-5xl"><iconify-icon icon="solar:buildings-bold-duotone"></iconify-icon></div>
+            }
+            <div class="absolute top-4 right-4">
+                <span class="badge @statusClass border-none py-3 px-4 font-bold shadow-lg">
+                    @(room.Status switch {
+                        RoomStatus.Available => "Trống",
+                        RoomStatus.Occupied => "Đang ở",
+                        RoomStatus.Maintenance => "Bảo trì",
+                        RoomStatus.Reserved => "Đã đặt",
+                        _ => room.Status.ToString()
+                    })
+                </span>
+            </div>
+            <div class="absolute bottom-4 left-4">
+                <span class="bg-black/60 backdrop-blur px-3 py-1 rounded text-content-primary text-xs font-semibold">Tầng @room.Floor</span>
+            </div>
+        </figure>
+
+        <div class="card-body p-5">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="card-title text-content-primary font-outfit text-xl">Phòng @room.RoomNumber</h3>
+                <div class="text-right">
+                    <p class="text-primary font-bold">@room.RoomType?.BasePrice.ToString("N0")₫</p>
+                    <p class="text-[10px] text-content-muted uppercase tracking-widest">mỗi đêm</p>
+                </div>
+            </div>
+
+            <p class="text-sm text-content-muted line-clamp-2 mb-4">
+                <span class="font-medium text-content-secondary">@room.RoomType?.Name:</span>
+                @room.RoomType?.Description
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+                @if (room.RoomType?.Amenities != null)
+                {
+                    @foreach (var amenity in room.RoomType.Amenities.Split(',').Take(3))
+                    {
+                        <span class="bg-surface-3/50 text-content-muted text-[10px] px-2 py-0.5 rounded border border-bdr-strong"><iconify-icon icon="solar:star-bold-duotone" class="mr-1 text-warning"></iconify-icon>@amenity.Trim()</span>
+                    }
+                }
+            </div>
+
+            <div class="card-actions justify-end mt-2 pt-4 border-t border-bdr-strong">
+                <div class="join">
+                    <a asp-page="Details" asp-route-id="@room.Id" class="btn btn-sm btn-ghost join-item text-content-muted hover:text-content-primary">Chi tiết</a>
+                    @if (User.IsInRole("Manager"))
+                    {
+                        <a asp-page="Edit" asp-route-id="@room.Id" class="btn btn-sm btn-ghost join-item text-primary hover:text-primary/70">Sửa</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

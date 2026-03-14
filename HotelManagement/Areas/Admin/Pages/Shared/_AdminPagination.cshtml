@@ -1,0 +1,66 @@
+@model HotelManagement.Areas.Admin.Pages.Shared.AdminPaginationModel
+@{
+    var safeTotalPages = Math.Max(1, Model.TotalPages);
+    var currentPage = Math.Min(Math.Max(Model.PageNumber, 1), safeTotalPages);
+
+    var startPage = Math.Max(1, currentPage - 2);
+    var endPage = Math.Min(safeTotalPages, currentPage + 2);
+
+    if (endPage - startPage < 4)
+    {
+        if (startPage == 1)
+        {
+            endPage = Math.Min(safeTotalPages, startPage + 4);
+        }
+        else if (endPage == safeTotalPages)
+        {
+            startPage = Math.Max(1, endPage - 4);
+        }
+    }
+
+    Dictionary<string, string?> BuildRouteValues(int targetPage)
+    {
+        var values = new Dictionary<string, string?>(Model.RouteValues, StringComparer.OrdinalIgnoreCase)
+        {
+            ["pageNumber"] = targetPage.ToString()
+        };
+
+        return values;
+    }
+}
+
+<div class="@Model.ContainerClass">
+    <div class="text-[11px] text-content-muted uppercase tracking-widest font-bold opacity-60">
+        Hiển thị <span class="text-primary">@Model.CurrentCount</span> / <span class="text-content-primary">@Model.TotalCount</span> @Model.ItemLabel
+    </div>
+
+    <div class="bg-surface-3/30 p-1.5 rounded-2xl border border-white/5 backdrop-blur-lg flex items-center gap-1 shadow-2xl">
+        @if (currentPage > 1)
+        {
+            <a asp-page="@Model.AspPage" asp-all-route-data="BuildRouteValues(currentPage - 1)"
+               class="btn btn-ghost btn-sm btn-square rounded-xl hover:bg-primary/20 hover:text-primary transition-all duration-300">
+                <iconify-icon icon="solar:alt-arrow-left-bold-duotone" width="18" height="18"></iconify-icon>
+            </a>
+        }
+
+        @for (var i = startPage; i <= endPage; i++)
+        {
+            <a asp-page="@Model.AspPage" asp-all-route-data="BuildRouteValues(i)"
+               class="btn btn-sm min-w-[36px] rounded-xl border-none transition-all duration-300 @(i == currentPage ? "bg-primary text-white shadow-lg shadow-primary/30 scale-110" : "btn-ghost text-content-muted hover:bg-white/5 hover:text-content-primary")">
+                @i
+            </a>
+        }
+
+        @if (currentPage < safeTotalPages)
+        {
+            <a asp-page="@Model.AspPage" asp-all-route-data="BuildRouteValues(currentPage + 1)"
+               class="btn btn-ghost btn-sm btn-square rounded-xl hover:bg-primary/20 hover:text-primary transition-all duration-300">
+                <iconify-icon icon="solar:alt-arrow-right-bold-duotone" width="18" height="18"></iconify-icon>
+            </a>
+        }
+    </div>
+
+    <div class="text-[11px] text-content-muted uppercase tracking-widest font-bold opacity-60">
+        Trang <span class="text-primary">@currentPage</span> / @safeTotalPages
+    </div>
+</div>

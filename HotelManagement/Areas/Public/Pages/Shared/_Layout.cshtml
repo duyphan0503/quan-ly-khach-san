@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" class="mq-theme-dark">
+@inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
+@{
+    var websiteSettings = await WebsiteSettingsService.GetCurrentAsync();
+    var logoUrl = string.IsNullOrWhiteSpace(websiteSettings.LogoUrl) ? "/images/logo.svg" : websiteSettings.LogoUrl;
+    var brandMain = string.IsNullOrWhiteSpace(websiteSettings.BrandMain) ? HotelManagement.Core.Constants.BrandingConstants.BrandMain : websiteSettings.BrandMain;
+    var brandHighlight = string.IsNullOrWhiteSpace(websiteSettings.BrandHighlight) ? HotelManagement.Core.Constants.BrandingConstants.BrandHighlight : websiteSettings.BrandHighlight;
+    var brandSlogan = string.IsNullOrWhiteSpace(websiteSettings.BrandSlogan) ? HotelManagement.Core.Constants.BrandingConstants.BrandSlogan : websiteSettings.BrandSlogan;
+    var brandFullName = string.IsNullOrWhiteSpace(websiteSettings.BrandFullName) ? HotelManagement.Core.Constants.BrandingConstants.BrandFullName : websiteSettings.BrandFullName;
+    var contactPhone = string.IsNullOrWhiteSpace(websiteSettings.ContactPhone) ? "+84 123 456 789" : websiteSettings.ContactPhone;
+    var contactEmail = string.IsNullOrWhiteSpace(websiteSettings.ContactEmail) ? "reservation@minhquang.vn" : websiteSettings.ContactEmail;
+    var contactAddress = string.IsNullOrWhiteSpace(websiteSettings.ContactAddress) ? "123 Đại lộ Hòa Bình, Quận Ninh Kiều, Thành phố Cần Thơ" : websiteSettings.ContactAddress;
+    var footerMapEmbedUrl = string.IsNullOrWhiteSpace(websiteSettings.FooterMapEmbedUrl) ? "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.8475510619946!2d105.7797746757655!3d10.029444372545898!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0882139720a77%3A0x6717aa348f057f0!2zMTIzIMSQxrDhu51uZyBIw7JhIELDrG5oLCBOaW5oIEtp4buBdSwgQ-G6p24gVGjGoSwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1709708000000!5m2!1svi!2s" : websiteSettings.FooterMapEmbedUrl;
+    var footerDescription = string.IsNullOrWhiteSpace(websiteSettings.FooterDescription) ? "Trải nghiệm sự sang trọng đỉnh cao giữa lòng thành phố. Nơi không gian ngưng đọng, và mọi cảm xúc được thăng hoa bên những dịch vụ đẳng cấp 5 sao quốc tế." : websiteSettings.FooterDescription;
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @brandFullName | @brandSlogan</title>
+    <link rel="icon" href="@logoUrl" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js" defer></script>
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="~/js/layout/public-tailwind-config.js" asp-append-version="true"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/css/index.css" />
+    <link rel="stylesheet" href="~/css/ui-extracted.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout/public-layout.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="antialiased font-inter min-h-screen flex flex-col pt-20 overflow-x-hidden">
+
+    <!-- Header / Nav -->
+    <header class="fixed top-0 inset-x-0 z-50 glass-nav glass-nav-public">
+        <!-- Toast Notification (Global Level) -->
+        @{
+            var statusMessage = TempData["StatusMessage"]?.ToString();
+        }
+        <partial name="/Areas/Identity/Pages/Shared/_StatusMessage.cshtml" for="@statusMessage" />
+
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a asp-area="Public" asp-page="/Index" class="flex items-center gap-3 group">
+                <img src="@logoUrl" alt="@brandFullName" class="w-12 h-12 transition-transform duration-500 group-hover:rotate-360" />
+                <div class="flex flex-col">
+                    <span class="text-xl font-outfit font-extrabold tracking-[0.2em] text-white">
+                        @brandMain
+                        <span class="text-primary ml-1">@brandHighlight</span>
+                    </span>
+                    <span class="text-[10px] text-accent font-medium tracking-[0.3em] uppercase">@brandSlogan</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-10">
+                <a asp-area="Public" asp-page="/Index" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white hover:text-accent transition-colors">Trang Chủ</a>
+                <a href="/#rooms" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white/70 hover:text-accent transition-colors">Phòng Nghỉ</a>
+                <a href="/#services" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white/70 hover:text-accent transition-colors">Dịch Vụ</a>
+                <a href="#contact" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white/70 hover:text-accent transition-colors">Liên Hệ</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="hidden md:flex items-center gap-6">
+                <partial name="/Areas/Identity/Pages/Shared/_LoginPartial.cshtml" />
+                <a asp-area="Public" asp-page="/Rooms/Index" class="btn bg-accent hover:bg-accent-soft text-brand border-none px-10 h-12 rounded-xl font-outfit font-black uppercase tracking-widest text-[10px] shadow-lg shadow-accent/10 transition-all hover:-translate-y-0.5 active:scale-95">Đặt Ngay</a>
+            </div>
+
+            <!-- Mobile Menu Btn -->
+            <button id="mobile-menu-btn" class="md:hidden text-white text-3xl focus:outline-none" aria-label="Toggle Menu" aria-expanded="false">
+                <iconify-icon id="mobile-menu-open-icon" icon="solar:hamburger-menu-linear"></iconify-icon>
+                <iconify-icon id="mobile-menu-close-icon" icon="solar:close-circle-bold" class="hidden"></iconify-icon>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="hidden md:hidden fixed inset-0 top-20 bg-brand/95 backdrop-blur-xl z-50 animate-fade-in">
+            <div class="flex flex-col items-center justify-center h-full space-y-8 p-10">
+                <a asp-area="Public" asp-page="/Index" class="text-2xl font-outfit font-bold text-white uppercase tracking-widest">Trang Chủ</a>
+                <a href="/#rooms" class="text-2xl font-outfit font-bold text-white/70 uppercase tracking-widest">Phòng Nghỉ</a>
+                <a href="/#services" class="text-2xl font-outfit font-bold text-white/70 uppercase tracking-widest">Dịch Vụ</a>
+                <a href="#contact" class="text-2xl font-outfit font-bold text-white/70 uppercase tracking-widest">Liên Hệ</a>
+                
+                <div class="w-full h-px bg-white/10 my-4"></div>
+                
+                <partial name="/Areas/Identity/Pages/Shared/_LoginPartial.cshtml" />
+                <a asp-area="Public" asp-page="/Rooms/Index" class="btn bg-accent hover:bg-accent-soft text-brand border-none w-full py-4 rounded-xl font-outfit font-black uppercase tracking-widest text-xs text-center shadow-xl shadow-accent/10">Đặt Ngay</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="grow">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="border-t border-bdr-default pt-16 pb-8 mq-footer-surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 mb-12 items-start">
+                <div class="md:col-span-4">
+                    <a href="#" class="flex items-center gap-2 mb-5">
+                        <img src="@logoUrl" alt="@($"{brandFullName} Logo")" class="w-12 h-12 mq-logo-block mq-logo-min-48" />
+                        <div class="flex flex-col">
+                            <span class="text-xl font-outfit font-extrabold text-content-primary tracking-[0.12em] leading-none whitespace-nowrap">
+                                @brandMain
+                                <span class="text-primary ml-1">@brandHighlight</span>
+                            </span>
+                            <span class="text-[9px] text-accent font-medium tracking-[0.22em] uppercase mt-1 whitespace-nowrap">@brandSlogan</span>
+                        </div>
+                    </a>
+                    <p class="text-content-muted text-sm leading-relaxed max-w-md text-justify">@footerDescription</p>
+                </div>
+                
+                <div class="md:col-span-3 md:pt-1">
+                    <h3 class="text-content-primary font-outfit tracking-widest uppercase mb-5 text-sm font-bold">Liên Hệ</h3>
+                    <ul class="space-y-4 text-sm text-content-muted">
+                        <li class="flex items-start gap-3">
+                            <iconify-icon icon="solar:map-point-bold-duotone" class="text-accent mt-0.5"></iconify-icon>
+                            <span>@contactAddress</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <iconify-icon icon="solar:phone-bold-duotone" class="text-accent"></iconify-icon>
+                            <span>@contactPhone</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <iconify-icon icon="solar:letter-bold-duotone" class="text-accent"></iconify-icon>
+                            <span>@contactEmail</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="md:col-span-2 md:pt-1">
+                    <h3 class="text-content-primary font-outfit tracking-widest uppercase mb-5 text-sm font-bold">Khám Phá</h3>
+                    <ul class="space-y-3 text-sm text-content-muted">
+                        <li><a href="#" class="hover:text-accent transition-colors">Về Chúng Tôi</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Ẩm Thực</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Spa & Wellness</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Thư Viện Ảnh</a></li>
+                    </ul>
+                </div>
+
+                <!-- Mini Map Column -->
+                <div class="md:col-span-3 md:pt-1">
+                    <h3 class="text-content-primary font-outfit tracking-widest uppercase mb-5 text-sm font-bold">Vị Trí</h3>
+                    <div class="w-full h-44 rounded-2xl overflow-hidden border border-bdr-strong shadow-lg bg-surface-2/40 backdrop-blur-sm relative group">
+                        <iframe 
+                            src="@footerMapEmbedUrl" 
+                            class="w-full h-full grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 mq-map-frame"
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                        <div class="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-bdr-default pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-content-muted">
+                    &copy; 2026 @brandFullName. Bảo lưu mọi quyền.
+                </p>
+                <div class="flex space-x-6 text-content-muted text-xs">
+                    <a href="/Privacy" class="hover:text-accent transition-colors">Chính Sách Bảo Mật</a>
+                    <a href="/Terms" class="hover:text-accent transition-colors">Điều Khoản Dịch Vụ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/ui-extracted.js" asp-append-version="true" defer></script>
+    <script src="~/js/layout/public-layout.js" asp-append-version="true" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

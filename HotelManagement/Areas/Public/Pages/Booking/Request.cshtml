@@ -1,0 +1,382 @@
+@page "/booking/{roomId:int?}"
+@model HotelManagement.Areas.Public.Pages.Booking.RequestModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Đặt Phòng Trực Tuyến";
+}
+
+<div class="pt-16 pb-16 bg-surface-1 min-h-screen relative overflow-hidden">
+    <div class="absolute -top-28 -right-24 w-[420px] h-[420px] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-[420px] h-[420px] bg-accent/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="mb-10 text-center">
+            <div class="inline-flex items-center gap-2 px-4 h-9 rounded-full border border-primary/30 bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-[0.2em] mb-5">
+                <iconify-icon icon="solar:calendar-mark-bold-duotone" class="text-base"></iconify-icon>
+                Đặt phòng linh hoạt
+            </div>
+            <h1 class="text-4xl md:text-5xl font-outfit font-black text-content-primary tracking-tight">Hoàn Tất Đặt Phòng</h1>
+            <p class="text-content-muted mt-3 max-w-2xl mx-auto">
+                Trưởng nhóm có thể chọn nhiều phòng. Hệ thống sẽ kiểm tra tổng sức chứa và chỉ cho phép gửi yêu cầu khi đáp ứng đủ số lượng khách.
+            </p>
+        </div>
+
+        <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <div asp-validation-summary="ModelOnly" class="alert bg-danger/10 text-danger border border-danger/30 rounded-2xl"></div>
+
+                <section class="bg-surface-2/40 border border-bdr-strong/60 backdrop-blur-xl rounded-[28px] p-6 md:p-8">
+                    <h2 class="text-xl font-outfit font-bold text-content-primary mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-primary/15 border border-primary/30 text-primary text-sm font-black grid place-items-center">01</span>
+                        Thông Tin Trưởng Nhóm
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-control">
+                            <label asp-for="Input.FullName" class="label"><span class="label-text text-content-secondary font-medium">Họ và tên <span class="text-danger">*</span></span></label>
+                            <input asp-for="Input.FullName" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Tên của bạn" />
+                            <span asp-validation-for="Input.FullName" class="text-danger text-sm mt-1"></span>
+                        </div>
+
+                        <div class="form-control">
+                            <label asp-for="Input.Phone" class="label"><span class="label-text text-content-secondary font-medium">Số điện thoại <span class="text-danger">*</span></span></label>
+                            <input asp-for="Input.Phone" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" placeholder="VD: 0987654321" />
+                            <span asp-validation-for="Input.Phone" class="text-danger text-sm mt-1"></span>
+                        </div>
+
+                        <div class="form-control">
+                            <label asp-for="Input.Email" class="label"><span class="label-text text-content-secondary font-medium">Email <span class="text-danger">*</span></span></label>
+                            <input asp-for="Input.Email" type="email" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Email nhận xác nhận" />
+                            <span asp-validation-for="Input.Email" class="text-danger text-sm mt-1"></span>
+                        </div>
+
+                        <div class="form-control">
+                            <label asp-for="Input.CCCD" class="label"><span class="label-text text-content-secondary font-medium">CCCD / Passport</span></label>
+                            <input asp-for="Input.CCCD" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" placeholder="(Tùy chọn)" />
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-surface-2/40 border border-bdr-strong/60 backdrop-blur-xl rounded-[28px] p-6 md:p-8">
+                    <h2 class="text-xl font-outfit font-bold text-content-primary mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-accent/15 border border-accent/40 text-accent text-sm font-black grid place-items-center">02</span>
+                        Chi Tiết Lưu Trú
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="form-control">
+                            <label asp-for="Input.CheckIn" class="label"><span class="label-text text-content-secondary font-medium">Ngày Nhận Phòng <span class="text-danger">*</span></span></label>
+                            <input id="checkin-date" type="date" name="Input.CheckIn" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" value="@Model.Input.CheckIn.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="Input.CheckIn" class="text-danger text-sm mt-1"></span>
+                        </div>
+
+                        <div class="form-control">
+                            <label asp-for="Input.CheckOut" class="label"><span class="label-text text-content-secondary font-medium">Ngày Trả Phòng <span class="text-danger">*</span></span></label>
+                            <input id="checkout-date" type="date" name="Input.CheckOut" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" value="@Model.Input.CheckOut.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="Input.CheckOut" class="text-danger text-sm mt-1"></span>
+                        </div>
+
+                        <div class="form-control">
+                            <label asp-for="Input.NumberOfGuests" class="label"><span class="label-text text-content-secondary font-medium">Số Lượng Khách <span class="text-danger">*</span></span></label>
+                            <input id="guest-count" asp-for="Input.NumberOfGuests" type="number" min="1" max="10" class="input input-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary" />
+                            <span asp-validation-for="Input.NumberOfGuests" class="text-danger text-sm mt-1"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-control mt-6">
+                        <label asp-for="Input.Notes" class="label"><span class="label-text text-content-secondary font-medium">Yêu cầu đặc biệt (Ghi chú)</span></label>
+                        <textarea asp-for="Input.Notes" rows="4" class="textarea textarea-bordered bg-surface-1/60 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary text-base" placeholder="Ghi chú về thời gian đến dự kiến, chuyến bay, người đi cùng..."></textarea>
+                    </div>
+                </section>
+
+                <section class="bg-surface-2/40 border border-bdr-strong/60 backdrop-blur-xl rounded-[28px] p-6 md:p-8">
+                    <div class="flex items-center justify-between gap-3 mb-4">
+                        <h2 class="text-xl font-outfit font-bold text-content-primary flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-success/15 border border-success/40 text-success text-sm font-black grid place-items-center">03</span>
+                            Chọn Phòng
+                        </h2>
+                        <div id="selection-chip" class="badge h-8 px-3 rounded-full bg-primary/10 border border-primary/30 text-primary font-semibold">0 phòng đã chọn</div>
+                    </div>
+
+                    <div class="mb-4 p-4 rounded-2xl border border-white/10 bg-surface-1/50">
+                        <div class="flex flex-wrap items-center gap-6 text-sm">
+                            <div class="text-content-secondary">Tổng sức chứa: <span id="capacity-value" class="text-content-primary font-bold">0</span> khách</div>
+                            <div class="text-content-secondary">Yêu cầu: <span id="required-value" class="text-content-primary font-bold">@Model.Input.NumberOfGuests</span> khách</div>
+                            <div id="capacity-status" class="badge h-7 px-3 rounded-full bg-danger/10 border border-danger/30 text-danger font-semibold">Chưa đủ chỗ</div>
+                        </div>
+                    </div>
+
+                    @{
+                        var roomListModel = new HotelManagement.Areas.Public.Pages.Booking.RoomListViewModel
+                        {
+                            AvailableRooms = Model.AvailableRooms,
+                            SelectedRoomIds = Model.Input.SelectedRoomIds
+                        };
+                    }
+                    <div id="room-list-container">
+                        <partial name="_RoomList" model="roomListModel" />
+                    </div>
+                    <span asp-validation-for="Input.SelectedRoomIds" class="text-danger text-sm mt-3 block"></span>
+                    <p class="text-content-muted text-xs mt-2">Hệ thống sẽ cảnh báo và không cho gửi nếu tổng sức chứa không đáp ứng số lượng khách.</p>
+                </section>
+            </div>
+
+            <aside class="lg:col-span-1">
+                <div class="lg:sticky lg:top-28 bg-surface-2/50 border border-bdr-strong/60 backdrop-blur-xl rounded-[28px] p-6">
+                    <h3 class="text-lg font-outfit font-bold text-content-primary mb-5">Tóm Tắt Yêu Cầu</h3>
+
+                    <div class="space-y-3 text-sm mb-5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-content-secondary">Số phòng</span>
+                            <span id="summary-room-count" class="font-bold text-content-primary">0</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-content-secondary">Tổng sức chứa</span>
+                            <span id="summary-capacity" class="font-bold text-content-primary">0 khách</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-content-secondary">Đơn giá tạm tính</span>
+                            <span id="summary-per-night" class="font-bold text-accent">0₫/đêm</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-content-secondary">Số đêm</span>
+                            <span id="summary-nights" class="font-bold text-content-primary">1</span>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-white/10 bg-surface-1/60 px-4 py-3 mb-6">
+                        <div class="text-xs text-content-muted uppercase tracking-widest mb-1">Tổng ước tính</div>
+                        <div id="summary-total" class="text-2xl font-outfit font-black text-content-primary">0₫</div>
+                    </div>
+
+                    <button id="submit-booking-btn" type="submit" class="btn w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white border-none shadow-lg shadow-primary/25">
+                        <iconify-icon icon="solar:card-send-bold-duotone" class="text-xl"></iconify-icon>
+                        Gửi yêu cầu đặt phòng
+                    </button>
+                    <p class="text-content-muted text-xs mt-3 leading-relaxed">
+                        Đơn của bạn sẽ ở trạng thái chờ duyệt. Chúng tôi sẽ liên hệ xác nhận trong thời gian sớm nhất.
+                    </p>
+                </div>
+            </aside>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const roomListContainer = document.getElementById("room-list-container");
+            const guestInput = document.getElementById("guest-count");
+            const checkInInput = document.getElementById("checkin-date");
+            const checkOutInput = document.getElementById("checkout-date");
+
+            const capacityValue = document.getElementById("capacity-value");
+            const requiredValue = document.getElementById("required-value");
+            const capacityStatus = document.getElementById("capacity-status");
+            const selectionChip = document.getElementById("selection-chip");
+            const submitBtn = document.getElementById("submit-booking-btn");
+
+            const summaryRoomCount = document.getElementById("summary-room-count");
+            const summaryCapacity = document.getElementById("summary-capacity");
+            const summaryPerNight = document.getElementById("summary-per-night");
+            const summaryNights = document.getElementById("summary-nights");
+            const summaryTotal = document.getElementById("summary-total");
+
+            const fmt = new Intl.NumberFormat("en-US");
+            let currentFilter = "all";
+            let reloadAbortController = null;
+
+            function getCheckboxes() {
+                return Array.from(roomListContainer?.querySelectorAll(".room-checkbox") ?? []);
+            }
+
+            function getRoomCards() {
+                return Array.from(roomListContainer?.querySelectorAll("[data-room-card]") ?? []);
+            }
+
+            function getFilterButtons() {
+                return Array.from(roomListContainer?.querySelectorAll(".room-filter-btn") ?? []);
+            }
+
+            function getFilterEmpty() {
+                return roomListContainer?.querySelector("#room-filter-empty");
+            }
+
+            function parseDecimal(rawValue) {
+                if (!rawValue) return 0;
+                const normalized = String(rawValue).trim().replace(",", ".");
+                const value = Number.parseFloat(normalized);
+                return Number.isFinite(value) ? value : 0;
+            }
+
+            function getNights() {
+                const checkIn = new Date(checkInInput.value);
+                const checkOut = new Date(checkOutInput.value);
+                const ms = checkOut - checkIn;
+                const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+                return Number.isFinite(days) && days > 0 ? days : 1;
+            }
+
+            function syncSelectedVisual() {
+                const roomCards = getRoomCards();
+                roomCards.forEach(card => {
+                    const checkbox = card.querySelector(".room-checkbox");
+                    const shell = card.querySelector(".room-shell");
+                    const badge = card.querySelector(".check-badge");
+                    if (!checkbox || !shell || !badge) return;
+
+                    if (checkbox.checked) {
+                        shell.classList.add("border-primary/70", "bg-primary/10", "shadow-[0_12px_30px_-18px_rgba(99,102,241,0.9)]");
+                        shell.classList.remove("border-white/10");
+                        badge.classList.remove("text-transparent", "border-white/20", "bg-surface-2");
+                        badge.classList.add("text-white", "border-primary/80", "bg-primary");
+                    } else {
+                        shell.classList.remove("border-primary/70", "bg-primary/10", "shadow-[0_12px_30px_-18px_rgba(99,102,241,0.9)]");
+                        shell.classList.add("border-white/10");
+                        badge.classList.add("text-transparent", "border-white/20", "bg-surface-2");
+                        badge.classList.remove("text-white", "border-primary/80", "bg-primary");
+                    }
+                });
+            }
+
+            function refresh() {
+                const checkboxes = getCheckboxes();
+                const selected = checkboxes.filter(cb => cb.checked);
+                const roomCount = selected.length;
+                const capacity = selected.reduce((sum, cb) => sum + Number(cb.dataset.capacity || 0), 0);
+                const perNight = selected.reduce((sum, cb) => sum + parseDecimal(cb.dataset.price), 0);
+                const guests = Number(guestInput.value || 0);
+                const nights = getNights();
+                const total = perNight * nights;
+                const enough = capacity >= guests && roomCount > 0;
+
+                selectionChip.textContent = `${roomCount} phòng đã chọn`;
+                capacityValue.textContent = `${capacity}`;
+                requiredValue.textContent = `${guests}`;
+
+                summaryRoomCount.textContent = `${roomCount}`;
+                summaryCapacity.textContent = `${capacity} khách`;
+                summaryPerNight.textContent = `${fmt.format(perNight)}₫/đêm`;
+                summaryNights.textContent = `${nights}`;
+                summaryTotal.textContent = `${fmt.format(total)}₫`;
+                syncSelectedVisual();
+
+                if (enough) {
+                    capacityStatus.textContent = "Đủ sức chứa";
+                    capacityStatus.className = "badge h-7 px-3 rounded-full bg-success/10 border border-success/30 text-success font-semibold";
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove("opacity-60", "cursor-not-allowed");
+                } else {
+                    capacityStatus.textContent = "Chưa đủ chỗ";
+                    capacityStatus.className = "badge h-7 px-3 rounded-full bg-danger/10 border border-danger/30 text-danger font-semibold";
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add("opacity-60", "cursor-not-allowed");
+                }
+            }
+
+            function applyFilter(filterValue) {
+                currentFilter = filterValue;
+                const roomCards = getRoomCards();
+                const filterButtons = getFilterButtons();
+                const filterEmpty = getFilterEmpty();
+
+                let visibleCount = 0;
+                roomCards.forEach(card => {
+                    const roomType = card.dataset.roomType || "";
+                    const show = filterValue === "all" || roomType === filterValue;
+                    card.classList.toggle("hidden", !show);
+                    if (show) visibleCount += 1;
+                });
+
+                if (filterEmpty) {
+                    filterEmpty.classList.toggle("hidden", visibleCount > 0);
+                }
+
+                filterButtons.forEach(btn => {
+                    const isActive = btn.dataset.filter === filterValue;
+                    btn.classList.toggle("bg-primary/15", isActive);
+                    btn.classList.toggle("border-primary/40", isActive);
+                    btn.classList.toggle("text-primary", isActive);
+                    btn.classList.toggle("bg-surface-1/50", !isActive);
+                    btn.classList.toggle("border-white/15", !isActive);
+                    btn.classList.toggle("text-content-secondary", !isActive);
+                });
+            }
+
+            function getSelectedRoomIdsCsv() {
+                return getCheckboxes()
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value)
+                    .join(",");
+            }
+
+            function bindRoomListEvents() {
+                getCheckboxes().forEach(cb => {
+                    cb.addEventListener("change", refresh);
+                });
+
+                getFilterButtons().forEach(btn => {
+                    btn.addEventListener("click", () => applyFilter(btn.dataset.filter || "all"));
+                });
+            }
+
+            async function reloadByDateRange() {
+                if (!checkInInput?.value || !checkOutInput?.value) return;
+
+                const checkIn = new Date(checkInInput.value);
+                const checkOut = new Date(checkOutInput.value);
+                if (!(checkOut > checkIn)) return;
+
+                reloadAbortController?.abort();
+                reloadAbortController = new AbortController();
+
+                const params = new URLSearchParams({
+                    handler: "RoomList",
+                    checkIn: checkInInput.value,
+                    checkOut: checkOutInput.value,
+                    selectedRoomIds: getSelectedRoomIdsCsv()
+                });
+
+                const endpoint = '@Url.Page("./Request")';
+                try {
+                    const response = await fetch(`${endpoint}?${params.toString()}`, {
+                        method: "GET",
+                        headers: { "X-Requested-With": "XMLHttpRequest" },
+                        signal: reloadAbortController.signal
+                    });
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const html = await response.text();
+                    if (roomListContainer) {
+                        roomListContainer.innerHTML = html;
+                    }
+
+                    bindRoomListEvents();
+                    applyFilter(currentFilter);
+                    refresh();
+                } catch (error) {
+                    if (error?.name !== "AbortError") {
+                        console.error("Không thể tải danh sách phòng theo ngày.", error);
+                    }
+                }
+            }
+
+            const reactiveInputs = [guestInput, checkInInput, checkOutInput];
+            reactiveInputs.forEach(el => {
+                if (!el) return;
+                el.addEventListener("change", refresh);
+                el.addEventListener("input", refresh);
+            });
+
+            checkInInput?.addEventListener("change", reloadByDateRange);
+            checkOutInput?.addEventListener("change", reloadByDateRange);
+
+            bindRoomListEvents();
+            refresh();
+            applyFilter(currentFilter);
+        })();
+    </script>
+}

@@ -1,0 +1,48 @@
+@page "/error"
+@model HotelManagement.Areas.Public.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Lỗi hệ thống";
+    Layout = "/Areas/Public/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="min-h-[70vh] flex items-center justify-center px-4 relative overflow-hidden">
+    <!-- Decorative Blobs -->
+    <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse mq-animation-delay-20"></div>
+
+    <div class="relative z-10 text-center max-w-2xl animate-fade-in">
+        <div class="mb-8 inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-danger/10 border border-danger/20 text-danger shadow-2xl shadow-danger/20">
+            <iconify-icon icon="solar:danger-bold-duotone" class="text-6xl"></iconify-icon>
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-outfit font-black text-content-primary mb-6 tracking-tighter uppercase"> SỰ CỐ KỸ THUẬT @if(Model.StatusCode.HasValue){<span class="text-xl">( mã @Model.StatusCode.Value )</span>}</h1>
+        
+        <p class="text-lg text-content-muted mb-10 leading-relaxed font-medium">
+            Rất tiếc, hệ thống Minh Quang Luxury đang gặp một sự cố bất ngờ. <br class="hidden md:block">
+            Đội ngũ kỹ thuật của chúng tôi đã được thông báo và đang xử lý.
+        </p>
+
+        @if (Model.ShowRequestId)
+        {
+            <div class="mb-10 px-6 py-4 bg-surface-2/40 backdrop-blur-xl border border-white/5 rounded-2xl inline-block shadow-inner">
+                <p class="text-xs font-mono text-content-muted flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-danger"></span>
+                    Mã yêu cầu: <span class="text-content-primary font-bold">@Model.RequestId</span>
+                </p>
+            </div>
+        }
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="/" class="btn btn-primary bg-accent hover:bg-accent-soft text-brand-950 border-none px-10 h-14 rounded-2xl font-bold uppercase tracking-widest shadow-xl shadow-accent/20 transition-all hover:-translate-y-1">
+                Quay lại trang chủ
+            </a>
+            <button type="button" data-reload-page class="btn bg-white/5 hover:bg-white/10 text-white border-white/10 px-8 h-14 rounded-2xl font-bold uppercase tracking-widest transition-all">
+                Thử tải lại trang
+            </button>
+        </div>
+
+        <p class="mt-12 text-sm text-content-muted">
+            Cần hỗ trợ gấp? Liên hệ Hotline: <span class="text-accent font-bold">1900 xxxx</span>
+        </p>
+    </div>
+</div>

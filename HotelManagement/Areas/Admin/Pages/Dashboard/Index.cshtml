@@ -1,0 +1,250 @@
+@page "/admin"
+@model HotelManagement.Areas.Admin.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+
+    static string GetTrendTextClass(double value) => value > 0 ? "text-emerald-300" : value < 0 ? "text-red-300" : "text-slate-300";
+    static string GetTrendIconPath(double value) => value < 0
+        ? "M19 14l-7 7m0 0l-7-7m7 7V3"
+        : "M5 10l7-7m0 0l7 7m-7-7v18";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin/dashboard/index.css" asp-append-version="true" />
+}
+
+<div class="mb-10 space-y-1">
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h1",
+        Icon = "solar:chart-2-bold-duotone",
+        Title = "Bảng Điều Khiển",
+        Subtitle = "Theo dõi chỉ số kinh doanh và hiệu suất vận hành thời gian thực",
+        WrapperClass = "space-y-1"
+    }' />
+</div>
+
+<!-- ── Tầng 1: 4 KPI Cards ── -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+    <!-- Card 1: Revenue -->
+    <div class="kpi-card kpi-indigo shadow-xl hover:shadow-indigo-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-1">
+        <div class="p-5 flex flex-col items-start text-left">
+            <p class="text-indigo-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
+                <iconify-icon icon="fluent-color:money-24" inline class="text-2xl"></iconify-icon>
+                DOANH THU
+            </p>
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-white font-outfit leading-none mb-3">
+                @Model.Data.MonthlyRevenueThisMonth.ToString("N0")₫
+            </h2>
+            <div class="flex flex-col items-start gap-1 text-[11px] font-medium pl-1">
+                <span class="@GetTrendTextClass((double)Model.Data.MonthlyRevenueChangePercent) flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="@GetTrendIconPath((double)Model.Data.MonthlyRevenueChangePercent)"></path></svg>
+                    @Model.Data.MonthlyRevenueChangePercent.ToString("+0.0;-0.0;0.0")%
+                </span>
+                <span class="text-indigo-200 opacity-80 uppercase tracking-tighter">so với tháng trước</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Occupancy -->
+    <div class="kpi-card kpi-emerald shadow-xl hover:shadow-emerald-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-2">
+        <div class="p-5 flex flex-col items-start text-left">
+            <p class="text-emerald-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
+                <iconify-icon icon="fluent-color:data-line-24" inline class="text-2xl"></iconify-icon>
+                TỶ LỆ LẤP ĐẦY
+            </p>
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-white font-outfit leading-none mb-3">
+                @Model.Data.OccupancyRate%
+            </h2>
+            <div class="flex flex-col items-start gap-1 text-[11px] font-medium pl-1">
+                <span class="@GetTrendTextClass(Model.Data.OccupancyRateChange) flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="@GetTrendIconPath(Model.Data.OccupancyRateChange)"></path></svg>
+                    @Model.Data.OccupancyRateChange.ToString("+0.0;-0.0;0.0") điểm %
+                </span>
+                <span class="text-emerald-200 opacity-80 uppercase tracking-tighter">so với tháng trước</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3: Guests -->
+    <div class="kpi-card kpi-pink shadow-xl hover:shadow-pink-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-3">
+        <div class="p-5 flex flex-col items-start text-left">
+            <p class="text-pink-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
+                <iconify-icon icon="fluent-color:people-24" inline class="text-2xl"></iconify-icon>
+                KHÁCH HÀNG
+            </p>
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-white font-outfit leading-none mb-3">
+                @Model.Data.TotalGuestsThisMonth
+            </h2>
+            <div class="flex flex-col items-start gap-1 text-[11px] font-medium pl-1">
+                <span class="@GetTrendTextClass(Model.Data.TotalGuestsChange) flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="@GetTrendIconPath(Model.Data.TotalGuestsChange)"></path></svg>
+                    @Model.Data.TotalGuestsChange.ToString("+0;-0;0")
+                </span>
+                <span class="text-pink-200 opacity-80 uppercase tracking-tighter">so với tháng trước</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4: Available -->
+    <div class="kpi-card kpi-amber shadow-xl hover:shadow-amber-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-4">
+        <div class="p-5 flex flex-col items-start text-left">
+            <p class="text-amber-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
+                <iconify-icon icon="fluent-color:key-24" inline class="text-2xl"></iconify-icon>
+                PHÒNG TRỐNG
+            </p>
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-white font-outfit leading-none mb-3">
+                @Model.Data.AvailableRooms / @Model.Data.TotalRooms
+            </h2>
+            <div class="flex flex-col items-start gap-1 text-[11px] font-medium pl-1">
+                <span class="@GetTrendTextClass(Model.Data.AvailableRoomsChange) flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="@GetTrendIconPath(Model.Data.AvailableRoomsChange)"></path></svg>
+                    @Model.Data.AvailableRoomsChange.ToString("+0;-0;0")
+                </span>
+                <span class="text-amber-200 opacity-80 uppercase tracking-tighter">so với hôm qua</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── Tầng 2: 2 Charts Row ── -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+    <!-- Revenue Trend Chart -->
+    <div class="lg:col-span-2 card bg-surface-2 border border-bdr-strong shadow-xl animate-fadeIn dashboard-animate-delay-5">
+        <div class="card-body p-6">
+            <h3 class="font-semibold text-content-primary mb-6 flex items-center gap-2 text-sm uppercase tracking-widest">
+                <iconify-icon icon="fluent-color:data-trending-24" inline class="text-xl"></iconify-icon>
+                Xu Hướng Doanh Thu
+            </h3>
+            <div class="relative mq-chart-revenue">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Types Doughnut -->
+    <div class="card bg-surface-2 border border-bdr-strong shadow-xl animate-fadeIn dashboard-animate-delay-6">
+        <div class="card-body p-6">
+            <h3 class="font-semibold text-content-primary mb-6 flex items-center gap-2 text-sm uppercase tracking-widest">
+                <iconify-icon icon="fluent-color:chart-person-24" inline class="text-xl"></iconify-icon>
+                Phân Bổ Loại Phòng
+            </h3>
+            <div class="relative mq-chart-room">
+                <canvas id="roomChart"></canvas>
+            </div>
+            <div class="mt-6 space-y-3 text-xs uppercase tracking-tighter">
+                @{ var colors = new[] { "bg-indigo-500", "bg-emerald-500", "bg-pink-500", "bg-amber-500" }; var i = 0; }
+                @foreach (var type in Model.Data.RoomTypeDistribution)
+                {
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-content-muted">
+                            <span class="w-2 h-2 rounded-full @colors[i % colors.Length]"></span>
+                            @type.Key
+                        </span>
+                        <span class="text-content-primary font-bold font-outfit">@((100.0 * type.Value / Model.Data.TotalRooms).ToString("0.0"))%</span>
+                    </div>
+                    i++;
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── Tầng 3: Recent Bookings Table ── -->
+<div class="card bg-surface-2 border border-bdr-strong shadow-xl animate-fadeIn dashboard-animate-delay-7">
+    <div class="card-body p-0 overflow-hidden">
+        <div class="p-6 border-b border-bdr-strong flex justify-between items-center">
+            <h3 class="font-semibold text-content-primary flex items-center gap-2 uppercase tracking-widest text-sm">
+                <iconify-icon icon="fluent-color:list-24" inline class="text-xl"></iconify-icon>
+                ĐẶT PHÒNG GẦN ĐÂY
+            </h3>
+            <a asp-page="/Bookings/Index" class="btn btn-xs btn-ghost text-primary uppercase tracking-tighter">Xem Tất Cả →</a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-content-secondary">
+                <thead class="text-[11px] uppercase tracking-widest text-content-muted bg-surface-3/50 font-bold border-b border-bdr-strong">
+                    <tr>
+                        <th scope="col" class="px-6 py-4">Khách Hàng</th>
+                        <th scope="col" class="px-6 py-4 text-center">Phòng</th>
+                        <th scope="col" class="px-6 py-4">Nhận Phòng</th>
+                        <th scope="col" class="px-6 py-4">Trạng Thái</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-bdr-strong/50">
+                    @foreach (var booking in Model.Data.RecentBookings.Take(5))
+                    {
+                        var (statusColor, statusIcon) = booking.Status.ToString() switch
+                        {
+                            "Confirmed"  => ("text-emerald-400", "fluent-color:checkmark-circle-24"),
+                            "CheckedIn"  => ("text-blue-400", "fluent-color:door-arrow-right-24"),
+                            "CheckedOut" => ("text-slate-400", "fluent-color:door-arrow-left-24"),
+                            "Cancelled"  => ("text-red-400", "fluent-color:dismiss-circle-24"),
+                            _            => ("text-amber-400", "fluent-color:info-24")
+                        };
+                        <tr class="hover:bg-surface-3/20 transition-colors duration-150 group">
+                            <td class="px-6 py-4 font-medium text-content-primary">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center text-[10px] text-primary border border-primary/20 overflow-hidden shrink-0 shadow-lg">
+                                        @{
+                                            var normalizedAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(booking.Guest?.AvatarUrl);
+                                        }
+                                        @if (!string.IsNullOrEmpty(normalizedAvatarUrl))
+                                        {
+                                            <img src="@normalizedAvatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-fallback="#dashboard-avatar-@booking.Id" />
+                                            <span id="dashboard-avatar-@booking.Id" class="mq-avatar-fallback-block">@(booking.Guest?.FullName?.FirstOrDefault('G') ?? 'G')</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@(booking.Guest?.FullName?.FirstOrDefault('G') ?? 'G')</span>
+                                        }
+                                    </div>
+                                    @booking.Guest?.FullName
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="badge badge-sm border-bdr-strong/50 bg-surface-3 text-content-muted">@booking.Room?.RoomNumber</span>
+                            </td>
+                            <td class="px-6 py-4 text-xs font-mono">@booking.CheckIn.ToString("dd/MM/yyyy")</td>
+                            <td class="px-6 py-4">
+                                <span class="flex items-center gap-2 font-bold uppercase text-[10px] tracking-widest @statusColor">
+                                    <iconify-icon icon="@statusIcon" class="text-lg"></iconify-icon> 
+                                    @(booking.Status switch {
+                                        BookingStatus.Confirmed => "Đã xác nhận",
+                                        BookingStatus.CheckedIn => "Đã nhận phòng",
+                                        BookingStatus.CheckedOut => "Đã trả phòng",
+                                        BookingStatus.Cancelled => "Đã hủy",
+                                        BookingStatus.Pending => "Chờ duyệt",
+                                        _ => booking.Status.ToString()
+                                    })
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Data.RecentBookings.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="py-12 text-center text-content-muted italic text-xs uppercase tracking-widest">
+                                Không tìm thấy dữ liệu gần đây
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="dashboard-chart-data"
+     data-monthly-revenue="@string.Join(",", Model.Data.MonthlyRevenue)"
+     data-room-labels="@string.Join("|", Model.Data.RoomTypeDistribution.Keys)"
+     data-room-values="@string.Join(",", Model.Data.RoomTypeDistribution.Values)">
+</div>
+
+@section Scripts {
+    <script src="~/js/pages/admin/dashboard/index.js" asp-append-version="true" defer></script>
+}

@@ -1,0 +1,166 @@
+@page
+@model RegisterModel
+@inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
+@{
+    var websiteSettings = await WebsiteSettingsService.GetCurrentAsync();
+    var logoUrl = string.IsNullOrWhiteSpace(websiteSettings.LogoUrl) ? "/images/logo.svg" : websiteSettings.LogoUrl;
+    var brandMain = string.IsNullOrWhiteSpace(websiteSettings.BrandMain) ? HotelManagement.Core.Constants.BrandingConstants.BrandMain : websiteSettings.BrandMain;
+    var brandHighlight = string.IsNullOrWhiteSpace(websiteSettings.BrandHighlight) ? HotelManagement.Core.Constants.BrandingConstants.BrandHighlight : websiteSettings.BrandHighlight;
+    var brandSlogan = string.IsNullOrWhiteSpace(websiteSettings.BrandSlogan) ? HotelManagement.Core.Constants.BrandingConstants.BrandSlogan : websiteSettings.BrandSlogan;
+    var brandFullName = string.IsNullOrWhiteSpace(websiteSettings.BrandFullName) ? HotelManagement.Core.Constants.BrandingConstants.BrandFullName : websiteSettings.BrandFullName;
+    ViewData["Title"] = "Đăng Ký";
+    Layout = "/Areas/Public/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="min-h-[calc(100vh-80px)] pt-16 pb-12 flex items-center justify-center relative overflow-hidden bg-surface-1">
+    <!-- Fluid Decorative Blobs (Liquid Glass Core) -->
+    <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[120px] animate-pulse pointer-events-none mq-auth-blob-delay"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
+
+    <div class="relative z-10 w-full max-w-xl px-6 py-12">
+        <!-- Header with Luxury Branding -->
+        <div class="text-center mb-10 animate-fade-in">
+            <a asp-area="Public" asp-page="/Index" class="inline-flex items-center gap-4 mb-6 group">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-accent/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <img src="@logoUrl" alt="@($"{brandFullName} Logo")" class="relative w-16 h-16 transition-transform duration-500 group-hover:rotate-[360deg] mq-auth-logo" />
+                </div>
+                <div class="flex flex-col items-start text-left">
+                    <span class="text-2xl font-outfit font-extrabold text-content-primary tracking-[0.15em] uppercase leading-none">@brandMain <span class="text-primary">@brandHighlight</span></span>
+                    <span class="text-[10px] text-accent font-bold tracking-[0.4em] uppercase mt-2 opacity-80">@brandSlogan</span>
+                </div>
+            </a>
+            <h1 class="text-3xl font-outfit font-bold text-content-primary tracking-tight">Khởi Tạo Tài Khoản</h1>
+            <p class="text-content-muted mt-2">Đăng ký để trở thành thành viên đặc quyền</p>
+        </div>
+
+        <!-- Registration Card (The Liquid Glass Container) -->
+        <div class="bg-surface-2/30 backdrop-blur-3xl border border-white/10 rounded-[32px] p-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] hover:border-primary/40 transition-all duration-700">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-6">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="ModelOnly" class="alert bg-danger/10 border border-danger/20 text-danger text-sm p-4 rounded-2xl mb-6 flex items-center gap-3 animate-shake" role="alert">
+                        <iconify-icon icon="solar:danger-bold-duotone" class="text-xl"></iconify-icon>
+                        <span>Vui lòng kiểm tra lại thông tin đăng ký.</span>
+                    </div>
+                }
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Full Name -->
+                    <div class="space-y-2 text-left col-span-2 md:col-span-1">
+                        <label asp-for="Input.FullName" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Họ và Tên</label>
+                        <div class="relative group/input">
+                            <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                                <iconify-icon icon="solar:user-circle-bold-duotone" class="text-2xl"></iconify-icon>
+                            </span>
+                            <input asp-for="Input.FullName" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-2xl py-4 pl-14 pr-4 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" placeholder="Nguyễn Văn An" />
+                        </div>
+                        <span asp-validation-for="Input.FullName" class="text-[10px] text-danger font-bold ml-2"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-2 text-left col-span-2 md:col-span-1">
+                        <label asp-for="Input.Email" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Địa chỉ Email</label>
+                        <div class="relative group/input">
+                            <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                                <iconify-icon icon="solar:letter-bold-duotone" class="text-2xl"></iconify-icon>
+                            </span>
+                            <input asp-for="Input.Email" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-2xl py-4 pl-14 pr-4 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" autocomplete="username" placeholder="email@example.com" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="text-[10px] text-danger font-bold ml-2"></span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="space-y-2 text-left col-span-2 md:col-span-1">
+                        <label asp-for="Input.PhoneNumber" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Số điện thoại</label>
+                        <div class="relative group/input">
+                            <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                                <iconify-icon icon="solar:phone-bold-duotone" class="text-2xl"></iconify-icon>
+                            </span>
+                            <input asp-for="Input.PhoneNumber" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-2xl py-4 pl-14 pr-4 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" autocomplete="tel" placeholder="0901234567" />
+                        </div>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-[10px] text-danger font-bold ml-2"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="space-y-2 text-left col-span-2 md:col-span-1">
+                        <label asp-for="Input.Password" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Mật khẩu</label>
+                        <div class="relative group/input" data-password-toggle>
+                            <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                                <iconify-icon icon="solar:lock-password-bold-duotone" class="text-2xl"></iconify-icon>
+                            </span>
+                            <input asp-for="Input.Password" data-password-toggle-field type="password" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-2xl py-4 pl-14 pr-14 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" autocomplete="new-password" placeholder="••••••••" />
+                            <button type="button" data-password-toggle-btn class="absolute inset-y-0 right-0 flex items-center pr-4 text-content-muted hover:text-primary transition-colors" aria-label="Hiện mật khẩu" aria-pressed="false">
+                                <iconify-icon data-password-toggle-icon icon="lucide:eye" class="text-xl"></iconify-icon>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-[10px] text-danger font-bold ml-2"></span>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="space-y-2 text-left col-span-2 md:col-span-1">
+                        <label asp-for="Input.ConfirmPassword" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Xác nhận mật khẩu</label>
+                        <div class="relative group/input" data-password-toggle>
+                            <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                                <iconify-icon icon="solar:shield-keyhole-bold-duotone" class="text-2xl"></iconify-icon>
+                            </span>
+                            <input asp-for="Input.ConfirmPassword" data-password-toggle-field type="password" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-2xl py-4 pl-14 pr-14 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" autocomplete="new-password" placeholder="••••••••" />
+                            <button type="button" data-password-toggle-btn class="absolute inset-y-0 right-0 flex items-center pr-4 text-content-muted hover:text-primary transition-colors" aria-label="Hiện mật khẩu" aria-pressed="false">
+                                <iconify-icon data-password-toggle-icon icon="lucide:eye" class="text-xl"></iconify-icon>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-[10px] text-danger font-bold ml-2"></span>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button id="registerSubmit" type="submit" class="w-full relative overflow-hidden group/btn btn h-16 rounded-[20px] bg-primary border-none shadow-[0_20px_40px_-12px_rgba(79,70,229,0.4)] transition-all duration-500 hover:-translate-y-1 active:scale-95 active:translate-y-0">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-shimmer"></div>
+                        <span class="relative z-10 flex items-center justify-center gap-3 text-white font-outfit text-lg font-bold uppercase tracking-[0.2em]">
+                            Khởi Tạo Tài Khoản <iconify-icon icon="solar:user-plus-bold-duotone" class="text-2xl"></iconify-icon>
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-white/5 text-center">
+                <p class="text-sm text-content-secondary font-medium">
+                    Bạn đã là thành viên? 
+                    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-primary font-bold hover:text-accent transition-colors underline underline-offset-8 decoration-primary/30 hover:decoration-accent">Đăng nhập ngay</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- External Logins -->
+        @{
+            if ((Model.ExternalLogins?.Count ?? 0) > 0)
+            {
+                <div class="mt-10">
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
+                        <div class="relative flex justify-center text-[10px] uppercase tracking-[0.2em]"><span class="bg-surface-1 px-4 text-content-muted">Tiếp tục bằng mạng xã hội</span></div>
+                    </div>
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="grid grid-cols-2 gap-4">
+                        @foreach (var provider in Model.ExternalLogins!)
+                        {
+                            var icon = provider.DisplayName?.ToLower() switch {
+                                 "google" => "logos:google-icon",
+                                 "facebook" => "logos:facebook",
+                                 _ => "solar:user-circle-bold-duotone"
+                             };
+                            <button type="submit" class="btn btn-outline border-white/10 hover:bg-surface-3 text-content-primary rounded-2xl uppercase tracking-widest text-[10px] h-14" name="provider" value="@provider.Name">
+                                <iconify-icon icon="@icon" class="text-xl mr-2"></iconify-icon> @provider.DisplayName
+                            </button>
+                        }
+                    </form>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/common/password-toggle.js" asp-append-version="true"></script>
+}

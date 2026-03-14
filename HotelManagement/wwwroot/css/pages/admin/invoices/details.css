@@ -1,0 +1,76 @@
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  html,
+  body {
+    background-color: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  nav.glass-nav,
+  #logo-sidebar,
+  #sidebar-backdrop,
+  .sidebar-backdrop,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .p-4.sm\:ml-64 {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    min-height: auto !important;
+  }
+
+  .p-4.mt-14.max-w-7xl.mx-auto {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .min-h-screen {
+    min-height: auto !important;
+  }
+
+  #invoice-print-area {
+    max-width: 190mm !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #invoice-print-area .card-body {
+    padding: 0 !important;
+  }
+
+  #invoice-print-area h1 {
+    font-size: 2rem !important;
+    line-height: 1.1 !important;
+  }
+
+  #invoice-print-area .mb-8 {
+    margin-bottom: 1.25rem !important;
+  }
+
+  #invoice-print-area .mt-16 {
+    margin-top: 1.75rem !important;
+  }
+
+  #invoice-print-area .pt-8 {
+    padding-top: 1rem !important;
+  }
+
+  #invoice-print-area table th,
+  #invoice-print-area table td {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+  }
+}

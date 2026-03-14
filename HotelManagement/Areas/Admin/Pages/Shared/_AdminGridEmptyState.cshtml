@@ -1,0 +1,16 @@
+@model HotelManagement.Areas.Admin.Pages.Shared.AdminGridEmptyStateModel
+
+<div class="@Model.ContainerClass">
+    <div class="text-6xl mb-4 opacity-20">
+        <iconify-icon icon="@Model.Icon"></iconify-icon>
+    </div>
+    <h3 class="text-xl font-semibold text-content-muted">@Model.Title</h3>
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p class="text-content-muted mt-2">@Model.Description</p>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.CreatePage) && !string.IsNullOrWhiteSpace(Model.CreateText))
+    {
+        <a asp-page="@Model.CreatePage" class="btn btn-link text-primary mt-2">@Model.CreateText</a>
+    }
+</div>

@@ -1,0 +1,206 @@
+@page "/admin/rooms/details/{id:int}"
+@model HotelManagement.Areas.Admin.Pages.Rooms.DetailsModel
+@using HotelManagement.Core.Models.Enums
+@{
+    ViewData["Title"] = "Chi Tiết Phòng";
+    
+    var statusClass = Model.Room.Status switch
+    {
+        RoomStatus.Available => "badge-success",
+        RoomStatus.Occupied => "badge-error",
+        RoomStatus.Maintenance => "badge-warning",
+        RoomStatus.Reserved => "badge-info",
+        _ => "badge-ghost"
+    };
+}
+
+<div class="mb-8">
+    <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary mb-4 w-fit">
+        <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+        <span>Quay lại danh sách phòng</span>
+    </a>
+    <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-content-primary font-outfit uppercase tracking-tight">
+            Chi Tiết Phòng @Model.Room.RoomNumber
+        </h2>
+        <div class="flex gap-2">
+            @if (User.IsInRole("Manager"))
+            {
+                <a asp-page="./Edit" asp-route-id="@Model.Room.Id" class="btn btn-outline border-primary text-primary hover:bg-primary hover:text-content-primary hover:border-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300">Sửa Phòng</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Hình Ảnh & Thông Tin Cơ Bản -->
+    <div class="lg:col-span-1">
+        <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden backdrop-blur-md">
+            <figure class="relative h-64 bg-surface-3">
+                @if (!string.IsNullOrEmpty(Model.Room.ImageUrl) || !string.IsNullOrEmpty(Model.Room.RoomType?.ImageUrl))
+                {
+                    var displayUrl = Model.Room.ImageUrl ?? Model.Room.RoomType?.ImageUrl;
+                    <picture>
+                        @{
+                            var detailsRoomWebp = displayUrl?.EndsWith(".jpg") == true ? displayUrl?.Replace(".jpg", ".webp") : displayUrl;
+                        }
+                        <source srcset="@detailsRoomWebp" type="image/webp">
+                        <img src="@displayUrl" 
+                             width="800" height="600"
+                             loading="lazy"
+                             alt="Room @Model.Room.RoomNumber" 
+                             class="w-full h-full object-cover" />
+                    </picture>
+                }
+                else
+                {
+                    <div class="flex items-center justify-center w-full h-full text-content-muted text-6xl"><iconify-icon icon="solar:city-bold-duotone"></iconify-icon></div>
+                }
+                <div class="absolute top-4 right-4">
+                    <span class="badge @statusClass border-none py-3 px-4 font-bold shadow-lg">@Model.Room.Status</span>
+                </div>
+            </figure>
+            <div class="card-body p-6">
+                <h3 class="text-2xl font-bold text-content-primary font-outfit mb-1">@Model.Room.RoomType?.Name</h3>
+                <p class="text-primary text-xl font-bold mb-4">@Model.Room.RoomType?.BasePrice.ToString("N0")₫ <span class="text-sm font-normal text-content-muted">/đêm</span></p>
+                
+                <div class="space-y-3 mt-4 border-t border-bdr-strong/50 pt-4">
+                    <div class="flex justify-between">
+                        <span class="text-content-muted">Tầng:</span>
+                        <span class="text-content-primary font-medium">@Model.Room.Floor</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-content-muted">Sức chứa:</span>
+                        <span class="text-content-primary font-medium">@Model.Room.RoomType?.MaxOccupancy người</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin chi tiết & Lịch sử -->
+    <div class="lg:col-span-2 space-y-6">
+        <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl backdrop-blur-md">
+            <div class="card-body p-6">
+                <h3 class="text-lg font-bold text-content-primary mb-4 flex items-center gap-2">
+                    <iconify-icon icon="solar:star-fall-bold-duotone" class="text-warning"></iconify-icon> Tiện Ích Phòng
+                </h3>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    @if (!string.IsNullOrEmpty(Model.Room.RoomType?.Amenities))
+                    {
+                        @foreach (var amenity in Model.Room.RoomType.Amenities.Split(','))
+                        {
+                            <span class="bg-surface-3 text-content-secondary px-3 py-1 rounded-full text-sm border border-bdr-strong">@amenity.Trim()</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-content-muted italic">Không có tiện ích đặc biệt</span>
+                    }
+                </div>
+
+                <h3 class="text-lg font-bold text-content-primary mb-4 mt-6 flex items-center gap-2">
+                    <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary"></iconify-icon> Mô Tả & Ghi Chú
+                </h3>
+                <div class="bg-surface-1/50 rounded-lg p-4 border border-bdr-strong/50 mb-4">
+                    <p class="text-sm text-content-secondary font-medium mb-1">Mô tả hạng phòng:</p>
+                    <p class="text-content-muted text-sm">@(Model.Room.RoomType?.Description ?? "Không có mô tả.")</p>
+                </div>
+                
+                <div class="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                    <p class="text-sm text-primary/70 font-medium mb-1">Ghi chú riêng của phòng:</p>
+                    <p class="text-content-muted text-sm">@(string.IsNullOrEmpty(Model.Room.Notes) ? "Không có ghi chú." : Model.Room.Notes)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholder for recent bookings of this room -->
+        <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl backdrop-blur-md">
+            <div class="card-body p-6">
+                <h3 class="text-lg font-bold text-content-primary mb-4 flex items-center gap-2">
+                    <iconify-icon icon="solar:calendar-bold-duotone" class="text-success"></iconify-icon> Đặt Phòng Gần Đây
+                </h3>
+                
+                @if (Model.RecentBookings.Any())
+                {
+                    <div class="overflow-x-auto">
+                        <table class="table table-sm w-full border-separate border-spacing-y-2">
+                            <thead>
+                                <tr class="text-content-secondary border-b border-bdr-strong/30">
+                                    <th class="font-bold py-3 text-left">Khách hàng</th>
+                                    <th class="font-bold py-3 text-left">Thời gian</th>
+                                    <th class="font-bold py-3 text-left">Trạng thái</th>
+                                    <th class="font-bold py-3 text-right">Tổng tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in Model.RecentBookings)
+                                {
+                                    <tr class="bg-surface-1/40 hover:bg-surface-3 transition-colors duration-200 cursor-default">
+                                        <td class="rounded-l-lg py-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center text-[10px] text-primary border border-primary/20 overflow-hidden shrink-0">
+                                                    @{
+                                                        var normalizedAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(booking.Guest?.AvatarUrl);
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(normalizedAvatarUrl))
+                                                    {
+                                                        <img src="@normalizedAvatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-fallback="#room-details-avatar-@booking.Id" />
+                                                        <span id="room-details-avatar-@booking.Id" class="mq-avatar-fallback-block">@(booking.Guest?.FullName?.FirstOrDefault() ?? 'G')</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@(booking.Guest?.FullName?.FirstOrDefault() ?? 'G')</span>
+                                                    }
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <div class="font-bold text-content-primary">@booking.Guest?.FullName</div>
+                                                    <div class="text-[10px] text-content-muted">@booking.Guest?.PhoneNumber</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3">
+                                            <div class="text-sm font-medium">@booking.CheckIn.ToString("dd/MM/yyyy") - @booking.CheckOut.ToString("dd/MM/yyyy")</div>
+                                            <div class="text-xs text-content-muted">(@booking.NumberOfNights đêm)</div>
+                                        </td>
+                                        <td class="py-3">
+                                            @{
+                                                var statusBadge = booking.Status switch
+                                                {
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.Confirmed => "badge-info/20 text-info",
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.CheckedIn => "badge-success/20 text-success",
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.CheckedOut => "badge-white/10 text-content-muted",
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.Cancelled => "badge-error/20 text-error",
+                                                    _ => "badge-warning/20 text-warning"
+                                                };
+                                                var statusLabel = booking.Status switch
+                                                {
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.Confirmed => "Đã xác nhận",
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.CheckedIn => "Đã nhận phòng",
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.CheckedOut => "Đã trả phòng",
+                                                    HotelManagement.Core.Models.Enums.BookingStatus.Cancelled => "Đã hủy",
+                                                    _ => booking.Status.ToString()
+                                                };
+                                            }
+                                            <span class="badge @statusBadge badge-sm font-semibold border-none">@statusLabel</span>
+                                        </td>
+                                        <td class="rounded-r-lg text-right font-mono font-bold text-accent py-3">
+                                            @booking.TotalAmount.ToString("N0")₫
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12 bg-surface-1/30 rounded-xl border border-dashed border-bdr-strong/50">
+                        <iconify-icon icon="solar:calendar-minimalistic-bold-duotone" class="text-4xl text-content-muted opacity-30 mb-3"></iconify-icon>
+                        <p class="text-content-muted text-sm italic">Chưa có lịch sử đặt phòng cho phòng này.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

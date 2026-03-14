@@ -1,0 +1,80 @@
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+    var activePage = ViewData["ActivePage"]?.ToString();
+}
+
+<li class="relative group/item">
+    <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full transform scale-y-0 transition-transform duration-300 @(activePage == ManageNavPages.Index ? "scale-y-100" : "group-hover/item:scale-y-50")"></div>
+    <a class="flex items-center gap-4 py-4 px-5 rounded-3xl transition-all duration-300 group 
+              @(activePage == ManageNavPages.Index 
+                ? "bg-primary/10 text-primary font-bold ml-2" 
+                : "text-content-secondary hover:bg-white/5 hover:text-content-primary hover:ml-1")" 
+       id="profile" href="/profile">
+        <iconify-icon icon="solar:user-id-bold-duotone" class="text-2xl transition-transform duration-300 group-hover:scale-110"></iconify-icon>
+        <span class="text-sm tracking-wide">Hồ sơ cá nhân</span>
+    </a>
+</li>
+
+<li class="relative group/item">
+    <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full transform scale-y-0 transition-transform duration-300 @(activePage == "Bookings" ? "scale-y-100" : "group-hover/item:scale-y-50")"></div>
+    <a class="flex items-center gap-4 py-4 px-5 rounded-3xl transition-all duration-300 group 
+              @(activePage == "Bookings" 
+                ? "bg-primary/10 text-primary font-bold ml-2" 
+                : "text-content-secondary hover:bg-white/5 hover:text-content-primary hover:ml-1")" 
+       id="bookings" href="/profile/bookings">
+        <iconify-icon icon="solar:calendar-date-bold-duotone" class="text-2xl transition-transform duration-300 group-hover:scale-110"></iconify-icon>
+        <span class="text-sm tracking-wide">Kỳ nghỉ của bạn</span>
+    </a>
+</li>
+
+<li class="relative group/item">
+    <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full transform scale-y-0 transition-transform duration-300 @(activePage == ManageNavPages.Email ? "scale-y-100" : "group-hover/item:scale-y-50")"></div>
+    <a class="flex items-center gap-4 py-4 px-5 rounded-3xl transition-all duration-300 group 
+              @(activePage == ManageNavPages.Email 
+                ? "bg-primary/10 text-primary font-bold ml-2" 
+                : "text-content-secondary hover:bg-white/5 hover:text-content-primary hover:ml-1")" 
+       id="email" href="/profile/email">
+        <iconify-icon icon="solar:letter-bold-duotone" class="text-2xl transition-transform duration-300 group-hover:scale-110"></iconify-icon>
+        <span class="text-sm tracking-wide">Tài khoản Email</span>
+    </a>
+</li>
+
+<li class="relative group/item">
+    <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full transform scale-y-0 transition-transform duration-300 @(activePage == ManageNavPages.ChangePassword ? "scale-y-100" : "group-hover/item:scale-y-50")"></div>
+    <a class="flex items-center gap-4 py-4 px-5 rounded-3xl transition-all duration-300 group 
+              @(activePage == ManageNavPages.ChangePassword 
+                ? "bg-primary/10 text-primary font-bold ml-2" 
+                : "text-content-secondary hover:bg-white/5 hover:text-content-primary hover:ml-1")" 
+       id="change-password" href="/profile/password">
+        <iconify-icon icon="solar:lock-password-bold-duotone" class="text-2xl transition-transform duration-300 group-hover:scale-110"></iconify-icon>
+        <span class="text-sm tracking-wide">Mật khẩu</span>
+    </a>
+</li>
+
+@if (hasExternalLogins)
+{
+    <li class="relative group/item">
+        <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full transform scale-y-0 transition-transform duration-300 @(activePage == ManageNavPages.ExternalLogins ? "scale-y-100" : "group-hover/item:scale-y-50")"></div>
+        <a class="flex items-center gap-4 py-4 px-5 rounded-3xl transition-all duration-300 group 
+                  @(activePage == ManageNavPages.ExternalLogins 
+                    ? "bg-primary/10 text-primary font-bold ml-2" 
+                    : "text-content-secondary hover:bg-white/5 hover:text-content-primary hover:ml-1")" 
+           id="external-login" href="/profile/external-logins">
+            <iconify-icon icon="solar:share-circle-bold-duotone" class="text-2xl transition-transform duration-300 group-hover:scale-110"></iconify-icon>
+            <span class="text-sm tracking-wide">Liên kết MXH</span>
+        </a>
+    </li>
+}
+
+<li class="relative group/item">
+    <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-full transform scale-y-0 transition-transform duration-300 @(activePage == ManageNavPages.PersonalData ? "scale-y-100" : "group-hover/item:scale-y-50")"></div>
+    <a class="flex items-center gap-4 py-4 px-5 rounded-3xl transition-all duration-300 group 
+              @(activePage == ManageNavPages.PersonalData 
+                ? "bg-primary/10 text-primary font-bold ml-2" 
+                : "text-content-secondary hover:bg-white/5 hover:text-content-primary hover:ml-1")" 
+       id="personal-data" href="/profile/data">
+        <iconify-icon icon="solar:database-bold-duotone" class="text-2xl transition-transform duration-300 group-hover:scale-110"></iconify-icon>
+        <span class="text-sm tracking-wide">Dữ liệu cá nhân</span>
+    </a>
+</li>

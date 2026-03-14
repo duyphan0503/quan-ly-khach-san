@@ -1,0 +1,101 @@
+@page "/admin/room-types"
+@model HotelManagement.Areas.Admin.Pages.RoomTypes.IndexModel
+@{
+    ViewData["Title"] = "Quản Lý Loại Phòng";
+}
+
+<div class="mb-6 space-y-6">
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h2",
+        Icon = "solar:star-bold-duotone",
+        Title = "Loại Phòng Hotel",
+        Subtitle = "Định nghĩa tiêu chuẩn phòng và chính sách giá cao cấp"
+    }' />
+    <div class="w-full">
+        <div class="flex w-full flex-wrap items-center gap-3">
+            <form method="get" class="flex min-w-0 flex-wrap items-center gap-2">
+            <div class="relative group">
+                <input type="text" asp-for="SearchQuery" placeholder="Tìm loại phòng..."
+                       class="input input-bordered bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary focus:ring-1 focus:ring-primary w-80 rounded-xl pl-10 transition-all duration-300 backdrop-blur-md" />
+                <iconify-icon icon="solar:magnifer-linear"
+                              class="absolute left-3 top-1/2 -translate-y-1/2 text-content-muted group-focus-within:text-primary transition-colors"></iconify-icon>
+            </div>
+
+            <select asp-for="OccupancyFilter" class="select bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary rounded-xl">
+                <option value="">Tất cả sức chứa</option>
+                <option value="1-2">1 - 2 khách</option>
+                <option value="3-4">3 - 4 khách</option>
+                <option value="5+">5+ khách</option>
+            </select>
+
+            <button type="submit" class="btn btn-square rounded-xl bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/30 transition-all duration-300" title="Lọc">
+                <iconify-icon icon="solar:filter-bold-duotone" width="18" height="18"></iconify-icon>
+            </button>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SearchQuery) || !string.IsNullOrWhiteSpace(Model.OccupancyFilter))
+            {
+                <a asp-page="./Index" class="btn btn-square rounded-xl border border-white/10 hover:border-red-400/40 hover:bg-red-500/10 text-content-muted hover:text-red-400 transition-all" title="Xóa bộ lọc">
+                    <iconify-icon icon="solar:close-circle-bold-duotone" width="18" height="18"></iconify-icon>
+                </a>
+            }
+            </form>
+
+            <a asp-page="./Create" class="btn bg-gradient-to-br from-primary to-primary-700 hover:from-primary/90 hover:to-primary text-white border-none shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 rounded-2xl px-6 md:ml-auto">
+                <span class="flex items-center gap-2">
+                    <iconify-icon icon="solar:add-circle-bold-duotone" class="text-xl"></iconify-icon>
+                    Thêm Loại Phòng Mới
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card bg-surface-2/50 border border-bdr-strong/30 shadow-2xl backdrop-blur-xl overflow-hidden rounded-2xl">
+    <div class="card-body p-0">
+        <div class="overflow-x-auto">
+            <table class="table w-full text-content-secondary border-separate border-spacing-0 mq-row-fade">
+                <thead>
+                    <tr class="text-content-muted uppercase text-xs tracking-widest border-b border-bdr-strong bg-surface-1/30">
+                        <th class="py-5 pl-8">Thông Tin Loại Phòng</th>
+                        <th class="py-5">Giá Cơ Bản</th>
+                        <th class="py-5">Sức Chứa</th>
+                        <th class="py-5 text-right pr-8">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-bdr-strong/30">
+                    @if (Model.RoomTypes.Any())
+                    {
+                        <partial name="_RoomTypeRows" model="Model.RoomTypes" />
+                    }
+                    else
+                    {
+                        <partial name="~/Areas/Admin/Pages/Shared/_AdminTableEmptyState.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminTableEmptyStateModel
+                        {
+                            ColSpan = 4,
+                            Icon = "solar:folder-error-bold-duotone",
+                            Title = "Chưa có loại phòng nào trong hệ thống.",
+                            CreatePage = "./Create",
+                            CreateText = "Bắt đầu thêm ngay"
+                        }' />
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPagination.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPaginationModel
+    {
+        AspPage = "./Index",
+        PageNumber = Model.PageNumber,
+        TotalPages = Model.TotalPages,
+        CurrentCount = Model.RoomTypes.Count,
+        TotalCount = Model.TotalCount,
+        ItemLabel = "loại phòng",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["searchQuery"] = Model.SearchQuery,
+            ["occupancyFilter"] = Model.OccupancyFilter
+        }
+    }' />
+</div>

@@ -1,0 +1,75 @@
+# ------------------------------
+# Build artifacts (.NET)
+# ------------------------------
+**/bin/
+**/obj/
+
+# Rider / Visual Studio / VS Code
+.vs/
+.idea/
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Logs
+*.log
+*.out
+
+# ------------------------------
+# Local database / temporary data
+# ------------------------------
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# SQL Server local/dev artifacts (if any)
+*.mdf
+*.ldf
+
+# Local env files
+.env
+.env.*
+!*.env.example
+!*.env.sample
+
+docker/.env
+
+# ------------------------------
+# Local tooling cache
+# ------------------------------
+.ruff_cache/
+.sisyphus/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# ------------------------------
+# Temporary test/debug scripts in repo root
+# ------------------------------
+/test_*.cs
+/test_*.sql
+/bolog.txt
+
+# ------------------------------
+# Dev/Internal-only artifacts (khong push cho khach hang)
+# ------------------------------
+/AGENTS.md
+/docs/
+/run-dev.sh
+/optimize-images.py
+/replace_icons.py
+/HotelManagement/appsettings.Development.json
+/HotelManagement/appsettings.*.local.json
+/HotelManagement/secrets*.json

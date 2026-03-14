@@ -1,0 +1,182 @@
+.mq-theme-dark {
+  color-scheme: dark;
+}
+
+.mq-logo-block {
+  display: block;
+}
+
+.mq-logo-min-40 {
+  min-width: 40px;
+}
+
+.mq-logo-min-48 {
+  min-width: 48px;
+}
+
+.mq-logo-min-64 {
+  min-width: 64px;
+}
+
+.mq-footer-surface {
+  background-color: var(--footer-bg);
+}
+
+.mq-map-frame {
+  border: 0;
+}
+
+.mq-animation-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.mq-animation-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.mq-animation-delay-3 {
+  animation-delay: 0.3s;
+}
+
+.mq-animation-delay-4 {
+  animation-delay: 0.4s;
+}
+
+.mq-animation-delay-5 {
+  animation-delay: 0.5s;
+}
+
+.mq-animation-delay-6 {
+  animation-delay: 0.6s;
+}
+
+.mq-animation-delay-7 {
+  animation-delay: 0.7s;
+}
+
+.mq-animation-delay-20 {
+  animation-delay: 2s;
+}
+
+.mq-animation-delay-30 {
+  animation-delay: 3s;
+}
+
+.mq-animation-duration-8 {
+  animation-duration: 8s;
+}
+
+.mq-animation-duration-9 {
+  animation-duration: 9s;
+}
+
+.mq-animation-duration-10 {
+  animation-duration: 10s;
+}
+
+.mq-hidden {
+  display: none;
+}
+
+.mq-avatar-fallback {
+  display: none;
+}
+
+.mq-avatar-fallback.is-visible {
+  display: flex;
+}
+
+.mq-avatar-fallback-block {
+  display: none;
+}
+
+.mq-avatar-fallback-block.is-visible {
+  display: block;
+}
+
+.mq-avatar-fallback-inline.is-visible {
+  display: inline;
+}
+
+.mq-row-fade tbody tr {
+  animation: mq-row-fade-in 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes mq-row-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mq-booking-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mq-booking-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mq-booking-scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(205, 168, 115, 0.2);
+  border-radius: 10px;
+}
+
+.mq-booking-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(205, 168, 115, 0.4);
+}
+
+.mq-booking-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mq-booking-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mq-shadow-premium {
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.4);
+}
+
+.mq-shadow-premium:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+.mq-chart-revenue {
+  height: 300px;
+}
+
+.mq-chart-room {
+  height: 220px;
+}
+
+.mq-auth-blob-delay {
+  animation-delay: 3s;
+}
+
+.mq-auth-logo {
+  display: block;
+  min-width: 64px;
+}
+
+.mq-row-fade tbody tr:nth-child(1) { animation-delay: 0s; }
+.mq-row-fade tbody tr:nth-child(2) { animation-delay: 0.04s; }
+.mq-row-fade tbody tr:nth-child(3) { animation-delay: 0.08s; }
+.mq-row-fade tbody tr:nth-child(4) { animation-delay: 0.12s; }
+.mq-row-fade tbody tr:nth-child(5) { animation-delay: 0.16s; }
+.mq-row-fade tbody tr:nth-child(6) { animation-delay: 0.2s; }
+.mq-row-fade tbody tr:nth-child(7) { animation-delay: 0.24s; }
+.mq-row-fade tbody tr:nth-child(8) { animation-delay: 0.28s; }
+.mq-row-fade tbody tr:nth-child(9) { animation-delay: 0.32s; }
+.mq-row-fade tbody tr:nth-child(10) { animation-delay: 0.36s; }
+.mq-row-fade tbody tr:nth-child(11) { animation-delay: 0.4s; }
+.mq-row-fade tbody tr:nth-child(12) { animation-delay: 0.44s; }

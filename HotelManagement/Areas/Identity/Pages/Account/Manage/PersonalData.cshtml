@@ -1,0 +1,37 @@
+@page
+@model PersonalDataModel
+@{
+    ViewData["Title"] = "Dữ liệu cá nhân";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+    Layout = "_Layout.cshtml";
+}
+
+<div class="space-y-8">
+    <div class="space-y-6">
+        <p class="text-content-secondary leading-relaxed font-medium">
+            Tài khoản của bạn chứa các dữ liệu cá nhân mà bạn đã cung cấp cho chúng tôi. Trang này cho phép bạn tải xuống hoặc xóa các dữ liệu đó.
+        </p>
+        <div class="alert alert-warning bg-warning/10 border border-warning/20 text-warning rounded-3xl flex items-start gap-4 p-5">
+            <iconify-icon icon="solar:danger-bold-duotone" class="text-3xl mt-0.5"></iconify-icon>
+            <div class="space-y-1">
+                <p class="text-sm font-bold uppercase tracking-wider">Cảnh báo bảo mật</p>
+                <p class="text-sm opacity-90 leading-relaxed">Việc xóa dữ liệu này sẽ xóa vĩnh viễn tài khoản của bạn và không thể khôi phục được.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4 mt-10 pt-8 border-t border-white/5">
+        <form id="download-data" asp-page="DownloadPersonalData" method="post">
+            <button class="btn bg-primary hover:bg-primary/90 text-white border-none px-8 h-14 rounded-3xl shadow-lg shadow-primary/20 flex items-center gap-3 font-outfit uppercase tracking-widest text-xs transition-all hover:-translate-y-1 active:scale-95" type="submit">
+                <iconify-icon icon="solar:download-minimalistic-bold-duotone" class="text-2xl"></iconify-icon> Tải xuống dữ liệu
+            </button>
+        </form>
+        <a id="delete" asp-page="DeletePersonalData" class="btn bg-danger hover:bg-danger/90 text-white border-none rounded-3xl px-8 h-14 shadow-lg shadow-danger/20 flex items-center gap-3 font-outfit uppercase tracking-widest text-xs transition-all hover:-translate-y-1 active:scale-95">
+            <iconify-icon icon="solar:trash-bin-trash-bold-duotone" class="text-2xl"></iconify-icon> Xóa tài khoản
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

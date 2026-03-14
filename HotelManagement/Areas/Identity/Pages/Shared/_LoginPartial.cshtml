@@ -1,0 +1,63 @@
+@using Microsoft.AspNetCore.Identity
+@using HotelManagement.Core.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    var avatarUrl = HotelManagement.Helpers.AvatarUrlHelper.ResolveOrDefault(user?.AvatarUrl);
+    <div class="flex items-center gap-4">
+        <div class="hidden lg:flex flex-col text-right">
+            <span class="text-xs font-bold text-white uppercase tracking-tighter">@user?.FullName</span>
+            <span class="text-[10px] text-accent font-bold uppercase tracking-widest">
+                @(User.IsInRole("Manager") ? "Quản lý" : User.IsInRole("Receptionist") ? "Lễ tân" : "Thành viên")
+            </span>
+        </div>
+        
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="avatar ring ring-accent/30 ring-offset-base-100 ring-offset-2 rounded-full cursor-pointer transition-transform hover:scale-105">
+                <div class="w-10 rounded-full overflow-hidden bg-surface-3">
+                    <img src="@avatarUrl" alt="Avatar" class="w-full h-full object-cover" data-avatar-image data-avatar-default-src="@HotelManagement.Helpers.AvatarUrlHelper.DefaultAvatar" />
+                </div>
+            </div>
+            <ul tabindex="0" class="dropdown-content z-[100] menu p-2 shadow-2xl bg-slate-900/90 border border-white/10 rounded-[1.5rem] w-64 mt-4 backdrop-blur-xl animate-fade-in shadow-black/60">
+                <li class="menu-title text-[10px] uppercase tracking-[0.2em] text-accent font-black px-5 py-3 opacity-90">Tài khoản</li>
+                <li>
+                    <a href="/profile" class="flex items-center gap-3 py-3 px-4 text-content-secondary hover:text-accent transition-colors rounded-xl hover:bg-surface-3">
+                        <iconify-icon icon="solar:user-circle-bold-duotone" class="text-xl"></iconify-icon> Thông tin cá nhân
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile/bookings" class="flex items-center gap-3 py-3 px-4 text-content-secondary hover:text-accent transition-colors rounded-xl hover:bg-surface-3">
+                        <iconify-icon icon="solar:calendar-mark-bold-duotone" class="text-xl"></iconify-icon> Lịch sử đặt phòng
+                    </a>
+                </li>
+                @if (User.IsInRole("Manager") || User.IsInRole("Receptionist"))
+                {
+                    <li>
+                        <a asp-area="Admin" asp-page="/Dashboard/Index" class="flex items-center gap-3 py-3 px-4 text-content-secondary hover:text-accent transition-colors rounded-xl hover:bg-surface-3">
+                            <iconify-icon icon="solar:widget-5-bold-duotone" class="text-xl"></iconify-icon> Quản trị hệ thống
+                        </a>
+                    </li>
+                }
+                <li class="border-t border-bdr-strong/30 my-2"></li>
+                <li>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "Public" })">
+                        <button type="submit" class="flex w-full items-center gap-3 py-3 px-4 text-danger hover:bg-danger/10 transition-colors rounded-xl">
+                            <iconify-icon icon="solar:logout-3-bold-duotone" class="text-xl"></iconify-icon> Đăng xuất
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <div class="flex items-center">
+        <a asp-area="Identity" asp-page="/Account/Login" class="text-sm font-medium text-slate-300 hover:text-white transition-colors px-4 py-2">
+            Đăng Nhập
+        </a>
+    </div>
+}

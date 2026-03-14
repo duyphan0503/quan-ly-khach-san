@@ -1,0 +1,31 @@
+HỒ SƠ GIẢI PHÁP: WEBSITE QUẢN LÝ KHÁCH SẠN
+
+1. CÔNG NGHỆ SỬ DỤNG
+Hệ thống được phát triển trên kiến trúc N-Tier Architecture chuẩn, đảm bảo tính ổn định và bảo mật:
+- Backend: ASP.NET Core 10.0 (Razor Pages), đảm bảo tốc độ xử lý nhanh và chịu tải tốt.
+- Cơ Sở Dữ Liệu: SQL Server 2022 + Entity Framework Core 10, lưu trữ an toàn, toàn vẹn dữ liệu.
+- Tối Ưu Hiệu Năng: Áp dụng cơ chế Caching và tối ưu hóa truy vấn giúp thao tác mượt mà, không độ trễ.
+- Frontend/Giao diện: Tailwind CSS, DaisyUI, Flowbite mang lại giao diện hiện đại, dễ sử dụng, tương thích nhiều thiết bị (PC, Mobile, Tablet).
+- Báo cáo thống kê: Tích hợp Chart.js hiển thị biểu đồ trực quan, dễ theo dõi kinh doanh.
+
+2. BẢNG TÍNH NĂNG CHI TIẾT
+- Phân hệ Tổng quan (Dashboard): Thống kê doanh thu, tỷ lệ lấp đầy, số lượng khách. Hiển thị biểu đồ trực quan và danh sách thao tác đặt phòng mới nhất. (Quyền: Quản lý)
+- Phân hệ Quản lý Phòng: Theo dõi sơ đồ phòng và cập nhật trạng thái realtime (Trống, Đang thuê, Bảo trì). Quản lý thêm/sửa/xóa thông tin các phòng và hạng phòng. (Quyền: Quản lý, Lễ tân)
+- Phân hệ Nghiệp vụ Lễ Tân: Xử lý Đặt phòng (Booking), Check-in, Check-out, quản lý và cập nhật trạng thái đơn đặt phòng. (Quyền: Quản lý, Lễ tân)
+- Phân hệ Quản lý Dịch vụ: Lập danh sách và bảng giá các dịch vụ phụ trợ (Giặt ủi, Minibar, Spa...). Bật/tắt dịch vụ linh hoạt. (Quyền: Quản lý)
+- Phân hệ Quản lý Khách hàng: Quản lý và lưu trữ hồ sơ thông tin khách lưu trú (Tên, SĐT, CCCD/Passport, Địa chỉ). (Quyền: Quản lý, Lễ tân)
+- Phân hệ Hóa đơn & Thanh toán: Tự động tổng hợp tiền phòng và dịch vụ phát sinh. Chốt hóa đơn thanh toán, trạng thái thanh toán và lưu trữ lịch sử giao dịch. (Quyền: Quản lý, Lễ tân)
+- Phân quyền & Bảo mật: Tính năng đăng nhập bảo mật. Phân quyền rõ ràng 2 cấp độ: Quản lý (toàn quyền quản trị) và Lễ tân (chỉ thực hiện nghiệp vụ khách hàng, đóng/không xem các báo cáo tổng quan/doanh thu). (Quyền: Quản lý)
+- Trang chủ giới thiệu khách sạn (Public Homepage): Thiết kế một trang giao diện hiển thị cho khách truy cập web xem thông tin phòng và tiện ích.
+
+3. BÁO GIÁ & THỜI GIAN THỰC HIỆN
+- Ngân sách trọn gói: 1.500.000 VNĐ
+- Thời gian thực hiện dự kiến: 7 - 10 ngày
+
+* Các hạng mục cam kết bàn giao:
+- Phân tích thiết kế hệ thống CSDL & cấu trúc thư mục rõ ràng.
+- Lập trình Backend logic & Database liên kết chuẩn.
+- Giao diện UI/UX trực quan cho phần Quản trị và Lễ tân.
+- Bàn giao toàn bộ Source Code hoàn chỉnh, code sạch sẽ dễ dàng chỉnh sửa hoặc mở rộng về sau.
+- Tích hợp sẵn dữ liệu mẫu (Dummy data) để có thể demo ngay lập tức.
+- Hỗ trợ Fix bug và đảm bảo source code chạy trơn tru khi bàn giao.

@@ -1,0 +1,97 @@
+@page
+@model HotelManagement.Areas.Public.Pages.Booking.ConfirmationModel
+@inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
+@{
+    var websiteSettings = await WebsiteSettingsService.GetCurrentAsync();
+    var contactPhone = string.IsNullOrWhiteSpace(websiteSettings.ContactPhone) ? "+84 123 456 789" : websiteSettings.ContactPhone;
+
+    ViewData["Title"] = "Xác nhận đặt phòng";
+}
+
+<div class="pt-16 pb-24 bg-surface-1 min-h-screen">
+    <div class="max-w-3xl mx-auto px-4">
+        <div class="text-center mb-12 animate-fade-up">
+            <div class="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6 text-success shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+                <iconify-icon icon="solar:check-circle-bold-duotone" class="text-5xl"></iconify-icon>
+            </div>
+            <h1 class="text-4xl font-outfit font-black text-content-primary uppercase tracking-tight mb-2">Đăng ký thành công</h1>
+            <p class="text-content-muted">Yêu cầu đặt phòng của bạn đã được tiếp nhận và đang chờ duyệt.</p>
+        </div>
+
+        <div class="bg-surface-2/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 lg:p-12 shadow-2xl animate-fade-up mq-animation-delay-1">
+            <div class="flex items-center justify-between border-b border-white/5 pb-8 mb-8">
+                <div>
+                    <p class="text-[10px] uppercase font-bold tracking-widest text-content-muted mb-1">Mã đặt phòng</p>
+                    <h2 class="text-2xl font-mono font-bold text-accent">#MQ-@Model.Booking.Id.ToString("D4")</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] uppercase font-bold tracking-widest text-content-muted mb-1">Ngày lập</p>
+                    <p class="text-content-primary font-medium">@Model.Booking.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Check-in Info -->
+                <div class="bg-surface-3/50 p-6 rounded-3xl border border-white/5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                            <iconify-icon icon="solar:calendar-mark-bold-duotone" class="text-xl"></iconify-icon>
+                        </div>
+                        <p class="text-[10px] uppercase font-bold tracking-widest text-primary">Thời gian nhận phòng</p>
+                    </div>
+                    <p class="text-3xl font-outfit font-black text-content-primary">@Model.Booking.CheckIn.ToString("dd/MM/yyyy")</p>
+                    <p class="text-sm text-content-muted mt-1 italic">Sau @Model.CheckInTimeText giờ</p>
+                </div>
+
+                <!-- Check-out Info -->
+                <div class="bg-surface-3/50 p-6 rounded-3xl border border-white/5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                            <iconify-icon icon="solar:calendar-date-bold-duotone" class="text-xl"></iconify-icon>
+                        </div>
+                        <p class="text-[10px] uppercase font-bold tracking-widest text-accent">Thời gian trả phòng</p>
+                    </div>
+                    <p class="text-3xl font-outfit font-black text-content-primary">@Model.Booking.CheckOut.ToString("dd/MM/yyyy")</p>
+                    <p class="text-sm text-content-muted mt-1 italic">Trước @Model.CheckOutTimeText giờ</p>
+                </div>
+            </div>
+
+            <div class="mt-10 py-8 border-y border-white/5 space-y-6">
+                <div class="flex justify-between items-center text-content-secondary">
+                    <span class="text-sm font-medium">Phòng lưu trú</span>
+                    <span class="font-bold text-white">@Model.RoomSummary</span>
+                </div>
+                <div class="flex justify-between items-center text-content-secondary">
+                    <span class="text-sm font-medium">Số lượng khách</span>
+                    <span class="font-bold text-white">@Model.TotalGuests Người</span>
+                </div>
+                @if (Model.IsGroupBooking)
+                {
+                    <div class="flex justify-between items-center text-content-secondary">
+                        <span class="text-sm font-medium">Số phòng</span>
+                        <span class="font-bold text-white">@Model.GroupBookings.Count phòng</span>
+                    </div>
+                }
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-content-secondary">Tổng thanh toán dự kiến</span>
+                    <span class="text-2xl font-black text-accent tracking-tighter">@Model.TotalAmount.ToString("N0")₫</span>
+                </div>
+                <div class="flex justify-between items-center text-content-secondary">
+                    <span class="text-sm font-medium">Thời điểm tự hủy nếu no-show</span>
+                    <span class="font-bold text-rose-300">@Model.NoShowCancelDeadline.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+            </div>
+
+            <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                <a href="/Index" class="btn btn-outline border-white/10 text-white hover:bg-white/5 rounded-2xl flex-1 h-14">Quay lại trang chủ</a>
+                <a asp-area="Identity" asp-page="/Account/Manage/Bookings" class="btn btn-primary bg-primary hover:bg-primary/80 text-white border-none rounded-2xl flex-1 h-14 shadow-lg shadow-primary/20">Xem lịch sử của bạn</a>
+            </div>
+        </div>
+
+        <p class="mt-8 text-center text-xs text-content-muted leading-relaxed">
+            Hệ thống sẽ tự động hủy yêu cầu nếu quý khách không check-in sau @Model.NoShowThresholdHours giờ kể từ giờ nhận phòng quy định.<br>
+            Đơn này sẽ tự hủy lúc <span class="text-rose-300 font-bold">@Model.NoShowCancelDeadline.ToString("dd/MM/yyyy HH:mm")</span> nếu chưa check-in.<br>
+            Mọi thắc mắc vui lòng liên hệ Hotline: <span class="text-accent font-bold">@contactPhone</span>
+        </p>
+    </div>
+</div>

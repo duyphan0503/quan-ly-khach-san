@@ -1,0 +1,65 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    Layout = "_Layout.cshtml";
+}
+
+<form id="profile-form" method="post" enctype="multipart/form-data" class="space-y-8 animate-fade-in">
+    <div asp-validation-summary="ModelOnly" class="alert alert-error bg-danger/10 border-danger/20 text-danger text-sm p-3 rounded-xl mb-8" role="alert"></div>
+
+    <div class="space-y-8">
+        <!-- Form Fields -->
+        <div class="grid grid-cols-1 gap-8">
+                <!-- Username (Readonly) -->
+                <div class="space-y-3 text-left">
+                    <label asp-for="Username" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Tên đăng nhập</label>
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted opacity-40">
+                            <iconify-icon icon="solar:shield-user-bold-duotone" class="text-2xl"></iconify-icon>
+                        </span>
+                        <input asp-for="Username" class="w-full bg-surface-3/50 border border-white/5 rounded-[1.25rem] py-4 pl-14 pr-4 text-content-muted outline-none cursor-not-allowed text-sm font-medium" disabled />
+                    </div>
+                </div>
+
+                <!-- Full Name -->
+                <div class="space-y-3 text-left">
+                    <label asp-for="Input.FullName" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Họ và Tên</label>
+                    <div class="relative group/input">
+                        <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                            <iconify-icon icon="solar:user-bold-duotone" class="text-2xl"></iconify-icon>
+                        </span>
+                        <input asp-for="Input.FullName" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-[1.25rem] py-4 pl-14 pr-4 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" placeholder="Nguyễn Văn An" />
+                    </div>
+                    <span asp-validation-for="Input.FullName" class="text-[10px] text-danger font-bold ml-2"></span>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="space-y-3 text-left">
+                    <label asp-for="Input.PhoneNumber" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Số điện thoại</label>
+                    <div class="relative group/input">
+                        <span class="absolute inset-y-0 left-0 pl-5 flex items-center text-content-muted group-focus-within/input:text-primary transition-colors">
+                            <iconify-icon icon="solar:phone-bold-duotone" class="text-2xl"></iconify-icon>
+                        </span>
+                        <input asp-for="Input.PhoneNumber" class="w-full bg-surface-1/60 border border-white/5 focus:border-primary/50 focus:ring-8 focus:ring-primary/5 rounded-[1.25rem] py-4 pl-14 pr-4 text-content-primary transition-all outline-none shadow-inner text-sm font-medium placeholder:text-content-muted/30" placeholder="0901234567" />
+                    </div>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-[10px] text-danger font-bold ml-2"></span>
+                </div>
+            </div>
+
+            <div class="pt-6">
+                <button id="update-profile-button" type="submit" class="w-full relative overflow-hidden group/btn btn h-16 rounded-[1.5rem] bg-primary border-none shadow-[0_20px_40px_-12px_rgba(79,70,229,0.4)] transition-all duration-500 hover:-translate-y-1 active:scale-95 active:translate-y-0">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-shimmer"></div>
+                    <span class="relative z-10 flex items-center justify-center gap-3 text-white font-outfit text-lg font-bold uppercase tracking-[0.2em]">
+                        Lưu Thay Đổi <iconify-icon icon="solar:check-read-bold-duotone" class="text-2xl"></iconify-icon>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

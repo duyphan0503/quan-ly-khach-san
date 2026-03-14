@@ -1,0 +1,126 @@
+@page "/admin/invoices"
+@model HotelManagement.Areas.Admin.Pages.Invoices.IndexModel
+@using HotelManagement.Core.Models.Enums
+@{
+    ViewData["Title"] = "Quản Lý Hóa Đơn";
+}
+
+<div class="mb-6 space-y-6">
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h1",
+        Icon = "solar:bill-check-bold-duotone",
+        Title = "Quản Lý Hóa Đơn",
+        Subtitle = "Kiểm soát dòng tiền và lịch sử giao dịch thanh toán của khách hàng",
+        WrapperClass = "space-y-1"
+    }' />
+</div>
+
+<div class="w-full mb-6">
+    <form method="get" class="flex min-w-0 flex-wrap items-center gap-2">
+        <div class="relative group">
+            <input type="text" asp-for="SearchQuery" placeholder="Tìm số HĐ, khách, SĐT, phòng..."
+                   class="input input-bordered bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary focus:ring-1 focus:ring-primary w-80 rounded-xl pl-10 transition-all duration-300 backdrop-blur-md" />
+            <iconify-icon icon="solar:magnifer-linear"
+                          class="absolute left-3 top-1/2 -translate-y-1/2 text-content-muted group-focus-within:text-primary transition-colors"></iconify-icon>
+        </div>
+
+        <select asp-for="StatusFilter" asp-items="Model.InvoiceStatusOptions" class="select bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary rounded-xl">
+            <option value="">Tất cả trạng thái</option>
+        </select>
+
+        <select asp-for="PaymentMethodFilter" asp-items="Model.PaymentMethodOptions" class="select bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary rounded-xl">
+            <option value="">Tất cả phương thức</option>
+        </select>
+
+        <button type="submit" class="btn btn-square rounded-xl bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/30 transition-all duration-300" title="Lọc">
+            <iconify-icon icon="solar:filter-bold-duotone" width="18" height="18"></iconify-icon>
+        </button>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SearchQuery) || Model.StatusFilter.HasValue || Model.PaymentMethodFilter.HasValue)
+        {
+            <a asp-page="./Index" class="btn btn-square rounded-xl border border-white/10 hover:border-red-400/40 hover:bg-red-500/10 text-content-muted hover:text-red-400 transition-all" title="Xóa bộ lọc">
+                <iconify-icon icon="solar:close-circle-bold-duotone" width="18" height="18"></iconify-icon>
+            </a>
+        }
+    </form>
+</div>
+
+<div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden backdrop-blur-md">
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full text-content-secondary mq-row-fade">
+            <thead>
+                <tr class="text-content-muted border-bdr-strong bg-surface-1/50">
+                    <th class="font-medium text-sm">
+                        <span class="inline-flex items-center gap-2">
+                            <iconify-icon icon="solar:bill-check-bold-duotone" class="text-base text-primary"></iconify-icon>
+                            Số Hóa Đơn
+                        </span>
+                    </th>
+                    <th class="font-medium text-sm">
+                        <span class="inline-flex items-center gap-2">
+                            <iconify-icon icon="solar:calendar-date-bold-duotone" class="text-base text-primary"></iconify-icon>
+                            Ngày Lập
+                        </span>
+                    </th>
+                    <th class="font-medium text-sm">
+                        <span class="inline-flex items-center gap-2">
+                            <iconify-icon icon="solar:user-id-bold-duotone" class="text-base text-primary"></iconify-icon>
+                            Khách Hàng / Phòng
+                        </span>
+                    </th>
+                    <th class="font-medium text-sm text-right">
+                        <span class="inline-flex items-center gap-2 justify-end">
+                            <iconify-icon icon="solar:wallet-money-bold-duotone" class="text-base text-primary"></iconify-icon>
+                            Tổng Cộng
+                        </span>
+                    </th>
+                    <th class="font-medium text-sm text-center">
+                        <span class="inline-flex items-center gap-2 justify-center">
+                            <iconify-icon icon="solar:checklist-minimalistic-bold-duotone" class="text-base text-primary"></iconify-icon>
+                            Trạng Thái
+                        </span>
+                    </th>
+                    <th class="font-medium text-sm text-right">
+                        <span class="inline-flex items-center gap-2 justify-end">
+                            <iconify-icon icon="solar:settings-bold-duotone" class="text-base text-primary"></iconify-icon>
+                            Thao Tác
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Invoices != null && Model.Invoices.Any())
+                {
+                    <partial name="_InvoiceRows" model="Model.Invoices" />
+                }
+                else
+                {
+                    <partial name="~/Areas/Admin/Pages/Shared/_AdminTableEmptyState.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminTableEmptyStateModel
+                    {
+                        ColSpan = 6,
+                        Icon = "solar:bill-cross-bold-duotone",
+                        Title = "Chưa có hóa đơn nào",
+                        Description = "Không tìm thấy hóa đơn phù hợp với bộ lọc hiện tại."
+                    }' />
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPagination.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPaginationModel
+    {
+        AspPage = "./Index",
+        PageNumber = Model.PageNumber,
+        TotalPages = Model.TotalPages,
+        CurrentCount = Model.Invoices?.Count ?? 0,
+        TotalCount = Model.TotalCount,
+        ItemLabel = "hóa đơn",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["searchQuery"] = Model.SearchQuery,
+            ["statusFilter"] = Model.StatusFilter?.ToString(),
+            ["paymentMethodFilter"] = Model.PaymentMethodFilter?.ToString()
+        }
+    }' />
+</div>

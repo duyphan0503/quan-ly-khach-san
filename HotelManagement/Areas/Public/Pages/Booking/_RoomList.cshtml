@@ -1,0 +1,88 @@
+@model HotelManagement.Areas.Public.Pages.Booking.RoomListViewModel
+@using System.Globalization
+@{
+    var roomTypeFilters = Model.AvailableRooms
+        .GroupBy(r => r.RoomType.Name)
+        .Select(g => new
+        {
+            Name = g.Key,
+            BasePrice = g.Min(x => x.RoomType.BasePrice)
+        })
+        .OrderBy(x => x.BasePrice)
+        .ThenBy(x => x.Name)
+        .ToList();
+}
+
+<div class="flex flex-wrap gap-2 mb-4">
+    <button type="button" class="room-filter-btn h-8 px-3 rounded-full text-xs font-semibold border border-primary/40 bg-primary/15 text-primary" data-filter="all">Tất cả</button>
+    @foreach (var roomType in roomTypeFilters)
+    {
+        <button type="button"
+                class="room-filter-btn h-8 px-3 rounded-full text-xs font-semibold border border-white/15 bg-surface-1/50 text-content-secondary hover:border-primary/40 hover:text-primary transition-colors"
+                data-filter="@roomType.Name">
+            @roomType.Name (@roomType.BasePrice.ToString("N0")₫)
+        </button>
+    }
+</div>
+
+<div class="max-h-[560px] overflow-y-auto pr-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @if (Model.AvailableRooms.Count == 0)
+        {
+            <div class="md:col-span-2 p-6 rounded-2xl border border-white/10 bg-surface-1/50 text-content-muted text-center">
+                Không có phòng trống trong khoảng ngày bạn đã chọn.
+            </div>
+        }
+        else
+        {
+            @foreach (var room in Model.AvailableRooms)
+            {
+                var isChecked = Model.SelectedRoomIds.Contains(room.Id);
+                <label class="group relative cursor-pointer room-card" data-room-card data-room-type="@room.RoomType.Name">
+                    @if (isChecked)
+                    {
+                        <input type="checkbox"
+                               name="Input.SelectedRoomIds"
+                               value="@room.Id"
+                               class="sr-only room-checkbox"
+                               data-capacity="@room.RoomType.MaxOccupancy"
+                               data-price="@room.RoomType.BasePrice.ToString(CultureInfo.InvariantCulture)"
+                               checked="checked" />
+                    }
+                    else
+                    {
+                        <input type="checkbox"
+                               name="Input.SelectedRoomIds"
+                               value="@room.Id"
+                               class="sr-only room-checkbox"
+                               data-capacity="@room.RoomType.MaxOccupancy"
+                               data-price="@room.RoomType.BasePrice.ToString(CultureInfo.InvariantCulture)" />
+                    }
+
+                    <div class="room-shell rounded-2xl border border-white/10 bg-surface-1/50 p-5 transition-all duration-300 hover:border-primary/35 hover:-translate-y-0.5">
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <div>
+                                <p class="text-content-primary font-bold">Phòng @room.RoomNumber</p>
+                                <p class="text-content-muted text-sm">@room.RoomType.Name</p>
+                            </div>
+                            <div class="check-badge w-6 h-6 rounded-md border border-white/20 bg-surface-2 grid place-items-center text-transparent transition-all duration-200">
+                                <iconify-icon icon="solar:check-read-bold-duotone"></iconify-icon>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="inline-flex items-center gap-1.5 text-content-secondary">
+                                <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="text-base text-accent"></iconify-icon>
+                                Tối đa @room.RoomType.MaxOccupancy khách
+                            </span>
+                            <span class="font-semibold text-accent">@room.RoomType.BasePrice.ToString("N0")₫/đêm</span>
+                        </div>
+                    </div>
+                </label>
+            }
+        }
+    </div>
+    <div id="room-filter-empty" class="hidden mt-4 p-6 rounded-2xl border border-white/10 bg-surface-1/50 text-content-muted text-center">
+        Không có phòng phù hợp với bộ lọc hiện tại.
+    </div>
+</div>

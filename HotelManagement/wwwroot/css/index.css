@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "daisyui";
+
+@theme {
+  --color-brand: #020617;
+  --color-accent: #cda873;
+  --color-accent-soft: #e2c08d;
+  --font-outfit: "Inter", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+:root {
+  --brand: #020617;
+  --accent: #cda873;
+  --accent-soft: #e2c08d;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  font-family: var(--font-inter);
+  background-color: var(--brand);
+  color: #f1f5f9;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+}
+
+.glass-nav {
+  background: rgba(2, 6, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.btn-luxury {
+  @apply px-8 py-3 rounded-full font-outfit font-semibold uppercase tracking-wider transition-all duration-300;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: var(--brand);
+  box-shadow: 0 4px 15px rgba(205, 168, 115, 0.3);
+}
+
+.btn-luxury:hover {
+  @apply scale-105;
+  box-shadow: 0 6px 20px rgba(205, 168, 115, 0.5);
+}
+
+.btn-luxury-outline {
+  @apply px-8 py-3 rounded-full font-outfit font-semibold uppercase tracking-wider transition-all duration-300;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.btn-luxury-outline:hover {
+  @apply bg-accent text-brand;
+}
+
+/* Animations */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s ease-out forwards;
+}

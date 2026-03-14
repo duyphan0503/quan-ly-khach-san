@@ -1,0 +1,20 @@
+@model HotelManagement.Areas.Admin.Pages.Shared.AdminTableEmptyStateModel
+
+<tr>
+    <td colspan="@Model.ColSpan" class="py-24 text-center">
+        <div class="flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
+            <div class="bg-surface-3 p-6 rounded-full mb-4">
+                <iconify-icon icon="@Model.Icon" width="64" height="64" class="text-content-muted opacity-30"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-bold text-content-primary">@Model.Title</h3>
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="text-content-muted mt-2 max-w-xs mx-auto">@Model.Description</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.CreatePage) && !string.IsNullOrWhiteSpace(Model.CreateText))
+            {
+                <a asp-page="@Model.CreatePage" class="btn btn-primary mt-6 px-8 rounded-xl">@Model.CreateText</a>
+            }
+        </div>
+    </td>
+</tr>

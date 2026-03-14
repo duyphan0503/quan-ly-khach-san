@@ -1,0 +1,121 @@
+@page "/admin/rooms"
+@model HotelManagement.Areas.Admin.Pages.Rooms.IndexModel
+@{
+    ViewData["Title"] = "Quản lý Phòng";
+}
+@using HotelManagement.Core.Models.Enums
+
+<div class="mb-6 space-y-6">
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h2",
+        Icon = "solar:home-2-bold-duotone",
+        Title = "Danh Mục Phòng",
+        Subtitle = "Quản lý không gian lưu trú và trạng thái phòng khách sạn"
+    }' />
+    <div class="w-full">
+        <div class="flex w-full flex-wrap items-center gap-3">
+            <form method="get" class="flex min-w-0 flex-wrap items-center gap-2">
+            <div class="relative group">
+                <input type="text" asp-for="SearchQuery" placeholder="Tìm phòng..."
+                       class="input input-bordered bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary focus:ring-1 focus:ring-primary w-80 rounded-xl pl-10 transition-all duration-300 backdrop-blur-md" />
+                <iconify-icon icon="solar:magnifer-linear"
+                              class="absolute left-3 top-1/2 -translate-y-1/2 text-content-muted group-focus-within:text-primary transition-colors"></iconify-icon>
+            </div>
+
+            <select asp-for="StatusFilter" asp-items="Html.GetEnumSelectList<RoomStatus>()" class="select bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary rounded-xl">
+                <option value="">Tất cả trạng thái</option>
+            </select>
+
+            <select asp-for="RoomTypeId" asp-items="Model.RoomTypeOptions" class="select bg-surface-2/50 border-bdr-strong/50 text-content-primary focus:border-primary rounded-xl">
+                <option value="">Tất cả loại phòng</option>
+            </select>
+
+            <button type="submit" class="btn btn-square rounded-xl bg-primary/20 hover:bg-primary text-primary hover:text-white border border-primary/30 transition-all duration-300" title="Lọc">
+                <iconify-icon icon="solar:filter-bold-duotone" width="18" height="18"></iconify-icon>
+            </button>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SearchQuery) || Model.StatusFilter.HasValue || Model.RoomTypeId.HasValue)
+            {
+                <a asp-page="./Index" class="btn btn-square rounded-xl border border-white/10 hover:border-red-400/40 hover:bg-red-500/10 text-content-muted hover:text-red-400 transition-all" title="Xóa bộ lọc">
+                    <iconify-icon icon="solar:close-circle-bold-duotone" width="18" height="18"></iconify-icon>
+                </a>
+            }
+            </form>
+
+            @if (User.IsInRole("Manager"))
+            {
+                <a asp-page="Create" class="btn bg-gradient-to-br from-primary to-primary-700 hover:from-primary/90 hover:to-primary text-white border-none shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 rounded-2xl px-6 md:ml-auto">
+                    <span class="flex items-center gap-2"><iconify-icon icon="solar:add-circle-bold-duotone" class="text-xl"></iconify-icon> Thêm Phòng Mới</span>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ── Room Grid ── -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+    @if (Model.Rooms.Any())
+    {
+        <partial name="_RoomRows" model="Model.Rooms" />
+    }
+    else
+    {
+        <partial name="~/Areas/Admin/Pages/Shared/_AdminGridEmptyState.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminGridEmptyStateModel
+        {
+            Icon = "solar:home-2-bold-duotone",
+            Title = "Chưa có phòng nào được tạo",
+            Description = "Dùng nút \"Thêm Phòng Mới\" để bắt đầu"
+        }' />
+    }
+</div>
+
+@if (Model.Rooms.Any())
+{
+    <div id="rooms-lazy-sentinel" class="mt-8 flex justify-center">
+        <div class="inline-flex items-center gap-2 text-content-muted text-sm bg-surface-2/60 border border-bdr-strong/40 rounded-full px-4 py-2">
+            <iconify-icon icon="solar:refresh-bold-duotone" class="text-primary"></iconify-icon>
+            Cuộn xuống để tải thêm phòng
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const roomCards = Array.from(document.querySelectorAll("[data-room-item]"));
+            const sentinel = document.getElementById("rooms-lazy-sentinel");
+            if (!roomCards.length || !sentinel) return;
+
+            const batchSize = 8;
+            let visibleCount = Math.min(batchSize, roomCards.length);
+
+            roomCards.forEach((card, index) => {
+                if (index >= visibleCount) card.classList.add("hidden");
+            });
+
+            if (visibleCount >= roomCards.length) {
+                sentinel.remove();
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                const hit = entries.some(entry => entry.isIntersecting);
+                if (!hit) return;
+
+                const nextCount = Math.min(visibleCount + batchSize, roomCards.length);
+                for (let i = visibleCount; i < nextCount; i++) {
+                    roomCards[i].classList.remove("hidden");
+                }
+                visibleCount = nextCount;
+
+                if (visibleCount >= roomCards.length) {
+                    observer.disconnect();
+                    sentinel.remove();
+                }
+            }, { rootMargin: "0px 0px 200px 0px" });
+
+            observer.observe(sentinel);
+        });
+    </script>
+}

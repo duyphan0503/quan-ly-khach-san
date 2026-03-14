@@ -1,0 +1,385 @@
+@page "/admin/bookings/details/{id:int}"
+@model HotelManagement.Areas.Admin.Pages.Bookings.DetailsModel
+@using HotelManagement.Core.Models.Enums
+@{
+    ViewData["Title"] = "Chi Tiết Đặt Phòng - Minh Quang Luxury Hotel";
+
+    var statusTheme = Model.Booking.Status switch
+    {
+        BookingStatus.Confirmed => (Text: "Đã xác nhận", Color: "text-blue-400", Bg: "bg-blue-500/10", Border: "border-blue-500/20", Icon: "solar:check-read-bold-duotone"),
+        BookingStatus.CheckedIn => (Text: "Đã nhận phòng", Color: "text-emerald-400", Bg: "bg-emerald-500/10", Border: "border-emerald-500/20", Icon: "solar:key-bold-duotone"),
+        BookingStatus.CheckedOut => (Text: "Đã trả phòng", Color: "text-gray-400", Bg: "bg-gray-500/10", Border: "border-gray-500/20", Icon: "solar:archive-check-bold-duotone"),
+        BookingStatus.Cancelled => (Text: "Đã hủy", Color: "text-rose-400", Bg: "bg-danger/10", Border: "border-danger/20", Icon: "solar:close-square-bold-duotone"),
+        BookingStatus.Pending => (Text: "Chờ duyệt", Color: "text-amber-400", Bg: "bg-amber-500/10", Border: "border-amber-500/20", Icon: "solar:clock-circle-bold-duotone"),
+        _ => (Text: Model.Booking.Status.ToString(), Color: "text-gray-400", Bg: "bg-gray-500/10", Border: "border-gray-500/20", Icon: "solar:info-circle-bold-duotone")
+    };
+}
+
+<div class="animate-fade-up">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+            <div class="flex items-center gap-3 mb-2">
+                <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary w-fit">
+                    <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+                    <span>Quay lại danh sách đặt phòng</span>
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold font-outfit uppercase tracking-tight flex items-center gap-4">
+                ĐẶT PHÒNG <span class="text-gradient-accent">#@Model.Booking.Id</span>
+            </h1>
+            <div class="flex flex-wrap items-center gap-4 mt-4">
+                <div class="flex items-center gap-2 px-4 py-1.5 rounded-full @statusTheme.Bg @statusTheme.Border border backdrop-blur-md">
+                    <iconify-icon icon="@statusTheme.Icon" class="@statusTheme.Color text-lg"></iconify-icon>
+                    <span class="text-xs font-bold uppercase tracking-wider @statusTheme.Color">@statusTheme.Text</span>
+                </div>
+                <div class="text-content-muted text-sm flex items-center gap-2">
+                    <iconify-icon icon="solar:calendar-add-linear" class="text-lg"></iconify-icon>
+                    Tạo vào: @Model.Booking.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Bar -->
+        <div class="flex flex-wrap gap-3">
+            @if (Model.Booking.Status == BookingStatus.Pending)
+            {
+                <form method="post" asp-page-handler="Confirm" asp-route-id="@Model.Booking.Id" class="inline">
+                    <button type="submit" class="btn btn-luxury-outline h-12 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-400/70 hover:text-emerald-300 transition-all">
+                        <iconify-icon icon="solar:check-read-bold-duotone" class="text-xl mr-2"></iconify-icon> Xác nhận
+                    </button>
+                </form>
+                <form method="post" asp-page-handler="Cancel" asp-route-id="@Model.Booking.Id" class="inline">
+                    <button type="submit" class="btn btn-luxury-outline h-12 border-rose-500/50 text-rose-400 hover:bg-rose-500/15 hover:border-rose-400/70 hover:text-rose-300 transition-all">
+                        <iconify-icon icon="solar:close-square-bold-duotone" class="text-xl mr-2"></iconify-icon> Hủy yêu cầu
+                    </button>
+                </form>
+            }
+
+            @if (Model.Booking.Status == BookingStatus.Confirmed || Model.Booking.Status == BookingStatus.CheckedIn)
+            {
+                <a asp-page="./Edit" asp-route-id="@Model.Booking.Id" class="btn btn-luxury-outline h-12 border-blue-500/40 text-blue-300 hover:bg-blue-500/15 hover:border-blue-400/70 hover:text-blue-200 transition-all">
+                    <iconify-icon icon="solar:pen-new-square-bold-duotone" class="text-xl mr-2"></iconify-icon> Chỉnh sửa
+                </a>
+            }
+
+            @if (Model.Booking.Status == BookingStatus.Confirmed)
+            {
+                <form method="post" asp-page-handler="CheckIn" asp-route-id="@Model.Booking.Id" class="inline">
+                    <button type="submit" class="btn btn-luxury-outline h-12 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-400/70 hover:text-emerald-300 transition-all">
+                        <iconify-icon icon="solar:key-bold-duotone" class="text-xl mr-2"></iconify-icon> Nhận phòng
+                    </button>
+                </form>
+            }
+            
+            @if (Model.Booking.Status == BookingStatus.CheckedIn)
+            {
+                <a asp-page="/Invoices/Checkout" asp-route-bookingId="@Model.Booking.Id" class="btn btn-luxury-outline h-12 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-400/70 hover:text-emerald-300 transition-all">
+                    <iconify-icon icon="solar:bill-list-bold-duotone" class="text-xl mr-2"></iconify-icon> Thanh toán & Trả phòng
+                </a>
+            }
+        </div>
+    </div>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Main Content (Left Col) -->
+        <div class="lg:col-span-8 space-y-8">
+            
+            <!-- Reservation Details Card -->
+            <div class="glass-card overflow-hidden">
+                <div class="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                    <h3 class="text-xl font-bold font-outfit uppercase tracking-widest flex items-center gap-3">
+                        <iconify-icon icon="solar:home-2-bold-duotone" class="text-accent text-2xl"></iconify-icon>
+                        Chi tiết lưu trú
+                    </h3>
+                    <div class="px-4 py-2 bg-accent/10 border border-accent/20 rounded-xl">
+                        <span class="text-accent font-bold font-outfit">@Model.Booking.NumberOfNights ĐÊM</span>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <!-- Dates -->
+                        <div class="relative pl-10">
+                            <!-- Timeline visual -->
+                            <div class="absolute left-[19px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-emerald-400 via-accent to-rose-400 opacity-20"></div>
+                            
+                            <div class="space-y-12">
+                                <div class="relative">
+                                    <div class="absolute -left-[28px] top-1 w-4 h-4 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] border-4 border-brand"></div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold mb-1">Ngày nhận phòng</p>
+                                    <p class="text-xl text-content-primary font-bold font-outfit">@Model.Booking.CheckIn.ToString("dd/MM/yyyy")</p>
+                                    <p class="text-xs text-emerald-400 font-medium mt-1">Check-in từ 14:00</p>
+                                </div>
+                                <div class="relative">
+                                    <div class="absolute -left-[28px] top-1 w-4 h-4 rounded-full bg-rose-400 shadow-[0_0_10px_rgba(251,113,133,0.5)] border-4 border-brand"></div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold mb-1">Ngày trả phòng</p>
+                                    <p class="text-xl text-content-primary font-bold font-outfit">@Model.Booking.CheckOut.ToString("dd/MM/yyyy")</p>
+                                    <p class="text-xs text-rose-400 font-medium mt-1">Check-out trước 12:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Room and Guests -->
+                        <div class="space-y-8">
+                            <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-colors">
+                                <p class="text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold mb-4">Hạng phòng & Số phòng</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-accent text-brand flex items-center justify-center font-bold text-2xl shadow-lg shadow-accent/20">
+                                        @Model.Booking.Room?.RoomNumber
+                                    </div>
+                                    <div>
+                                        <p class="text-lg text-content-primary font-bold uppercase tracking-wider font-outfit">@Model.Booking.Room?.RoomType?.Name</p>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <iconify-icon icon="solar:users-group-rounded-linear" class="text-accent"></iconify-icon>
+                                            <span class="text-sm text-content-muted font-medium">@Model.Booking.NumberOfGuests Khách lưu trú</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.Booking.Notes))
+                            {
+                                <div class="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/10">
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-amber-500/70 font-bold mb-2">Yêu cầu đặc biệt</p>
+                                    <p class="text-sm text-content-secondary italic leading-relaxed whitespace-pre-line">"@Model.Booking.Notes"</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Section (Only if Checked-in) -->
+            @if (Model.Booking.Status == BookingStatus.CheckedIn && Model.DraftInvoice != null)
+            {
+                <div class="glass-card overflow-hidden">
+                    <div class="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                        <h3 class="text-xl font-bold font-outfit uppercase tracking-widest flex items-center gap-3">
+                            <iconify-icon icon="solar:cup-hot-bold-duotone" class="text-accent text-2xl"></iconify-icon>
+                            Dịch vụ phát sinh
+                        </h3>
+                        <div class="flex items-center gap-2">
+                             <span class="text-xs text-content-muted font-medium uppercase tracking-wider">Tạm tính:</span>
+                             <span class="text-xl text-accent font-bold font-mono">@Model.DraftInvoice.GrandTotal.ToString("N0")₫</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4">
+                        <div class="overflow-x-auto rounded-xl">
+                            <table class="table w-full border-separate border-spacing-y-2">
+                                <thead class="text-[10px] uppercase tracking-[0.2em] text-content-muted">
+                                    <tr>
+                                        <th class="px-6 py-4">Dịch vụ</th>
+                                        <th class="text-center px-6 py-4">Đơn giá</th>
+                                        <th class="text-center px-6 py-4">Số lượng</th>
+                                        <th class="text-right px-6 py-4">Thành tiền</th>
+                                        <th class="w-10"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var detail in Model.DraftInvoice.InvoiceDetails)
+                                    {
+                                        <tr class="group bg-white/[0.02] hover:bg-white/[0.05] transition-all rounded-xl border border-white/5">
+                                            <td class="px-6 py-4 first:rounded-l-xl">
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold text-content-primary">@detail.Description</span>
+                                                    @if (detail.ServiceId != null) 
+                                                    { 
+                                                        <span class="text-[10px] text-content-muted uppercase tracking-wider">Service #@detail.ServiceId</span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="text-center px-6 py-4 font-mono text-sm">@detail.UnitPrice.ToString("N0")₫</td>
+                                            <td class="text-center px-6 py-4">
+                                                <span class="px-3 py-1 rounded-lg bg-surface-3 border border-white/5 font-bold text-accent">@detail.Quantity</span>
+                                            </td>
+                                            <td class="text-right px-6 py-4 font-mono font-bold text-accent">@detail.LineTotal.ToString("N0")₫</td>
+                                            <td class="px-6 py-4 last:rounded-r-xl">
+                                                @if (detail.ServiceId != null) 
+                                                {
+                                                    <form method="post" asp-page-handler="RemoveService" asp-route-id="@Model.Booking.Id" asp-route-detailId="@detail.Id">
+                                                        <button type="submit" class="p-2 rounded-lg text-content-muted hover:text-rose-400 hover:bg-rose-500/10 transition-all opacity-0 group-hover:opacity-100" title="Xóa">
+                                                            <iconify-icon icon="solar:trash-bin-minimalistic-linear" class="text-lg"></iconify-icon>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Add Service Footer -->
+                    <div class="p-8 bg-white/[0.02] border-t border-white/5">
+                        <form method="post" asp-page-handler="AddService" asp-route-id="@Model.Booking.Id" data-service-total-form class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+                            <div class="form-control md:col-span-5">
+                                <label class="label"><span class="label-text text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold">Thêm dịch vụ mới</span></label>
+                                <div class="relative">
+                                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-accent">
+                                        <iconify-icon icon="solar:add-circle-linear" class="text-xl"></iconify-icon>
+                                    </div>
+                                    <select name="serviceId" id="svc-select" data-service-select class="select select-bordered w-full h-14 pl-12 bg-surface-2/50 border-white/10 rounded-2xl focus:border-accent text-sm" required>
+                                        <option value="" disabled selected>Chọn dịch vụ tiêu dùng...</option>
+                                        @foreach (var svc in Model.ActiveServices)
+                                        {
+                                            <option value="@svc.Id" data-price="@svc.Price">@svc.Name (@svc.Price.ToString("N0")₫ / @svc.Unit)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-control md:col-span-2">
+                                <label class="label"><span class="label-text text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold">Số lượng</span></label>
+                                <input type="number" name="quantity" id="svc-quantity" data-service-quantity value="1" min="1" max="99" class="input input-bordered h-14 bg-surface-2/50 border-white/10 text-center rounded-2xl focus:border-accent font-bold" required />
+                            </div>
+                            <div class="md:col-span-2 text-right">
+                                <label class="label justify-end"><span class="label-text text-[10px] uppercase tracking-[0.2em] text-accent font-bold">Thành tiền</span></label>
+                                <div id="svc-total" data-service-total class="h-14 flex items-center justify-end text-xl font-bold text-accent font-mono">
+                                    0₫
+                                </div>
+                            </div>
+                            <div class="md:col-span-3">
+                                <button type="submit" class="btn btn-luxury-outline w-full h-14 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-400/70 hover:text-emerald-300 transition-all">
+                                    <iconify-icon icon="solar:cart-large-bold-duotone" class="text-xl mr-1"></iconify-icon>
+                                    Xác nhận
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar Content (Right Col) -->
+        <div class="lg:col-span-4 space-y-8">
+            
+            <!-- Guest Profile Card -->
+            <div class="glass-card p-8 text-center relative overflow-hidden group">
+                <!-- Decorative element -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl -mr-10 -mt-10 group-hover:bg-accent/10 transition-colors"></div>
+                
+                <div class="relative z-10">
+                    @{
+                        var finalAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.Normalize(Model.Booking.Guest?.AvatarUrl);
+                    }
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-accent to-accent-soft mx-auto mb-6 flex items-center justify-center text-brand text-4xl font-black shadow-2xl border-4 border-white/10 overflow-hidden">
+                        @if (finalAvatarUrl != null)
+                        {
+                            <img src="@finalAvatarUrl" 
+                                 alt="Avatar" 
+                                 class="w-full h-full object-cover"
+                                 data-avatar-image
+                                 data-avatar-fallback="#booking-details-avatar-fallback" />
+                            <span id="booking-details-avatar-fallback" class="mq-avatar-fallback-block">@(Model.Booking.Guest?.FullName?.FirstOrDefault() ?? 'G')</span>
+                        }
+                        else
+                        {
+                            <span>@(Model.Booking.Guest?.FullName?.FirstOrDefault() ?? 'G')</span>
+                        }
+                    </div>
+                    <h3 class="text-2xl font-bold font-outfit text-white mb-1">@Model.Booking.Guest?.FullName</h3>
+                    <p class="text-xs uppercase tracking-[0.2em] text-accent font-bold">Khách lưu trú</p>
+                    
+                    <div class="mt-8 space-y-4 text-left">
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                            <iconify-icon icon="solar:phone-bold-duotone" class="text-accent text-xl"></iconify-icon>
+                            <div>
+                                <p class="text-[10px] uppercase text-content-muted font-bold">Điện thoại</p>
+                                <p class="text-sm font-mono font-bold text-white">@Model.Booking.Guest?.PhoneNumber</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                            <iconify-icon icon="solar:letter-bold-duotone" class="text-accent text-xl"></iconify-icon>
+                            <div class="overflow-hidden">
+                                <p class="text-[10px] uppercase text-content-muted font-bold">Email</p>
+                                <p class="text-sm font-medium text-white truncate">@(Model.Booking.Guest?.Email ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a asp-page="/Guests/Details" asp-route-id="@Model.Booking.GuestId" class="mt-8 group flex items-center justify-center gap-2 text-xs font-bold text-accent uppercase tracking-widest hover:underline underline-offset-8 transition-all">
+                        Hồ sơ chi tiết
+                        <iconify-icon icon="solar:arrow-right-linear" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Financial Summary Card -->
+            @if (Model.DraftInvoice != null)
+            {
+                <div class="glass-card bg-gradient-to-br from-indigo-900 via-brand to-brand border-white/10 p-8 shadow-2xl relative overflow-hidden group">
+                    <!-- Mesh gradients -->
+                    <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.15),transparent)]"></div>
+                    <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(205,168,115,0.1),transparent)]"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-10">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-[0.25em] text-indigo-200/50 font-bold mb-1">Phiếu thanh toán</p>
+                                <p class="text-xs font-mono text-indigo-300">#@Model.DraftInvoice.InvoiceNumber</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md">
+                                <iconify-icon icon="solar:bill-check-bold-duotone" class="text-2xl text-accent"></iconify-icon>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-10">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-indigo-200/70 font-medium tracking-wide">Tiền phòng</span>
+                                <span class="text-white font-mono font-bold">@Model.Booking.TotalAmount.ToString("N0")₫</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-indigo-200/70 font-medium tracking-wide">Dịch vụ phát sinh</span>
+                                <span class="text-white font-mono font-bold">@((Model.DraftInvoice.GrandTotal - Model.Booking.TotalAmount).ToString("N0"))₫</span>
+                            </div>
+                            <div class="pt-4 border-t border-white/10 flex justify-between items-end">
+                                <span class="text-xs uppercase tracking-widest text-accent font-black">TỔNG CỘNG</span>
+                                <div class="text-right">
+                                    <span class="text-3xl font-black text-white font-outfit tracking-tighter shadow-sm">@Model.DraftInvoice.GrandTotal.ToString("N0")</span>
+                                    <span class="text-lg text-accent font-bold ml-1">₫</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a asp-page="/Invoices/Checkout" asp-route-bookingId="@Model.Booking.Id" class="w-full btn btn-luxury h-16 rounded-2xl shadow-[0_10px_30px_rgba(205,168,115,0.2)]">
+                            TIẾN HÀNH THANH TOÁN
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="glass-card p-8 border-white/5 bg-white/[0.01]">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold mb-1">Tổng tiền dự kiến</p>
+                            <p class="text-[10px] text-content-muted/50 font-sans italic">Bao gồm thuế & phí phòng</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-white/[0.03] flex items-center justify-center">
+                            <iconify-icon icon="solar:wad-of-money-bold-duotone" class="text-xl text-accent"></iconify-icon>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                         <span class="text-4xl font-extrabold text-white font-outfit tracking-tighter">@Model.Booking.TotalAmount.ToString("N0")</span>
+                         <span class="text-xl text-accent font-bold ml-1">₫</span>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10 flex gap-3">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-orange-500 text-lg shrink-0 mt-0.5"></iconify-icon>
+                        <p class="text-[10px] text-content-muted leading-relaxed">Giá chưa bao gồm các chi phí dịch vụ mini-bar, giặt ủi hoặc dịch vụ khác phát sinh trong quá trình lưu trú.</p>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/pages/admin/bookings/details.js" asp-append-version="true" defer></script>
+}

@@ -1,0 +1,251 @@
+@page "/admin/room-types/edit/{id:int}"
+@model HotelManagement.Areas.Admin.Pages.RoomTypes.EditModel
+@{
+    ViewData["Title"] = "Sửa Loại Phòng";
+}
+
+<div class="max-w-6xl mx-auto pb-12">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+            <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary mb-3 w-fit">
+                <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+                Quay lại danh sách loại phòng
+            </a>
+            <h2 class="text-3xl font-bold justify-start text-content-primary font-outfit tracking-tight flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                    <iconify-icon icon="solar:pen-bold-duotone" class="h-6 w-6"></iconify-icon>
+                </div>
+                Cập Nhật Loại Phòng
+            </h2>
+            <p class="text-content-secondary mt-2">Chỉnh sửa thông tin cơ bản, hình ảnh đại diện và các tiện nghi của phòng.</p>
+        </div>
+        <div class="flex gap-2">
+            <!-- Delete button moved to danger zone -->
+        </div>
+    </div>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="RoomType.Id" />
+        <input type="hidden" asp-for="RoomType.ImageUrl" />
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+            <!-- Cột Form chính -->
+            <div class="xl:col-span-2 space-y-8">
+                <!-- Card 1: Thông tin cơ bản -->
+                <div class="card bg-surface-2/80 backdrop-blur-md border border-bdr-strong/50 shadow-xl overflow-hidden relative group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
+                    <div class="card-body p-6 md:p-8">
+                        <h3 class="text-lg font-bold text-content-primary mb-6 flex items-center gap-2">
+                            <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary text-xl"></iconify-icon>
+                            Thông tin cơ bản
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-control w-full md:col-span-2">
+                                <label asp-for="RoomType.Name" class="label text-content-secondary font-medium pb-1"></label>
+                                <input asp-for="RoomType.Name" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" />
+                                <span asp-validation-for="RoomType.Name" class="text-error text-sm mt-1 font-medium"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="RoomType.BasePrice" class="label text-content-secondary font-medium pb-1"></label>
+                                <div class="join w-full shadow-sm">
+                                    <input asp-for="RoomType.BasePrice" asp-format="{0:0}" type="number" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary font-mono focus:border-primary join-item w-full" />
+                                    <span class="btn btn-disabled join-item border-bdr-strong bg-surface-3 text-content-secondary font-medium">VNĐ</span>
+                                </div>
+                                <span asp-validation-for="RoomType.BasePrice" class="text-error text-sm mt-1 font-medium"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="RoomType.MaxOccupancy" class="label text-content-secondary font-medium pb-1"></label>
+                                <div class="join w-full shadow-sm">
+                                    <input asp-for="RoomType.MaxOccupancy" type="number" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary join-item w-full" />
+                                    <span class="btn btn-disabled join-item border-bdr-strong bg-surface-3 text-content-secondary">
+                                        <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="h-5 w-5"></iconify-icon>
+                                    </span>
+                                </div>
+                                <span asp-validation-for="RoomType.MaxOccupancy" class="text-error text-sm mt-1 font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Hình ảnh & Chi tiết -->
+                <div class="card bg-surface-2/80 backdrop-blur-md border border-bdr-strong/50 shadow-xl overflow-hidden relative group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-secondary/50 group-hover:bg-secondary transition-colors"></div>
+                    <div class="card-body p-6 md:p-8">
+                        <h3 class="text-lg font-bold text-content-primary mb-6 flex items-center gap-2">
+                            <iconify-icon icon="solar:gallery-minimalistic-bold-duotone" class="text-secondary text-xl"></iconify-icon>
+                            Hình ảnh & Tiện nghi
+                        </h3>
+
+                        <div class="space-y-6">
+                            <div class="form-control w-full">
+                                <label class="label text-content-secondary font-medium pb-2 flex justify-between">
+                                    <span>Đại diện trực quan</span>
+                                    @if (!string.IsNullOrEmpty(Model.RoomType.ImageUrl))
+                                    {
+                                        <span class="badge badge-success bg-success/10 text-success border-none text-xs font-medium">Đã tải lên</span>
+                                    }
+                                </label>
+                                <div class="w-full relative">
+                                    <div class="w-full h-64 rounded-2xl border-2 border-dashed border-bdr-strong hover:border-primary/50 flex flex-col items-center justify-center overflow-hidden bg-surface-1/30 hover:bg-surface-1/80 transition-all cursor-pointer group/upload shadow-inner relative" data-click-target="UploadImage">
+                                        
+                                        <!-- Zone to render icon if no image -->
+                                        <div id="upload-placeholder" class="text-center z-10 transition-transform duration-300 group-hover/upload:-translate-y-2 @(!string.IsNullOrEmpty(Model.RoomType.ImageUrl) ? "hidden" : "")">
+                                            <div class="w-16 h-16 rounded-full bg-surface-2 border border-bdr-strong flex items-center justify-center mx-auto mb-4 shadow-lg group-hover/upload:shadow-primary/20 group-hover/upload:text-primary transition-all">
+                                                <iconify-icon icon="solar:camera-add-bold-duotone" class="h-8 w-8 text-inherit"></iconify-icon>
+                                            </div>
+                                            <p class="text-content-primary font-medium mb-1 text-lg">Thay đổi hình ảnh đại diện</p>
+                                            <p class="text-sm text-content-muted font-light mb-1">Click hoặc kéo thả ảnh (JPG, PNG)</p>
+                                            <p class="text-sm text-content-muted font-light inline-block px-3 py-1 rounded-full bg-surface-3/50 mt-2 border border-bdr-strong/30">Tỉ lệ 3:2</p>
+                                        </div>
+
+                                        <!-- Image Preview (hidden correctly dynamically or by class if not set) -->
+                                        <img id="preview-img" src="@(Model.RoomType.ImageUrl ?? "#")" alt="Preview" class="absolute inset-0 w-full h-full object-cover @(string.IsNullOrEmpty(Model.RoomType.ImageUrl) ? "hidden" : "") z-20" />
+                                        
+                                        <!-- Overlay for hover on existing image -->
+                                        <div id="preview-overlay" class="absolute inset-0 bg-base-900/60 backdrop-blur-sm opacity-0 hover:opacity-100 @(!string.IsNullOrEmpty(Model.RoomType.ImageUrl) ? "opacity-0 group-hover/upload:opacity-100" : "hidden") transition-all duration-300 flex flex-col items-center justify-center z-30">
+                                            <div class="w-14 h-14 rounded-full bg-surface-2 border border-bdr-strong flex items-center justify-center mb-3 shadow-xl transform scale-90 group-hover/upload:scale-100 transition-transform duration-300">
+                                                <iconify-icon icon="solar:pen-bold-duotone" class="h-7 w-7 text-content-primary"></iconify-icon>
+                                            </div>
+                                            <span class="text-content-primary font-medium tracking-wide shadow-sm">Tải hình ảnh mới lên</span>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="UploadImage" name="UploadImage" accept="image/*" class="hidden" />
+                                </div>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="RoomType.Amenities" class="label text-content-secondary font-medium pb-1"></label>
+                                <input asp-for="RoomType.Amenities" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" />
+                                <span asp-validation-for="RoomType.Amenities" class="text-error text-sm mt-1 font-medium"></span>
+                            </div>
+
+                            <div class="form-control w-full">
+                                <label asp-for="RoomType.Description" class="label text-content-secondary font-medium pb-1"></label>
+                                <textarea asp-for="RoomType.Description" class="textarea textarea-bordered bg-surface-1 border-bdr-strong text-content-primary min-h-[120px] focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"></textarea>
+                                <span asp-validation-for="RoomType.Description" class="text-error text-sm mt-1 font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột hiển thị Xem trước Tóm tắt (Bên phải) -->
+            <div class="xl:col-span-1 space-y-6 xl:sticky xl:top-24">
+                <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden group backdrop-blur-md">
+                    <div class="relative overflow-hidden border-b border-bdr-strong/30">
+                        @if (!string.IsNullOrEmpty(Model.RoomType.ImageUrl))
+                        {
+                            <figure class="aspect-[3/2] w-full relative">
+                                <img src="@Model.RoomType.ImageUrl" alt="@Model.RoomType.Name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" id="right-side-preview" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-base-900/90 via-base-900/20 to-transparent"></div>
+                                <div class="absolute bottom-4 left-4 flex gap-2">
+                                    <span class="badge bg-surface-2/90 text-content-primary border border-bdr-strong/50 backdrop-blur-md px-3 py-1 font-medium shadow-sm">
+                                        <iconify-icon icon="solar:users-group-rounded-bold-duotone" class="mr-1.5 text-primary"></iconify-icon>
+                                        <span id="right-side-occupancy">@Model.RoomType.MaxOccupancy</span> khách
+                                    </span>
+                                </div>
+                            </figure>
+                        }
+                        else
+                        {
+                            <div class="bg-surface-1 w-full aspect-[3/2] flex flex-col items-center justify-center text-content-muted border-b border-bdr-strong relative overflow-hidden group-hover:bg-surface-1/80 transition-colors" id="right-side-empty-preview">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-surface-3/50 to-transparent"></div>
+                                <iconify-icon icon="solar:gallery-remove-bold-duotone" class="h-16 w-16 mb-3 text-content-muted/50 z-10"></iconify-icon>
+                                <span class="font-medium tracking-wide z-10 text-sm">Chưa có hình ảnh</span>
+                            </div>
+                            <!-- placeholder cho JS cập nhật nếu chọn ảnh mới -->
+                            <figure class="aspect-[3/2] w-full relative hidden" id="right-side-has-preview">
+                                <img src="#" alt="Preview" class="w-full h-full object-cover" id="right-side-preview" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-base-900/90 via-base-900/20 to-transparent"></div>
+                            </figure>
+                        }
+                    </div>
+                    <div class="card-body p-6 relative">
+                        <div class="absolute -top-6 right-6 w-12 h-12 rounded-2xl bg-primary text-base-900 flex items-center justify-center shadow-lg shadow-primary/30 rotate-3 transform group-hover:rotate-6 transition-transform">
+                            <iconify-icon icon="solar:star-fall-bold" class="h-6 w-6"></iconify-icon>
+                        </div>
+                        <p class="text-xs font-semibold tracking-widest text-primary uppercase mb-1">Cập Nhật</p>
+                        <h3 class="text-2xl font-bold text-content-primary leading-tight mb-4 font-outfit" id="right-side-name">@Model.RoomType.Name</h3>
+                        
+                        <div class="bg-surface-1/50 rounded-xl p-4 border border-bdr-strong/30">
+                            <p class="text-sm text-content-secondary mb-1">Mức giá mỗi đêm</p>
+                            <p class="text-xl font-mono text-content-primary font-bold inline-flex items-baseline gap-1">
+                                <span id="right-side-price">@Model.RoomType.BasePrice.ToString("N0")</span> <span class="text-primary text-sm font-medium tracking-wide">VNĐ</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Actions Box -->
+                <div class="card bg-danger/5 border border-danger/20 shadow-sm relative overflow-hidden backdrop-blur-md">
+                    <div class="absolute left-0 top-0 w-1 h-full bg-danger"></div>
+                    <div class="card-body p-5">
+                       <h4 class="text-danger font-bold flex items-center gap-2 mb-2">
+                            <iconify-icon icon="solar:danger-circle-bold-duotone" class="text-lg"></iconify-icon>
+                            Khu vực nguy hiểm
+                       </h4>
+                       <p class="text-content-secondary text-sm mb-4">
+                           Xóa loại phòng này vĩnh viễn khỏi hệ thống. Thao tác không thể hoàn tác.
+                       </p>
+                       <button type="button" data-show-modal="delete_modal" class="btn btn-error btn-outline btn-sm w-full hover:!bg-danger hover:!border-danger hover:!text-base-900 shadow-sm transition-all hover:-translate-y-0.5 transition-all duration-300">
+                            <iconify-icon icon="solar:trash-bin-trash-bold-duotone" class="h-4 w-4 mr-1"></iconify-icon>
+                            Ngừng kinh doanh & Xóa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 sticky bottom-6 z-40 bg-surface-2/95 p-4 rounded-2xl backdrop-blur-xl border border-bdr-strong/80 shadow-[0_8px_30px_rgb(0,0,0,0.5)] mt-8">
+            <a asp-page="./Index" class="btn btn-ghost text-content-secondary hover:text-content-primary hover:bg-surface-3 transition-colors px-6 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300">Hủy bỏ</a>
+            <button type="submit" class="btn bg-primary hover:bg-primary/90 text-content-primary border-none shadow-lg shadow-primary/20 hover:shadow-primary/40 px-8 transition-all hover:scale-[1.02] min-w-[160px] hover:-translate-y-0.5 transition-all duration-300">
+                <iconify-icon icon="solar:diskette-bold-duotone" class="h-5 w-5 mr-2"></iconify-icon>
+                Lưu Thay Đổi
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<dialog id="delete_modal" class="modal">
+  <div class="modal-box bg-surface-2 border border-bdr-strong shadow-2xl p-0 overflow-hidden">
+    <div class="bg-danger/10 p-6 text-center border-b border-danger/20">
+        <div class="w-16 h-16 rounded-full bg-danger/20 text-danger flex items-center justify-center mx-auto mb-4">
+            <iconify-icon icon="solar:danger-triangle-bold-duotone" class="h-10 w-10"></iconify-icon>
+        </div>
+        <h3 class="font-bold text-2xl text-content-primary mb-2">Cảnh báo xóa!</h3>
+        <p class="text-content-secondary">Bạn đang chuẩn bị xóa một dữ liệu quan trọng.</p>
+    </div>
+    <div class="p-6">
+        <p class="text-content-secondary text-center mb-6">Bạn có chắc chắn muốn xóa loại phòng <strong class="text-danger">@Model.RoomType.Name</strong> này không? Dữ liệu không thể khôi phục sau khi xóa.</p>
+        
+        <div class="flex gap-4">
+            <form method="dialog" class="flex-1 w-full">
+                <button class="btn btn-ghost w-full border border-bdr-strong hover:bg-surface-3 text-content-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300">
+                    Giữ lại
+                </button>
+            </form>
+            <form method="post" asp-page-handler="Delete" asp-route-id="@Model.RoomType.Id" class="flex-1 w-full">
+                <button type="submit" class="btn btn-error w-full text-base-900 font-bold hover:shadow-lg hover:shadow-danger/30 transition-shadow">
+                    <iconify-icon icon="solar:trash-bin-minimalistic-bold" class="mr-1"></iconify-icon>
+                    Có, xóa ngay
+                </button>
+            </form>
+        </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop bg-base-900/60 backdrop-blur-sm">
+    <button>close</button>
+  </form>
+</dialog>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/pages/admin/room-types/edit.js" asp-append-version="true" defer></script>
+}

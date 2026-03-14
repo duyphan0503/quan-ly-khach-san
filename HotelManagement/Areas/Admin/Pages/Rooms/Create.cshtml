@@ -1,0 +1,263 @@
+@page "/admin/rooms/create"
+@model HotelManagement.Areas.Admin.Pages.Rooms.CreateModel
+@{
+    ViewData["Title"] = "Thêm Phòng Mới";
+}
+
+<div class="mb-8 space-y-4">
+    <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary">
+        <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
+        <span>Quay lại danh sách phòng</span>
+    </a>
+
+    <partial name="~/Areas/Admin/Pages/Shared/_AdminPageHeader.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPageHeaderModel
+    {
+        HeadingTag = "h2",
+        Icon = "solar:bed-bold-duotone",
+        Title = "Thêm Phòng Mới",
+        Subtitle = "Thiết lập phòng, trạng thái vận hành, hình ảnh và ghi chú nội bộ"
+    }' />
+</div>
+
+<partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
+
+<form method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+    <div class="space-y-6 xl:col-span-8">
+        <div class="card overflow-hidden rounded-3xl border border-bdr-strong/60 bg-surface-2/70 shadow-2xl backdrop-blur-xl">
+            <div class="card-body p-6 md:p-7">
+                <div class="mb-6 flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/15 text-primary">
+                        <iconify-icon icon="solar:settings-bold-duotone" class="h-5 w-5"></iconify-icon>
+                    </span>
+                    <div>
+                        <h3 class="text-lg font-bold text-content-primary">Thông tin vận hành phòng</h3>
+                        <p class="text-sm text-content-muted">Nhập mã phòng, tầng, loại phòng và trạng thái ban đầu.</p>
+                    </div>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="mb-5 rounded-xl border border-error/40 bg-error/10 p-3 text-sm text-error"></div>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div class="form-control">
+                        <label asp-for="Room.RoomNumber" class="label">
+                            <span class="label-text text-content-secondary font-medium">Số phòng <span class="text-danger">*</span></span>
+                        </label>
+                        <input asp-for="Room.RoomNumber" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary" placeholder="VD: 101" />
+                        <span asp-validation-for="Room.RoomNumber" class="text-danger text-sm mt-1"></span>
+                    </div>
+
+                    <div class="form-control">
+                        <label asp-for="Room.Floor" class="label">
+                            <span class="label-text text-content-secondary font-medium">Tầng <span class="text-danger">*</span></span>
+                        </label>
+                        <input asp-for="Room.Floor" type="number" class="input input-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary" placeholder="VD: 1" />
+                        <span asp-validation-for="Room.Floor" class="text-danger text-sm mt-1"></span>
+                    </div>
+
+                    <div class="form-control">
+                        <label asp-for="Room.RoomTypeId" class="label">
+                            <span class="label-text text-content-secondary font-medium">Loại phòng <span class="text-danger">*</span></span>
+                        </label>
+                        <select asp-for="Room.RoomTypeId" asp-items="Model.RoomTypes" class="select select-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary">
+                            <option value="">-- Chọn loại phòng --</option>
+                        </select>
+                        <span asp-validation-for="Room.RoomTypeId" class="text-danger text-sm mt-1"></span>
+                    </div>
+
+                    <div class="form-control">
+                        <label asp-for="Room.Status" class="label">
+                            <span class="label-text text-content-secondary font-medium">Trạng thái</span>
+                        </label>
+                        <select asp-for="Room.Status" asp-items="Model.RoomStatuses" class="select select-bordered bg-surface-1 border-bdr-strong text-content-primary focus:border-primary"></select>
+                        <span asp-validation-for="Room.Status" class="text-danger text-sm mt-1"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card overflow-hidden rounded-3xl border border-bdr-strong/60 bg-surface-2/70 shadow-2xl backdrop-blur-xl">
+            <div class="card-body p-6 md:p-7">
+                <div class="mb-5 flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/15 text-primary">
+                        <iconify-icon icon="solar:gallery-bold-duotone" class="h-5 w-5"></iconify-icon>
+                    </span>
+                    <div>
+                        <h3 class="text-lg font-bold text-content-primary">Hình ảnh phòng</h3>
+                        <p class="text-sm text-content-muted">Thêm ảnh đại diện để tăng trực quan trong quản trị và đặt phòng.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5">
+                    <div id="image-preview" class="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-bdr-strong/70 bg-surface-1/40 transition-all duration-300 hover:border-primary/50 hover:bg-surface-1/70">
+                        <img id="preview-img" src="#" alt="Xem trước ảnh phòng" class="absolute inset-0 hidden h-full w-full object-cover" />
+
+                        <div id="upload-placeholder" class="absolute inset-0 flex items-center justify-center">
+                            <div class="flex flex-col items-center gap-3 text-center">
+                                <div class="grid h-14 w-14 place-items-center rounded-full border border-white/15 bg-surface-2/80 text-content-secondary transition-colors duration-300 group-hover:text-primary">
+                                    <iconify-icon icon="solar:camera-bold-duotone" class="h-7 w-7"></iconify-icon>
+                                </div>
+                                <p class="text-sm font-semibold text-content-primary">Nhấn để tải ảnh</p>
+                            </div>
+                        </div>
+
+                        <div id="preview-overlay" class="absolute inset-0 hidden items-center justify-center bg-base-900/55 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                            <div class="rounded-xl border border-white/20 bg-surface-2/85 px-4 py-2 text-sm font-medium text-content-primary">
+                                Thay đổi hình ảnh
+                            </div>
+                        </div>
+
+                        <p class="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-content-muted">
+                            JPG/PNG/WEBP, khuyến nghị tỉ lệ 4:3
+                        </p>
+                    </div>
+                    <input asp-for="UploadImage" type="file" id="UploadImage" accept="image/*" class="hidden" />
+                    <p class="-mt-1 text-xs text-content-muted">Nếu không chọn ảnh, phòng vẫn được tạo bình thường.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card overflow-hidden rounded-3xl border border-bdr-strong/60 bg-surface-2/70 shadow-2xl backdrop-blur-xl">
+            <div class="card-body p-6 md:p-7">
+                <div class="mb-4 flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/15 text-primary">
+                        <iconify-icon icon="solar:notes-bold-duotone" class="h-5 w-5"></iconify-icon>
+                    </span>
+                    <h3 class="text-lg font-bold text-content-primary">Ghi chú nội bộ</h3>
+                </div>
+                <div class="form-control">
+                    <label asp-for="Room.Notes" class="label">
+                        <span class="label-text text-content-secondary font-medium">Ghi chú phòng (tuỳ chọn)</span>
+                    </label>
+                    <textarea asp-for="Room.Notes" class="textarea textarea-bordered min-h-[140px] bg-surface-1 border-bdr-strong text-content-primary focus:border-primary" placeholder="Thông tin bảo trì, lưu ý kỹ thuật hoặc các điểm đặc thù của phòng..."></textarea>
+                    <span asp-validation-for="Room.Notes" class="text-danger text-sm mt-1"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="xl:col-span-4">
+        <div class="sticky top-24 space-y-5">
+            <div class="card overflow-hidden rounded-3xl border border-bdr-strong/60 bg-gradient-to-br from-surface-2 to-surface-2/80 shadow-2xl backdrop-blur-xl">
+                <div class="card-body p-6">
+                    <h3 class="mb-4 flex items-center gap-2 text-lg font-bold text-content-primary">
+                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/15 text-primary">
+                            <iconify-icon icon="solar:eye-bold-duotone" class="h-4 w-4"></iconify-icon>
+                        </span>
+                        Tóm tắt phòng mới
+                    </h3>
+
+                    <div class="space-y-3 rounded-2xl border border-white/10 bg-black/10 p-4 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Số phòng</span>
+                            <strong id="summary-room-number" class="text-content-primary">@Model.Room.RoomNumber</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Tầng</span>
+                            <strong id="summary-floor" class="text-content-primary">@Model.Room.Floor</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Loại phòng</span>
+                            <strong id="summary-room-type" class="text-content-primary">-</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-content-secondary">Trạng thái</span>
+                            <strong id="summary-status" class="text-content-primary">-</strong>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-content-secondary">
+                        <p class="font-semibold text-primary">Quy trình gợi ý</p>
+                        <p class="mt-1">Hoàn thiện thông tin vận hành trước, sau đó thêm ảnh và ghi chú để dữ liệu phòng đồng nhất ngay từ đầu.</p>
+                    </div>
+
+                    <div class="mt-6 flex flex-col gap-3 border-t border-bdr-strong/50 pt-5">
+                        <button type="submit" class="btn bg-primary text-content-primary border-none shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-primary/40">
+                            <iconify-icon icon="solar:diskette-bold-duotone" class="h-5 w-5"></iconify-icon>
+                            Lưu Phòng Mới
+                        </button>
+                        <a asp-page="./Index" class="btn btn-ghost border border-bdr-strong text-content-secondary transition-all duration-300 hover:-translate-y-0.5 hover:text-content-primary">
+                            Hủy và quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const roomNumberInput = document.getElementById('Room_RoomNumber');
+            const floorInput = document.getElementById('Room_Floor');
+            const roomTypeSelect = document.getElementById('Room_RoomTypeId');
+            const statusSelect = document.getElementById('Room_Status');
+            const uploadInput = document.getElementById('UploadImage');
+            const imagePreviewShell = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const previewOverlay = document.getElementById('preview-overlay');
+            const uploadPlaceholder = document.getElementById('upload-placeholder');
+
+            const summaryRoomNumber = document.getElementById('summary-room-number');
+            const summaryFloor = document.getElementById('summary-floor');
+            const summaryRoomType = document.getElementById('summary-room-type');
+            const summaryStatus = document.getElementById('summary-status');
+
+            function updateSummary() {
+                if (summaryRoomNumber && roomNumberInput) {
+                    summaryRoomNumber.textContent = roomNumberInput.value?.trim() || '-';
+                }
+                if (summaryFloor && floorInput) {
+                    summaryFloor.textContent = floorInput.value?.trim() || '-';
+                }
+                if (summaryRoomType && roomTypeSelect) {
+                    const roomTypeText = roomTypeSelect.options[roomTypeSelect.selectedIndex]?.text || '-';
+                    summaryRoomType.textContent = roomTypeSelect.value ? roomTypeText : '-';
+                }
+                if (summaryStatus && statusSelect) {
+                    const statusText = statusSelect.options[statusSelect.selectedIndex]?.text || '-';
+                    summaryStatus.textContent = statusText;
+                }
+            }
+
+            function bindImagePreview() {
+                if (!uploadInput || !previewImg || !imagePreviewShell) {
+                    return;
+                }
+
+                imagePreviewShell.addEventListener('click', () => uploadInput.click());
+
+                uploadInput.addEventListener('change', () => {
+                    const file = uploadInput.files && uploadInput.files[0];
+                    if (!file) {
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const src = String(event.target?.result || '');
+                        if (!src) {
+                            return;
+                        }
+
+                        previewImg.src = src;
+                        previewImg.classList.remove('hidden');
+                        uploadPlaceholder?.classList.add('hidden');
+                        previewOverlay?.classList.remove('hidden');
+                        previewOverlay?.classList.add('flex');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            roomNumberInput?.addEventListener('input', updateSummary);
+            floorInput?.addEventListener('input', updateSummary);
+            roomTypeSelect?.addEventListener('change', updateSummary);
+            statusSelect?.addEventListener('change', updateSummary);
+
+            updateSummary();
+            bindImagePreview();
+        })();
+    </script>
+}
