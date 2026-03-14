@@ -39,7 +39,7 @@ Hệ thống quản lý khách sạn cao cấp cho thị trường Việt Nam, x
 
 - **Backend**: ASP.NET Core Razor Pages (.NET 10)
 - **ORM**: Entity Framework Core 10 (SQL Server provider)
-- **Database**: SQL Server (compose dùng `mcr.microsoft.com/mssql/server:2025-latest`)
+- **Database**: SQL Server 2025 (Docker chỉ dùng cho local dev trên Linux)
 - **Auth**: ASP.NET Core Identity
 - **Charts**: Chart.js + ChartJSCore
 - **Image handling**: SixLabors.ImageSharp
@@ -95,17 +95,14 @@ quan-ly-khach-san/
 │   ├── Program.cs
 │   ├── appsettings.json
 │   └── HotelManagement.csproj
-├── docker/
-│   ├── docker-compose.yml
-│   └── Dockerfile
-├── docs/
 └── quan-ly-khach-san.sln
 ```
 
 ## 4. Yêu cầu cài đặt
 
 - .NET SDK 10.0+
-- Docker + Docker Compose (khuyến nghị để chạy SQL Server local)
+- SQL Server 2025
+- Docker + Docker Compose (tùy chọn, chỉ dùng local dev trên Linux)
 - SQL client tùy chọn (`sqlcmd`, Azure Data Studio, DBeaver)
 - OS: Linux/macOS/Windows
 
@@ -118,20 +115,14 @@ git clone <REPO_URL>
 cd quan-ly-khach-san
 ```
 
-### Bước 2: Khởi động SQL Server bằng Docker
+### Bước 2: Chuẩn bị SQL Server
 
-`docker/docker-compose.yml` yêu cầu biến môi trường `MSSQL_SA_PASSWORD`.
+Chọn 1 trong 2 cách:
 
-```bash
-export MSSQL_SA_PASSWORD='Hotel@123'
-docker compose -f docker/docker-compose.yml up -d
-```
+- **Linux (dev nội bộ)**: chạy SQL Server bằng Docker local của bạn.
+- **Windows (môi trường khách hàng/production)**: cài SQL Server trực tiếp trên máy chủ.
 
-Kiểm tra container:
-
-```bash
-docker ps
-```
+> Lưu ý: cấu hình Docker phục vụ dev nội bộ, không nằm trong mã nguồn push cho khách hàng.
 
 ### Bước 3: Kiểm tra connection string
 
@@ -297,11 +288,13 @@ Smoke test thủ công quan trọng:
 
 ## 12. Deployment
 
-Repository hiện có `docker/docker-compose.yml` dùng để chạy SQL Server local.
+Docker chỉ được dùng cho môi trường dev Linux để tiện chạy SQL Server local.
+Mã cấu hình Docker dev nội bộ không phát hành lên GitHub dành cho khách hàng.
 
 ### Khuyến nghị triển khai production
 
-- Chạy app ASP.NET Core riêng (VM/App Service/container) và trỏ tới SQL Server managed.
+- Máy khách hàng dùng Windows + SQL Server cài trực tiếp (không phụ thuộc Docker).
+- Chạy app ASP.NET Core riêng (IIS/Kestrel service) và trỏ tới SQL Server production.
 - Thiết lập biến môi trường production cho `ConnectionStrings`.
 - Bật HTTPS, giám sát logs, backup database định kỳ.
 
@@ -317,7 +310,7 @@ Sau đó chạy output publish bằng `dotnet HotelManagement.dll` hoặc đóng
 
 ### 1) Không kết nối được SQL Server
 
-- Kiểm tra container SQL đang chạy:
+- Nếu bạn đang dev trên Linux bằng Docker, kiểm tra container SQL:
 
 ```bash
 docker ps
@@ -361,14 +354,7 @@ Trong môi trường không truy cập được `nuget.org`, có thể thấy wa
 
 ---
 
-## Tài liệu tham khảo nội bộ
+Nếu bạn muốn, mình có thể tách thêm:
 
-- `docs/ARCHITECTURE_PLAN.md`
-- `docs/DATABASE_SCHEMA.md`
-- `AGENTS.md`
-
-Nếu bạn muốn, mình có thể tạo thêm:
-
-1. `README_DEV.md` (dành riêng cho dev nội bộ)
-2. `README_DEPLOY.md` (playbook triển khai production)
-3. `CHANGELOG.md` chuẩn hóa theo phiên bản
+1. `README_DEV.md` (nội bộ dev)
+2. `README_DEPLOY.md` (playbook triển khai khách hàng)
