@@ -24,7 +24,7 @@ Hệ thống quản lý khách sạn cao cấp cho thị trường Việt Nam, x
 - [2. Kiến trúc hệ thống](#2-kiến-trúc-hệ-thống)
 - [3. Cấu trúc thư mục](#3-cấu-trúc-thư-mục)
 - [4. Yêu cầu cài đặt](#4-yêu-cầu-cài-đặt)
-- [5. Bắt đầu nhanh (local development)](#5-bắt-đầu-nhanh-local-development)
+- [5. Triển khai nhanh cho khách hàng](#5-triển-khai-nhanh-cho-khách-hàng)
 - [6. Cấu hình môi trường](#6-cấu-hình-môi-trường)
 - [7. Tài khoản mặc định sau seed](#7-tài-khoản-mặc-định-sau-seed)
 - [8. Cơ sở dữ liệu & migration](#8-cơ-sở-dữ-liệu--migration)
@@ -39,7 +39,7 @@ Hệ thống quản lý khách sạn cao cấp cho thị trường Việt Nam, x
 
 - **Backend**: ASP.NET Core Razor Pages (.NET 10)
 - **ORM**: Entity Framework Core 10 (SQL Server provider)
-- **Database**: SQL Server 2025 (Docker chỉ dùng cho local dev trên Linux)
+- **Database**: SQL Server 2025
 - **Auth**: ASP.NET Core Identity
 - **Charts**: Chart.js + ChartJSCore
 - **Image handling**: SixLabors.ImageSharp
@@ -101,12 +101,11 @@ quan-ly-khach-san/
 ## 4. Yêu cầu cài đặt
 
 - .NET SDK 10.0+
-- SQL Server 2025
-- Docker + Docker Compose (tùy chọn, chỉ dùng local dev trên Linux)
+- SQL Server 2022/2025
 - SQL client tùy chọn (`sqlcmd`, Azure Data Studio, DBeaver)
-- OS: Linux/macOS/Windows
+- OS: Windows Server/Windows 10+
 
-## 5. Bắt đầu nhanh (local development)
+## 5. Triển khai nhanh cho khách hàng
 
 ### Bước 1: Clone source
 
@@ -115,14 +114,11 @@ git clone <REPO_URL>
 cd quan-ly-khach-san
 ```
 
-### Bước 2: Chuẩn bị SQL Server
+### Bước 2: Cài SQL Server trên máy Windows
 
-Chọn 1 trong 2 cách:
-
-- **Linux (dev nội bộ)**: chạy SQL Server bằng Docker local của bạn.
-- **Windows (môi trường khách hàng/production)**: cài SQL Server trực tiếp trên máy chủ.
-
-> Lưu ý: cấu hình Docker phục vụ dev nội bộ, không nằm trong mã nguồn push cho khách hàng.
+1. Cài SQL Server 2022/2025.
+2. Tạo database `HotelManagementDB`.
+3. Tạo tài khoản SQL đăng nhập cho ứng dụng (không dùng tài khoản mặc định).
 
 ### Bước 3: Kiểm tra connection string
 
@@ -134,7 +130,7 @@ Mặc định trong `HotelManagement/appsettings.json`:
 
 Nếu bạn dùng password/port khác, cập nhật lại tương ứng.
 
-### Bước 4: Restore và chạy migration + seed
+### Bước 4: Restore và chạy ứng dụng lần đầu
 
 ```bash
 dotnet restore
@@ -154,7 +150,7 @@ dotnet run --project HotelManagement --urls http://localhost:5037
 
 ## 6. Cấu hình môi trường
 
-Hiện tại dự án dùng `appsettings.json` + `appsettings.Development.json` (không có `.env` mặc định).
+Hệ thống dùng file cấu hình `appsettings.json` và `appsettings.Production.json` khi vận hành thực tế.
 
 ### Cấu hình chính
 
@@ -166,13 +162,7 @@ Hiện tại dự án dùng `appsettings.json` + `appsettings.Development.json` 
 | `HotelSettings:CheckOutTime` | Giờ check-out chuẩn | `12:00` |
 | `WebsiteSettings:*` | Branding/Thông tin hiển thị website | logo, slogan, contact info |
 
-### User Secrets
-
-Project có `UserSecretsId` trong `.csproj`, có thể dùng để tách secret local:
-
-```bash
-dotnet user-secrets --project HotelManagement set "ConnectionStrings:DefaultConnection" "<YOUR_CONNECTION_STRING>"
-```
+Khuyến nghị lưu thông tin nhạy cảm (chuỗi kết nối, tài khoản SMTP, API key) ở biến môi trường hệ thống.
 
 ## 7. Tài khoản mặc định sau seed
 
@@ -219,15 +209,6 @@ dotnet build
 # Run app
 dotnet run --project HotelManagement --urls http://localhost:5037
 
-# Hot reload
-dotnet watch --project HotelManagement run --urls http://localhost:5037
-```
-
-### Script có sẵn
-
-```bash
-# Script tiện ích chạy dev (kill port 5037 + dotnet watch)
-./run-dev.sh
 ```
 
 ### Test
@@ -270,7 +251,7 @@ Dashboard tổng hợp:
 
 ## 11. Testing & quality checks
 
-Checklist tối thiểu trước khi merge:
+Checklist trước khi bàn giao cho khách hàng:
 
 ```bash
 dotnet restore
@@ -288,9 +269,6 @@ Smoke test thủ công quan trọng:
 
 ## 12. Deployment
 
-Docker chỉ được dùng cho môi trường dev Linux để tiện chạy SQL Server local.
-Mã cấu hình Docker dev nội bộ không phát hành lên GitHub dành cho khách hàng.
-
 ### Khuyến nghị triển khai production
 
 - Máy khách hàng dùng Windows + SQL Server cài trực tiếp (không phụ thuộc Docker).
@@ -298,31 +276,28 @@ Mã cấu hình Docker dev nội bộ không phát hành lên GitHub dành cho k
 - Thiết lập biến môi trường production cho `ConnectionStrings`.
 - Bật HTTPS, giám sát logs, backup database định kỳ.
 
-### Publish app
+### Checklist triển khai cho máy khách hàng (Windows)
+
+1. Cài SQL Server và tạo database `HotelManagementDB`.
+2. Publish ứng dụng:
 
 ```bash
 dotnet publish HotelManagement/HotelManagement.csproj -c Release -o ./publish
 ```
 
-Sau đó chạy output publish bằng `dotnet HotelManagement.dll` hoặc đóng gói container tùy hạ tầng.
+3. Cấu hình connection string production trong `appsettings.Production.json` hoặc biến môi trường Windows.
+4. Chạy migration từ bản deploy đầu tiên.
+5. Cấu hình host app bằng IIS hoặc Windows Service (Kestrel + reverse proxy).
+6. Đổi toàn bộ tài khoản/mật khẩu seed mặc định trước khi bàn giao.
+7. Bật cơ chế sao lưu dữ liệu SQL Server theo lịch.
 
 ## 13. Troubleshooting
 
 ### 1) Không kết nối được SQL Server
 
-- Nếu bạn đang dev trên Linux bằng Docker, kiểm tra container SQL:
-
-```bash
-docker ps
-```
-
-- Kiểm tra port 1433 có mở:
-
-```bash
-ss -lntp | rg 1433
-```
-
-- Đảm bảo `MSSQL_SA_PASSWORD` khớp với `appsettings.json`.
+- Kiểm tra SQL Server service đang chạy trên Windows.
+- Kiểm tra lại thông tin `Server`, `Database`, `User Id`, `Password` trong connection string.
+- Đảm bảo firewall cho phép kết nối SQL Server nếu ứng dụng và DB khác máy.
 
 ### 2) Lỗi migration/model mismatch
 
@@ -332,15 +307,7 @@ dotnet ef database update --project HotelManagement --startup-project HotelManag
 
 Nếu vẫn lỗi, kiểm tra lại migration mới nhất trong `Infrastructure/Data/Migrations`.
 
-### 3) Cổng 5037 bị chiếm
-
-```bash
-./run-dev.sh
-```
-
-Script sẽ tự giải phóng cổng 5037 và chạy lại app.
-
-### 4) Warning NU1900 khi build
+### 3) Warning NU1900 khi build
 
 Trong môi trường không truy cập được `nuget.org`, có thể thấy warning lấy vulnerability metadata. Đây là warning môi trường mạng, không nhất thiết là lỗi compile/runtime.
 
@@ -351,10 +318,4 @@ Trong môi trường không truy cập được `nuget.org`, có thể thấy wa
 - Toàn bộ định dạng locale đã chuẩn hóa cho Việt Nam:
   - tiền tệ: phân cách nghìn bằng `,`, không hiển thị `.00`
   - ngày tháng: `dd/MM/yyyy`
-
----
-
-Nếu bạn muốn, mình có thể tách thêm:
-
-1. `README_DEV.md` (nội bộ dev)
-2. `README_DEPLOY.md` (playbook triển khai khách hàng)
+- Mục tiêu phát hành cho khách hàng: chỉ cung cấp phần cần thiết để vận hành production.
