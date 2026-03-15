@@ -131,7 +131,7 @@ Mặc định trong `HotelManagement/appsettings.json`:
 Khi triển khai production, đặt lại `DefaultConnection` theo SQL Server thực tế của khách hàng
 trong `appsettings.Production.json` hoặc biến môi trường hệ điều hành.
 
-### Bước 4: Restore và chạy migration + seed
+### Bước 4: Restore và chạy ứng dụng lần đầu
 
 ```bash
 dotnet restore
@@ -252,7 +252,7 @@ Dashboard tổng hợp:
 
 ## 11. Testing & quality checks
 
-Checklist tối thiểu trước khi merge:
+Checklist trước khi bàn giao cho khách hàng:
 
 ```bash
 dotnet restore
@@ -277,7 +277,10 @@ Smoke test thủ công quan trọng:
 - Thiết lập `ConnectionStrings:DefaultConnection` theo production.
 - Bật HTTPS, giám sát logs, backup database định kỳ.
 
-### Publish app
+### Checklist triển khai cho máy khách hàng (Windows)
+
+1. Cài SQL Server và tạo database `HotelManagementDB`.
+2. Publish ứng dụng:
 
 ```bash
 dotnet publish HotelManagement/HotelManagement.csproj -c Release -o ./publish
