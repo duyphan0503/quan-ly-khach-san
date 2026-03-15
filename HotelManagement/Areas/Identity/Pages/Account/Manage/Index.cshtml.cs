@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -20,6 +20,9 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace HotelManagement.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// PageModel xử lý luồng tài khoản 'Index.cshtml'.
+    /// </summary>
     public class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -27,6 +30,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         private readonly IWebHostEnvironment _environment;
         private readonly IGuestService _guestService;
 
+        /// <summary>
+        /// Khởi tạo lớp IndexModel và nạp các dependency cần thiết.
+        /// </summary>
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -39,34 +45,34 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public string Username { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public class InputModel
         {
             /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
+            /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+            /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
             /// </summary>
             [Required(ErrorMessage = "Vui lòng nhập họ tên")]
             [Display(Name = "Họ và tên")]
@@ -98,6 +104,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
 
 
+        /// <summary>
+        /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -110,6 +119,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// Xử lý yêu cầu POST, kiểm tra dữ liệu đầu vào và lưu thay đổi.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -217,3 +229,8 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
     }
 }
+
+
+
+
+

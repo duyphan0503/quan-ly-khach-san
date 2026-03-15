@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace HotelManagement.Areas.Admin.Pages.Bookings;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Hiển thị chi tiết booking và xử lý các thao tác vận hành tại quầy (confirm, check-in, thêm dịch vụ, checkout).
+/// </summary>
 public class DetailsModel : PageModel
 {
     private readonly IBookingService _bookingService;
@@ -17,6 +20,9 @@ public class DetailsModel : PageModel
     private readonly IGuestService _guestService;
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>
+    /// Khởi tạo PageModel với các dịch vụ booking, hóa đơn, dịch vụ phát sinh và người dùng.
+    /// </summary>
     public DetailsModel(
         IBookingService bookingService,
         IInvoiceService invoiceService,
@@ -35,6 +41,9 @@ public class DetailsModel : PageModel
     public Invoice? DraftInvoice { get; set; }
     public List<Service> ActiveServices { get; set; } = new();
 
+    /// <summary>
+    /// Nạp booking theo id; nếu khách đã check-in thì nạp thêm hóa đơn nháp và danh sách dịch vụ đang hoạt động.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int? id)
     {
         if (id == null) return NotFound();
@@ -66,6 +75,9 @@ public class DetailsModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Chuyển trạng thái booking sang Confirmed.
+    /// </summary>
     public async Task<IActionResult> OnPostConfirmAsync(int id)
     {
         var (success, msg) = await _bookingService.UpdateStatusAsync(id, nameof(BookingStatus.Confirmed));
@@ -75,6 +87,9 @@ public class DetailsModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    /// <summary>
+    /// Hủy booking theo nghiệp vụ hủy đặt phòng.
+    /// </summary>
     public async Task<IActionResult> OnPostCancelAsync(int id)
     {
         var (success, msg) = await _bookingService.CancelAsync(id);
@@ -84,6 +99,9 @@ public class DetailsModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    /// <summary>
+    /// Check-in khách và tự tạo hóa đơn nháp để ghi nhận chi phí trong thời gian lưu trú.
+    /// </summary>
     public async Task<IActionResult> OnPostCheckInAsync(int id)
     {
         var (success, msg) = await _bookingService.UpdateStatusAsync(id, nameof(BookingStatus.CheckedIn));
@@ -101,6 +119,9 @@ public class DetailsModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    /// <summary>
+    /// Thêm dịch vụ phát sinh vào hóa đơn nháp của booking hiện tại.
+    /// </summary>
     public async Task<IActionResult> OnPostAddServiceAsync(int id, int serviceId, int quantity)
     {
         if (quantity <= 0)
@@ -122,6 +143,9 @@ public class DetailsModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    /// <summary>
+    /// Gỡ một dòng dịch vụ khỏi hóa đơn nháp.
+    /// </summary>
     public async Task<IActionResult> OnPostRemoveServiceAsync(int id, int detailId)
     {
         var draft = await _invoiceService.GetByBookingIdAsync(id);
@@ -135,9 +159,12 @@ public class DetailsModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    /// <summary>
+    /// Checkout nhanh bằng phương thức tiền mặt, không phụ thu và không giảm giá.
+    /// </summary>
     public async Task<IActionResult> OnPostCheckOutAsync(int id)
     {
-        // Simple checkout with default values (0 discount, 0 tax, Cash)
+        // Thanh toán nhanh với giá trị mặc định (giảm giá 0, thuế 0, tiền mặt)
         var (success, msg, _) = await _invoiceService.FinalizeInvoiceAsync(id, 0, 0, PaymentMethod.Cash);
         if (success) TempData["SuccessMessage"] = "Thanh toán và trả phòng thành công!";
         else TempData["ErrorMessage"] = msg;
@@ -145,3 +172,4 @@ public class DetailsModel : PageModel
         return RedirectToPage(new { id });
     }
 }
+

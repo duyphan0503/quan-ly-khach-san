@@ -1,5 +1,8 @@
-namespace HotelManagement.Areas.Admin.Pages.Shared;
+﻿namespace HotelManagement.Areas.Admin.Pages.Shared;
 
+/// <summary>
+/// PageModel xử lý trang quản trị 'AdminGridEmptyStateModel'.
+/// </summary>
 public sealed class AdminGridEmptyStateModel
 {
     public string Icon { get; set; } = "solar:folder-error-bold-duotone";

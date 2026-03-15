@@ -1,5 +1,8 @@
-namespace HotelManagement.Areas.Admin.Pages.Shared;
+﻿namespace HotelManagement.Areas.Admin.Pages.Shared;
 
+/// <summary>
+/// PageModel xử lý trang quản trị 'AdminPageHeaderModel'.
+/// </summary>
 public sealed class AdminPageHeaderModel
 {
     public string Icon { get; set; } = "solar:widget-bold-duotone";

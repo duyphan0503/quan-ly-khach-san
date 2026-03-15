@@ -1,11 +1,11 @@
-@page "/admin/room-types/edit/{id:int}"
+﻿@page "/admin/room-types/edit/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.RoomTypes.EditModel
 @{
     ViewData["Title"] = "Sửa Loại Phòng";
 }
 
 <div class="max-w-6xl mx-auto pb-12">
-    <!-- Header -->
+    <!-- Tiêu đề trang + điều hướng quay lại danh sách -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
             <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary mb-3 w-fit">
@@ -20,9 +20,7 @@
             </h2>
             <p class="text-content-secondary mt-2">Chỉnh sửa thông tin cơ bản, hình ảnh đại diện và các tiện nghi của phòng.</p>
         </div>
-        <div class="flex gap-2">
-            <!-- Delete button moved to danger zone -->
-        </div>
+        <div class="flex gap-2"></div>
     </div>
 
     <partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
@@ -32,9 +30,9 @@
         <input type="hidden" asp-for="RoomType.ImageUrl" />
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
-            <!-- Cột Form chính -->
+            <!-- Cột trái: form chỉnh sửa dữ liệu loại phòng -->
             <div class="xl:col-span-2 space-y-8">
-                <!-- Card 1: Thông tin cơ bản -->
+                <!-- Khối thông tin định danh và giá cơ bản -->
                 <div class="card bg-surface-2/80 backdrop-blur-md border border-bdr-strong/50 shadow-xl overflow-hidden relative group">
                     <div class="absolute top-0 left-0 w-1 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
                     <div class="card-body p-6 md:p-8">
@@ -73,7 +71,7 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Hình ảnh & Chi tiết -->
+                <!-- Khối media và mô tả phục vụ hiển thị phía khách hàng -->
                 <div class="card bg-surface-2/80 backdrop-blur-md border border-bdr-strong/50 shadow-xl overflow-hidden relative group">
                     <div class="absolute top-0 left-0 w-1 h-full bg-secondary/50 group-hover:bg-secondary transition-colors"></div>
                     <div class="card-body p-6 md:p-8">
@@ -94,7 +92,7 @@
                                 <div class="w-full relative">
                                     <div class="w-full h-64 rounded-2xl border-2 border-dashed border-bdr-strong hover:border-primary/50 flex flex-col items-center justify-center overflow-hidden bg-surface-1/30 hover:bg-surface-1/80 transition-all cursor-pointer group/upload shadow-inner relative" data-click-target="UploadImage">
                                         
-                                        <!-- Zone to render icon if no image -->
+                                        <!-- Trạng thái rỗng khi chưa có ảnh đại diện -->
                                         <div id="upload-placeholder" class="text-center z-10 transition-transform duration-300 group-hover/upload:-translate-y-2 @(!string.IsNullOrEmpty(Model.RoomType.ImageUrl) ? "hidden" : "")">
                                             <div class="w-16 h-16 rounded-full bg-surface-2 border border-bdr-strong flex items-center justify-center mx-auto mb-4 shadow-lg group-hover/upload:shadow-primary/20 group-hover/upload:text-primary transition-all">
                                                 <iconify-icon icon="solar:camera-add-bold-duotone" class="h-8 w-8 text-inherit"></iconify-icon>
@@ -104,10 +102,10 @@
                                             <p class="text-sm text-content-muted font-light inline-block px-3 py-1 rounded-full bg-surface-3/50 mt-2 border border-bdr-strong/30">Tỉ lệ 3:2</p>
                                         </div>
 
-                                        <!-- Image Preview (hidden correctly dynamically or by class if not set) -->
+                                        <!-- Preview ảnh ngay tại chỗ trước khi submit -->
                                         <img id="preview-img" src="@(Model.RoomType.ImageUrl ?? "#")" alt="Preview" class="absolute inset-0 w-full h-full object-cover @(string.IsNullOrEmpty(Model.RoomType.ImageUrl) ? "hidden" : "") z-20" />
                                         
-                                        <!-- Overlay for hover on existing image -->
+                                        <!-- Overlay gợi ý thao tác thay ảnh -->
                                         <div id="preview-overlay" class="absolute inset-0 bg-base-900/60 backdrop-blur-sm opacity-0 hover:opacity-100 @(!string.IsNullOrEmpty(Model.RoomType.ImageUrl) ? "opacity-0 group-hover/upload:opacity-100" : "hidden") transition-all duration-300 flex flex-col items-center justify-center z-30">
                                             <div class="w-14 h-14 rounded-full bg-surface-2 border border-bdr-strong flex items-center justify-center mb-3 shadow-xl transform scale-90 group-hover/upload:scale-100 transition-transform duration-300">
                                                 <iconify-icon icon="solar:pen-bold-duotone" class="h-7 w-7 text-content-primary"></iconify-icon>
@@ -135,7 +133,7 @@
                 </div>
             </div>
 
-            <!-- Cột hiển thị Xem trước Tóm tắt (Bên phải) -->
+            <!-- Cột phải: bản xem trước để đối chiếu nhanh trước khi lưu -->
             <div class="xl:col-span-1 space-y-6 xl:sticky xl:top-24">
                 <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden group backdrop-blur-md">
                     <div class="relative overflow-hidden border-b border-bdr-strong/30">
@@ -159,7 +157,7 @@
                                 <iconify-icon icon="solar:gallery-remove-bold-duotone" class="h-16 w-16 mb-3 text-content-muted/50 z-10"></iconify-icon>
                                 <span class="font-medium tracking-wide z-10 text-sm">Chưa có hình ảnh</span>
                             </div>
-                            <!-- placeholder cho JS cập nhật nếu chọn ảnh mới -->
+                            <!-- Khung ảnh tạm để script hiển thị ảnh mới ngay sau khi chọn tệp -->
                             <figure class="aspect-[3/2] w-full relative hidden" id="right-side-has-preview">
                                 <img src="#" alt="Preview" class="w-full h-full object-cover" id="right-side-preview" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-base-900/90 via-base-900/20 to-transparent"></div>
@@ -182,7 +180,7 @@
                     </div>
                 </div>
 
-                <!-- Delete Actions Box -->
+                <!-- Vùng hành động nguy hiểm: xóa loại phòng -->
                 <div class="card bg-danger/5 border border-danger/20 shadow-sm relative overflow-hidden backdrop-blur-md">
                     <div class="absolute left-0 top-0 w-1 h-full bg-danger"></div>
                     <div class="card-body p-5">
@@ -212,7 +210,7 @@
     </form>
 </div>
 
-<!-- Modal xác nhận xóa -->
+<!-- Hộp thoại xác nhận xóa nhằm tránh thao tác nhầm -->
 <dialog id="delete_modal" class="modal">
   <div class="modal-box bg-surface-2 border border-bdr-strong shadow-2xl p-0 overflow-hidden">
     <div class="bg-danger/10 p-6 text-center border-b border-danger/20">

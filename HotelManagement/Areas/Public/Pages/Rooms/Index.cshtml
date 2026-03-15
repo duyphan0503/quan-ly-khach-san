@@ -1,4 +1,4 @@
-@page "/rooms"
+﻿@page "/rooms"
 @model HotelManagement.Areas.Public.Pages.Rooms.IndexModel
 @{
     ViewData["Title"] = "Danh Sách Phòng Tốt Nhất";
@@ -17,13 +17,13 @@
 <div class="pt-16 pb-12 bg-surface-1 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Header -->
+        <!-- Tiêu đề trang danh sách phòng theo nhu cầu lưu trú -->
         <div class="text-center mb-16">
             <h2 class="text-accent tracking-[0.2em] uppercase text-sm font-semibold mb-4">Lựa chọn của bạn</h2>
             <h1 class="text-4xl md:text-5xl font-outfit font-extrabold text-content-primary">Khám Phá Không Gian Nghỉ Dưỡng</h1>
         </div>
 
-        <!-- Filter Bar -->
+        <!-- Thanh lọc theo ngày, loại phòng và số lượng khách -->
         <div class="bg-surface-2/30 backdrop-blur-2xl border border-white/5 p-8 mb-20 animate-fade-in rounded-[2rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
             <form method="get" class="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-8 items-end">
@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <!-- Rooms Grid -->
+        <!-- Lưới hiển thị phòng khả dụng theo bộ lọc hiện tại -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach (var room in Model.AvailableRooms)
             {

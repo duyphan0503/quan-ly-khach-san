@@ -1,4 +1,4 @@
-@page "/admin/services/edit/{id:int}"
+﻿@page "/admin/services/edit/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.Services.EditModel
 @{
     ViewData["Title"] = "Cập Nhật Dịch Vụ";
@@ -168,9 +168,11 @@
 </form>
 
 <dialog id="delete-modal" class="modal">
+    <!-- Khối hiển thị hộp thoại xác nhận thao tác -->
     <div class="modal-box rounded-3xl border border-bdr-strong bg-surface-2">
         <h3 class="text-lg font-bold text-content-primary">Xác nhận xóa dịch vụ</h3>
         <p class="py-4 text-sm text-content-secondary">Bạn đang xóa dịch vụ <span class="font-semibold text-error">@Model.Input.Name</span>. Nếu dịch vụ đã được sử dụng trong hóa đơn, hệ thống sẽ từ chối thao tác để đảm bảo toàn vẹn dữ liệu.</p>
+        <!-- Nhóm hành động xác nhận hoặc hủy trong hộp thoại -->
         <div class="modal-action">
             <button type="button" data-close-modal="delete-modal" class="btn btn-ghost">Hủy</button>
             <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Input.Id">

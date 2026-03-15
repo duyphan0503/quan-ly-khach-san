@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Infrastructure.Repositories.Interfaces;
 using HotelManagement.Application.Services.Interfaces;
@@ -8,6 +8,9 @@ using Microsoft.Extensions.Options;
 
 namespace HotelManagement.Application.Services;
 
+/// <summary>
+/// Service trung tâm xử lý nghiệp vụ đặt phòng: tạo, cập nhật trạng thái, kiểm tra trùng lịch và auto-cancel no-show.
+/// </summary>
 public class BookingService : IBookingService
 {
     private readonly IBookingRepository _bookingRepo;
@@ -16,6 +19,9 @@ public class BookingService : IBookingService
     private readonly AppDbContext _context;
     private readonly HotelSettings _hotelSettings;
 
+    /// <summary>
+    /// Khởi tạo lớp BookingService và nạp các dependency cần thiết.
+    /// </summary>
     public BookingService(
         IBookingRepository bookingRepo,
         IRoomRepository roomRepo,
@@ -28,16 +34,23 @@ public class BookingService : IBookingService
         _hotelSettings = hotelSettingsOptions.Value;
     }
 
+    /// <summary>
+    /// Lấy toàn bộ dữ liệu booking.
+    /// </summary>
     public Task<List<Booking>> GetAllAsync() => _bookingRepo.GetAllAsync();
 
+    /// <summary>
+    /// Lấy thông tin booking theo mã định danh.
+    /// </summary>
     public Task<Booking?> GetByIdAsync(int id) => _bookingRepo.GetByIdAsync(id);
 
     public async Task<(bool Success, string Message)> CreateAsync(Booking booking)
     {
-        // ... (Logic cũ giữ nguyên)
+        // Rule 1: check-out phải sau check-in.
         if (booking.CheckOut <= booking.CheckIn)
             return (false, "Ngày trả phòng phải sau ngày nhận phòng.");
 
+        // Rule 2: phòng không được trùng lịch trong cùng khoảng thời gian.
         if (!await _bookingRepo.IsRoomAvailableAsync(booking.RoomId, booking.CheckIn, booking.CheckOut))
             return (false, "Phòng đã có lịch đặt trong khoảng thời gian này.");
 
@@ -49,6 +62,7 @@ public class BookingService : IBookingService
         booking.Status = BookingStatus.Confirmed;
         booking.CreatedAt = DateTime.Now;
 
+        // Transaction đảm bảo booking và trạng thái phòng luôn nhất quán.
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
@@ -119,6 +133,7 @@ public class BookingService : IBookingService
         var remainingGuests = totalGuests;
         var bookingsToCreate = new List<Booking>();
 
+        // Phân bổ khách theo phòng có sức chứa lớn trước để tối ưu số phòng dùng.
         foreach (var room in selectedRooms.OrderByDescending(r => r.RoomType.MaxOccupancy))
         {
             if (remainingGuests <= 0) break;
@@ -190,6 +205,7 @@ public class BookingService : IBookingService
 
         var room = await _roomRepo.GetByIdAsync(booking.RoomId);
 
+        // Trạng thái booking thay đổi kéo theo trạng thái phòng tương ứng.
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
@@ -311,19 +327,37 @@ public class BookingService : IBookingService
     public Task<(bool Success, string Message)> CancelAsync(int bookingId)
         => UpdateStatusAsync(bookingId, nameof(BookingStatus.Cancelled));
 
+    /// <summary>
+    /// Lấy danh sách booking gần đây theo tiêu chí thời gian.
+    /// </summary>
     public Task<List<Booking>> GetRecentAsync(int count = 10) => _bookingRepo.GetRecentAsync(count);
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền booking.
+    /// </summary>
     public Task<int> GetGuestCountThisMonthAsync() => _bookingRepo.GetGuestCountThisMonthAsync();
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền booking.
+    /// </summary>
     public Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut, int excludeBookingId = 0)
         => _bookingRepo.IsRoomAvailableAsync(roomId, checkIn, checkOut, excludeBookingId);
 
+    /// <summary>
+    /// Lấy danh sách booking gần đây theo tiêu chí thời gian.
+    /// </summary>
     public Task<List<Booking>> GetRecentByRoomIdAsync(int roomId, int count = 5)
         => _bookingRepo.GetByRoomIdAsync(roomId, count);
 
+    /// <summary>
+    /// Lấy dữ liệu booking theo điều kiện chỉ định.
+    /// </summary>
     public Task<List<Booking>> GetByGroupCodeAsync(string groupCode)
         => _bookingRepo.GetByGroupCodeAsync(groupCode);
 
+    /// <summary>
+    /// Tìm kiếm booking theo các bộ lọc đầu vào.
+    /// </summary>
     public Task<List<Booking>> SearchAsync(string? query, string? status)
         => _bookingRepo.SearchAsync(query, status);
 
@@ -338,6 +372,7 @@ public class BookingService : IBookingService
                 b.CheckIn <= now)
             .ToListAsync();
 
+        // Chọn các booking đã qua deadline no-show theo cấu hình HotelSettings.
         var bookingsToCancel = pendingBookings
             .Where(b => settings.GetNoShowDeadline(b.CheckIn) <= now)
             .ToList();
@@ -371,3 +406,4 @@ public class BookingService : IBookingService
         }
     }
 }
+

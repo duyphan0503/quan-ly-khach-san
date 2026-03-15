@@ -1,4 +1,4 @@
-@page "/admin/invoices/split/{id:int}"
+﻿@page "/admin/invoices/split/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.Invoices.SplitModel
 @{
     ViewData["Title"] = "Tách Chứng Từ";
@@ -15,11 +15,14 @@
 
 <partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
 
+<!-- Màn hình tách chứng từ: chọn các dòng chi tiết sẽ chuyển sang hóa đơn mới -->
 <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden backdrop-blur-md">
     <div class="card-body">
+        <!-- Submit danh sách SelectedDetailIds để backend tạo hóa đơn tách -->
         <form method="post" class="space-y-4">
             <input asp-for="Input.InvoiceId" type="hidden" />
 
+            <!-- Bảng lựa chọn dòng chi tiết cần tách -->
             <div class="overflow-x-auto">
                 <table class="table table-zebra w-full">
                     <thead>
@@ -31,6 +34,7 @@
                             <th class="text-right">Thành tiền</th>
                         </tr>
                     </thead>
+                    <!-- Mỗi hàng là một dòng chi tiết của hóa đơn nguồn -->
                     <tbody>
                         @foreach (var detail in Model.SourceInvoice.InvoiceDetails.OrderBy(d => d.Id))
                         {
@@ -50,6 +54,7 @@
 
             <span asp-validation-for="Input.SelectedDetailIds" class="text-error text-sm"></span>
 
+            <!-- Nhóm thao tác cuối: hủy hoặc xác nhận tách -->
             <div class="flex justify-end gap-2">
                 <a asp-page="./Details" asp-route-id="@Model.SourceInvoice.Id" class="btn btn-ghost rounded-xl">Hủy</a>
                 <button type="submit" class="btn bg-primary hover:bg-primary/90 text-content-primary border-none rounded-xl">

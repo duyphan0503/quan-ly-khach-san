@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
@@ -10,6 +10,9 @@ using System.Linq;
 
 namespace HotelManagement.Areas.Public.Pages.Booking;
 
+/// <summary>
+/// PageModel xử lý trang công khai 'Request.cshtml'.
+/// </summary>
 public class RequestModel : PageModel
 {
     private readonly IRoomService _roomService;
@@ -17,6 +20,9 @@ public class RequestModel : PageModel
     private readonly IBookingService _bookingService;
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>
+    /// Khởi tạo lớp RequestModel và nạp các dependency cần thiết.
+    /// </summary>
     public RequestModel(
         IRoomService roomService, 
         IGuestService guestService, 
@@ -34,6 +40,9 @@ public class RequestModel : PageModel
 
     public List<Room> AvailableRooms { get; set; } = new();
 
+    /// <summary>
+    /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int? roomId, DateTime? checkIn, DateTime? checkOut, int? guests)
     {
         Input.CheckIn = checkIn ?? DateTime.Today;
@@ -61,6 +70,9 @@ public class RequestModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+    /// </summary>
     public async Task<PartialViewResult> OnGetRoomListAsync(DateTime? checkIn, DateTime? checkOut, string? selectedRoomIds)
     {
         var effectiveCheckIn = checkIn ?? DateTime.Today;
@@ -87,6 +99,9 @@ public class RequestModel : PageModel
         return Partial("_RoomList", model);
     }
 
+    /// <summary>
+    /// Xử lý yêu cầu POST, kiểm tra dữ liệu đầu vào và lưu thay đổi.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -394,6 +409,9 @@ public class RequestModel : PageModel
     }
 }
 
+/// <summary>
+/// PageModel xử lý trang công khai 'Request.cshtml'.
+/// </summary>
 public class BookingRequestForm
 {
     [Required(ErrorMessage = "Vui lòng nhập họ tên")]
@@ -439,6 +457,9 @@ public class BookingRequestForm
     public string? Notes { get; set; }
 }
 
+/// <summary>
+/// PageModel xử lý trang công khai 'Request.cshtml'.
+/// </summary>
 public class RoomListViewModel
 {
     public List<Room> AvailableRooms { get; set; } = new();

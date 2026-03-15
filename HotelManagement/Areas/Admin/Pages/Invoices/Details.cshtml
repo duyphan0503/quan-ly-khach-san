@@ -1,4 +1,4 @@
-@page "/admin/invoices/details/{id:int}"
+﻿@page "/admin/invoices/details/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.Invoices.DetailsModel
 @using HotelManagement.Core.Models.Enums
 @inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
@@ -11,7 +11,7 @@
     var contactEmail = string.IsNullOrWhiteSpace(websiteSettings.ContactEmail) ? "contact@minhquang.vn" : websiteSettings.ContactEmail;
 
     ViewData["Title"] = "Chi Tiết Hóa Đơn";
-    // Chúng ta định nghĩa class in invoice rieng de khi an Ctrl P nó an Sidebar v.v...
+    // Trang này dùng stylesheet in riêng để in đúng mẫu hóa đơn, không kèm phần điều hướng quản trị.
 }
 
 <div class="mb-8 grid grid-cols-1 gap-4 print:hidden xl:grid-cols-[1fr_auto_1fr] xl:items-center">
@@ -44,7 +44,7 @@
 
 <div id="invoice-print-area" class="card bg-surface-1 text-content-primary shadow-xl max-w-4xl mx-auto print:shadow-none print:max-w-full backdrop-blur-md">
     <div class="card-body p-10 print:p-0">
-        <!-- Header Hóa Đơn -->
+        <!-- Phần đầu chứng từ: thương hiệu, số hóa đơn, ngày lập và trạng thái thanh toán -->
         <div class="flex justify-between items-start border-b-2 border-bdr-strong pb-8 mb-8">
             <div>
                 <div class="mb-4">
@@ -106,7 +106,7 @@
             </div>
         </div>
 
-        <!-- Bảng Dịch Vụ -->
+        <!-- Bảng chi tiết các hạng mục tính phí của hóa đơn -->
         <div class="mb-8">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -117,6 +117,8 @@
                         <th class="py-3 px-2 text-right">Thành tiền (VNĐ)</th>
                     </tr>
                 </thead>
+
+                <!-- Dữ liệu dòng hóa đơn được render từ InvoiceDetails -->
                 <tbody class="text-content-secondary">
                     @foreach (var detail in Model.Invoice.InvoiceDetails)
                     {
@@ -164,7 +166,7 @@
             </div>
         </div>
 
-        <!-- Footer Note -->
+        <!-- Phần cuối với thông điệp cảm ơn khách hàng sau khi hoàn tất giao dịch -->
         <div class="mt-16 pt-8 border-t border-bdr-strong text-center text-content-muted text-sm">
             <p class="font-medium text-content-muted mb-1">Cảm ơn quý khách đã sử dụng dịch vụ của khách sạn chúng tôi.</p>
             <p>Hẹn gặp lại quý khách trong lần tới!</p>

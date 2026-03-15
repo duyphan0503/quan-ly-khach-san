@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -10,12 +10,18 @@ using System.ComponentModel.DataAnnotations;
 namespace HotelManagement.Areas.Admin.Pages.Invoices;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Điều phối quy trình checkout: dựng hóa đơn nháp, nhận thông tin thanh toán và chốt thu tiền.
+/// </summary>
 public class CheckoutModel : PageModel
 {
     private readonly IInvoiceService _invoiceService;
     private readonly IBookingService _bookingService;
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>
+    /// Khởi tạo PageModel với các dịch vụ hóa đơn, đặt phòng và người dùng hiện tại.
+    /// </summary>
     public CheckoutModel(
         IInvoiceService invoiceService,
         IBookingService bookingService,
@@ -35,6 +41,9 @@ public class CheckoutModel : PageModel
     [BindProperty]
     public CheckoutInputModel Input { get; set; } = new();
 
+    /// <summary>
+    /// Dữ liệu đầu vào khi xác nhận checkout.
+    /// </summary>
     public class CheckoutInputModel
     {
         [Required]
@@ -55,6 +64,9 @@ public class CheckoutModel : PageModel
         public bool CheckoutWholeGroup { get; set; } = true;
     }
 
+    /// <summary>
+    /// Nạp booking đang ở trạng thái CheckedIn và chuẩn bị hóa đơn nháp để hiển thị màn hình thanh toán.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int bookingId)
     {
         var booking = await _bookingService.GetByIdAsync(bookingId);
@@ -81,6 +93,9 @@ public class CheckoutModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Chốt thanh toán cho một phòng hoặc toàn bộ nhóm phòng cùng mã booking group.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -120,6 +135,9 @@ public class CheckoutModel : PageModel
         return RedirectToPage("./Index");
     }
 
+    /// <summary>
+    /// Nạp danh sách phòng đang lưu trú cùng BookingGroupCode để hỗ trợ checkout theo nhóm.
+    /// </summary>
     private async Task LoadGroupCheckoutAsync(Booking rootBooking)
     {
         GroupCheckedInBookings = new List<Booking>();

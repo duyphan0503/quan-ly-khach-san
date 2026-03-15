@@ -1,3 +1,4 @@
+﻿
 <!DOCTYPE html>
 <html lang="vi" data-theme="dark" class="mq-theme-dark">
 @inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
@@ -20,13 +21,13 @@
     <title>@ViewData["Title"] - @brandFullName | @brandSlogan</title>
     <link rel="icon" href="@logoUrl" />
     
-    <!-- Fonts -->
+    <!-- Bộ font nền cho toàn bộ giao diện Public -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js" defer></script>
     
-    <!-- Styles -->
+    <!-- Nạp hệ style: Tailwind, DaisyUI và stylesheet nội bộ -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="~/js/layout/public-tailwind-config.js" asp-append-version="true"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -37,16 +38,16 @@
 </head>
 <body class="antialiased font-inter min-h-screen flex flex-col pt-20 overflow-x-hidden">
 
-    <!-- Header / Nav -->
+    <!-- Thanh điều hướng chính của khu vực công khai -->
     <header class="fixed top-0 inset-x-0 z-50 glass-nav glass-nav-public">
-        <!-- Toast Notification (Global Level) -->
+        <!-- Toast toàn cục để hiển thị trạng thái thao tác của người dùng -->
         @{
             var statusMessage = TempData["StatusMessage"]?.ToString();
         }
         <partial name="/Areas/Identity/Pages/Shared/_StatusMessage.cshtml" for="@statusMessage" />
 
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
-            <!-- Logo -->
+            <!-- Biểu tượng thương hiệu và cụm nhận diện -->
             <a asp-area="Public" asp-page="/Index" class="flex items-center gap-3 group">
                 <img src="@logoUrl" alt="@brandFullName" class="w-12 h-12 transition-transform duration-500 group-hover:rotate-360" />
                 <div class="flex flex-col">
@@ -58,7 +59,7 @@
                 </div>
             </a>
 
-            <!-- Desktop Nav -->
+            <!-- Menu điều hướng cho màn hình lớn -->
             <nav class="hidden md:flex items-center gap-10">
                 <a asp-area="Public" asp-page="/Index" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white hover:text-accent transition-colors">Trang Chủ</a>
                 <a href="/#rooms" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white/70 hover:text-accent transition-colors">Phòng Nghỉ</a>
@@ -66,20 +67,20 @@
                 <a href="#contact" class="font-outfit text-sm font-semibold uppercase tracking-wider text-white/70 hover:text-accent transition-colors">Liên Hệ</a>
             </nav>
 
-            <!-- Actions -->
+            <!-- Nhóm hành động nhanh: tài khoản và đặt phòng -->
             <div class="hidden md:flex items-center gap-6">
                 <partial name="/Areas/Identity/Pages/Shared/_LoginPartial.cshtml" />
                 <a asp-area="Public" asp-page="/Rooms/Index" class="btn bg-accent hover:bg-accent-soft text-brand border-none px-10 h-12 rounded-xl font-outfit font-black uppercase tracking-widest text-[10px] shadow-lg shadow-accent/10 transition-all hover:-translate-y-0.5 active:scale-95">Đặt Ngay</a>
             </div>
 
-            <!-- Mobile Menu Btn -->
+            <!-- Nút mở/đóng menu cho thiết bị di động -->
             <button id="mobile-menu-btn" class="md:hidden text-white text-3xl focus:outline-none" aria-label="Toggle Menu" aria-expanded="false">
                 <iconify-icon id="mobile-menu-open-icon" icon="solar:hamburger-menu-linear"></iconify-icon>
                 <iconify-icon id="mobile-menu-close-icon" icon="solar:close-circle-bold" class="hidden"></iconify-icon>
             </button>
         </div>
 
-        <!-- Mobile Menu Overlay -->
+        <!-- Lớp menu phủ toàn màn hình cho thiết bị di động -->
         <div id="mobile-menu" class="hidden md:hidden fixed inset-0 top-20 bg-brand/95 backdrop-blur-xl z-50 animate-fade-in">
             <div class="flex flex-col items-center justify-center h-full space-y-8 p-10">
                 <a asp-area="Public" asp-page="/Index" class="text-2xl font-outfit font-bold text-white uppercase tracking-widest">Trang Chủ</a>
@@ -95,12 +96,12 @@
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Vùng nội dung chính được render theo từng trang -->
     <main class="grow">
         @RenderBody()
     </main>
 
-    <!-- Footer -->
+    <!-- Chân trang với thông tin liên hệ và liên kết bổ sung -->
     <footer id="contact" class="border-t border-bdr-default pt-16 pb-8 mq-footer-surface">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 mb-12 items-start">
@@ -146,7 +147,7 @@
                     </ul>
                 </div>
 
-                <!-- Mini Map Column -->
+                <!-- Cột bản đồ định vị khách sạn -->
                 <div class="md:col-span-3 md:pt-1">
                     <h3 class="text-content-primary font-outfit tracking-widest uppercase mb-5 text-sm font-bold">Vị Trí</h3>
                     <div class="w-full h-44 rounded-2xl overflow-hidden border border-bdr-strong shadow-lg bg-surface-2/40 backdrop-blur-sm relative group">

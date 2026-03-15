@@ -1,4 +1,4 @@
-@page "/admin"
+﻿@page "/admin"
 @model HotelManagement.Areas.Admin.Pages.Dashboard.IndexModel
 @{
     ViewData["Title"] = "Bảng điều khiển";
@@ -24,10 +24,10 @@
     }' />
 </div>
 
-<!-- ── Tầng 1: 4 KPI Cards ── -->
+<!-- Nhóm KPI tổng quan: doanh thu, lấp đầy, khách lưu trú, phòng trống -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-    <!-- Card 1: Revenue -->
+    <!-- KPI doanh thu tháng hiện tại và biến động so với tháng trước -->
     <div class="kpi-card kpi-indigo shadow-xl hover:shadow-indigo-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-1">
         <div class="p-5 flex flex-col items-start text-left">
             <p class="text-indigo-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <!-- Card 2: Occupancy -->
+    <!-- KPI tỷ lệ lấp đầy phòng -->
     <div class="kpi-card kpi-emerald shadow-xl hover:shadow-emerald-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-2">
         <div class="p-5 flex flex-col items-start text-left">
             <p class="text-emerald-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <!-- Card 3: Guests -->
+    <!-- KPI số lượng khách trong tháng -->
     <div class="kpi-card kpi-pink shadow-xl hover:shadow-pink-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-3">
         <div class="p-5 flex flex-col items-start text-left">
             <p class="text-pink-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <!-- Card 4: Available -->
+    <!-- KPI phòng còn trống theo thời điểm hiện tại -->
     <div class="kpi-card kpi-amber shadow-xl hover:shadow-amber-500/30 transition-all duration-300 animate-fadeIn dashboard-animate-delay-4">
         <div class="p-5 flex flex-col items-start text-left">
             <p class="text-amber-200 text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -109,10 +109,10 @@
 
 </div>
 
-<!-- ── Tầng 2: 2 Charts Row ── -->
+<!-- Nhóm biểu đồ: xu hướng doanh thu và cơ cấu loại phòng -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
-    <!-- Revenue Trend Chart -->
+    <!-- Biểu đồ đường: theo dõi nhịp tăng/giảm doanh thu -->
     <div class="lg:col-span-2 card bg-surface-2 border border-bdr-strong shadow-xl animate-fadeIn dashboard-animate-delay-5">
         <div class="card-body p-6">
             <h3 class="font-semibold text-content-primary mb-6 flex items-center gap-2 text-sm uppercase tracking-widest">
@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <!-- Room Types Doughnut -->
+    <!-- Biểu đồ doughnut: tỷ trọng từng loại phòng -->
     <div class="card bg-surface-2 border border-bdr-strong shadow-xl animate-fadeIn dashboard-animate-delay-6">
         <div class="card-body p-6">
             <h3 class="font-semibold text-content-primary mb-6 flex items-center gap-2 text-sm uppercase tracking-widest">
@@ -154,7 +154,7 @@
 
 </div>
 
-<!-- ── Tầng 3: Recent Bookings Table ── -->
+<!-- Bảng tóm tắt các booking mới nhất để theo dõi vận hành theo thời gian thực -->
 <div class="card bg-surface-2 border border-bdr-strong shadow-xl animate-fadeIn dashboard-animate-delay-7">
     <div class="card-body p-0 overflow-hidden">
         <div class="p-6 border-b border-bdr-strong flex justify-between items-center">

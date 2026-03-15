@@ -8,6 +8,7 @@ namespace HotelManagement.Core.Models;
 /// </summary>
 public class Room
 {
+    // Khóa chính phòng.
     public int Id { get; set; }
 
     [Required(ErrorMessage = "Số phòng không được để trống")]
@@ -16,6 +17,7 @@ public class Room
     public string RoomNumber { get; set; } = string.Empty;
 
     [Display(Name = "Loại phòng")]
+    // FK về RoomType.Id.
     public int RoomTypeId { get; set; }
 
     [Range(1, 100)]
@@ -23,6 +25,7 @@ public class Room
     public int Floor { get; set; }
 
     [Display(Name = "Trạng thái")]
+    // Trạng thái vận hành tức thời của phòng.
     public RoomStatus Status { get; set; } = RoomStatus.Available;
 
     [StringLength(500)]
@@ -33,7 +36,7 @@ public class Room
     [Display(Name = "Ghi chú")]
     public string? Notes { get; set; }
 
-    // Navigation
+    // Navigation phục vụ Include/join trong EF Core.
     public RoomType RoomType { get; set; } = null!;
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

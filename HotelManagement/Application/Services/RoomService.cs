@@ -1,23 +1,35 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Infrastructure.Repositories.Interfaces;
 using HotelManagement.Application.Services.Interfaces;
 
 namespace HotelManagement.Application.Services;
 
+/// <summary>
+/// Cung cấp nghiệp vụ cho miền room.
+/// </summary>
 public class RoomService : IRoomService
 {
     private readonly IRoomRepository _repo;
     private readonly IBookingRepository _bookingRepo;
 
+    /// <summary>
+    /// Khởi tạo lớp RoomService và nạp các dependency cần thiết.
+    /// </summary>
     public RoomService(IRoomRepository repo, IBookingRepository bookingRepo)
     {
         _repo = repo;
         _bookingRepo = bookingRepo;
     }
 
+    /// <summary>
+    /// Lấy toàn bộ dữ liệu room.
+    /// </summary>
     public Task<List<Room>> GetAllAsync() => _repo.GetAllAsync();
 
+    /// <summary>
+    /// Lấy thông tin room theo mã định danh.
+    /// </summary>
     public Task<Room?> GetByIdAsync(int id) => _repo.GetByIdAsync(id);
 
     public async Task<(bool Success, string Message)> CreateAsync(Room room)
@@ -50,8 +62,14 @@ public class RoomService : IRoomService
         return (true, $"Đã xóa phòng {room.RoomNumber}.");
     }
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền room.
+    /// </summary>
     public Task<List<RoomType>> GetRoomTypesAsync() => _repo.GetAllRoomTypesAsync();
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền room.
+    /// </summary>
     public Task<RoomType?> GetRoomTypeByIdAsync(int id) => _repo.GetRoomTypeByIdAsync(id);
 
     public async Task<(bool Success, string Message)> CreateRoomTypeAsync(RoomType roomType)
@@ -82,10 +100,19 @@ public class RoomService : IRoomService
         }
     }
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền room.
+    /// </summary>
     public Task<int> GetAvailableCountAsync() => _repo.GetAvailableCountAsync();
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền room.
+    /// </summary>
     public Task<int> GetTotalCountAsync() => _repo.GetTotalCountAsync();
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền room.
+    /// </summary>
     public async Task<List<RoomType>> GetFeaturedRoomTypesAsync(int count)
     {
         var allRoomTypes = await _repo.GetAllRoomTypesAsync();
@@ -94,6 +121,9 @@ public class RoomService : IRoomService
             .ToList();
     }
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền room.
+    /// </summary>
     public async Task<List<Room>> GetAvailableRoomsAsync(DateTime? checkIn, DateTime? checkOut, int? guests, string? typeName)
     {
         var allRooms = await _repo.GetAllAsync();
@@ -137,3 +167,4 @@ public class RoomService : IRoomService
         return candidateRooms;
     }
 }
+

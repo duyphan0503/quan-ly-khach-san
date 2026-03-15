@@ -1,4 +1,4 @@
-@page "/notfound"
+﻿@page "/notfound"
 @model HotelManagement.Areas.Public.Pages.NotFoundModel
 @{
     ViewData["Title"] = "Không tìm thấy nội dung - Minh Quang Luxury";
@@ -7,30 +7,30 @@
 
 <div class="relative min-h-[85vh] flex items-center justify-center overflow-hidden font-sans">
     
-    <!-- Liquid Glass Background Accents -->
+    <!-- Lớp nền hiệu ứng thị giác để giữ đồng nhất nhận diện thương hiệu -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-accent/15 rounded-full mix-blend-screen filter blur-[100px] opacity-70 animate-float mq-animation-duration-8"></div>
         <div class="absolute bottom-[10%] right-[15%] w-[35vw] h-[35vw] max-w-[450px] max-h-[450px] bg-primary/20 rounded-full mix-blend-screen filter blur-[120px] opacity-60 animate-float mq-animation-duration-10 mq-animation-delay-20"></div>
         <div class="absolute top-[40%] left-[60%] w-[30vw] h-[30vw] max-w-[300px] max-h-[300px] bg-[#D4AF37]/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 animate-float mq-animation-duration-9 mq-animation-delay-1"></div>
     </div>
 
-    <!-- Main Content Container -->
+    <!-- Khung nội dung trung tâm cho thông báo 404 -->
     <div class="relative z-10 w-full max-w-4xl px-6 py-12 lg:px-8 text-center flex flex-col items-center">
         
-        <!-- Luxury Typography & 404 Display -->
+        <!-- Cụm tiêu đề 404 và thông điệp định hướng người dùng -->
         <div class="relative mb-12 lg:mb-16 w-full flex justify-center animate-fade-in">
             
-            <!-- Foreground Glass Card -->
+            <!-- Thẻ kính tiền cảnh chứa thông điệp chính -->
             <div class="relative w-full max-w-2xl bg-surface-1/40 dark:bg-[#0F172A]/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-[2.5rem] p-10 md:p-14 lg:p-16 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] ring-1 ring-white/10 ring-inset overflow-hidden transition-transform duration-500 hover:scale-[1.01] group z-10">
                 
-                <!-- Subtle internal glow -->
+                <!-- Vệt sáng nội bộ tạo chiều sâu cho thẻ hiển thị -->
                 <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0"></div>
 
-                <!-- 404 Watermark Inside Card (No longer obscured by blur) -->
+                <!-- Watermark 404 nằm phía sau nội dung để tăng nhận diện trạng thái lỗi -->
                 <h1 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12rem] md:text-[18rem] lg:text-[22rem] font-bold font-outfit text-white/[0.04] dark:text-white/[0.06] leading-none select-none tracking-tighter pointer-events-none z-0">404</h1>
 
                 <div class="relative z-10 flex flex-col items-center">
-                    <!-- Elegant Icon -->
+                    <!-- Biểu tượng ngữ cảnh để người dùng nhận biết trang không tồn tại -->
                     <div class="flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-2/50 border border-white/10 text-accent mb-8 shadow-inner shadow-white/5">
                         <iconify-icon icon="solar:compass-bold-duotone" class="text-4xl md:text-5xl"></iconify-icon>
                     </div>
@@ -48,11 +48,11 @@
             </div>
         </div>
 
-        <!-- Call to Action Buttons -->
+        <!-- Nhóm nút điều hướng lại luồng sử dụng chính -->
         <div class="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 animate-fade-in mq-animation-delay-3 w-full max-w-lg">
             <a href="/" class="group w-full sm:w-auto inline-flex items-center justify-center bg-transparent relative overflow-hidden h-14 px-8 rounded-2xl">
                 <div class="absolute inset-0 bg-gradient-to-r from-accent to-[#D4AF37] transition-all duration-300 group-hover:opacity-90"></div>
-                <!-- Shimmer effect -->
+                <!-- Hiệu ứng quét sáng khi hover để tăng phản hồi thị giác -->
                 <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[shimmer_1.5s_infinite] transition-all"></div>
                 <span class="relative z-10 flex items-center font-bold text-brand-950 uppercase tracking-wider text-sm">
                     <iconify-icon icon="solar:home-smile-angle-broken" class="mr-2 text-lg"></iconify-icon>

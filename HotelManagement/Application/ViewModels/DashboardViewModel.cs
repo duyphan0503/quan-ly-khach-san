@@ -1,7 +1,10 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 
 namespace HotelManagement.Application.ViewModels;
 
+/// <summary>
+/// Mô hình dữ liệu phục vụ hiển thị cho miền dashboard.
+/// </summary>
 public class DashboardViewModel
 {
     public decimal TotalRevenue { get; set; }

@@ -1,5 +1,8 @@
-namespace HotelManagement.Areas.Admin.Pages.Shared;
+﻿namespace HotelManagement.Areas.Admin.Pages.Shared;
 
+/// <summary>
+/// PageModel xử lý trang quản trị 'AdminTableEmptyStateModel'.
+/// </summary>
 public sealed class AdminTableEmptyStateModel
 {
     public int ColSpan { get; set; }

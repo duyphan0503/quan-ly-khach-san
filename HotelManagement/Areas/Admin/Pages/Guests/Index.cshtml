@@ -1,4 +1,4 @@
-@page "/admin/guests"
+﻿@page "/admin/guests"
 @model HotelManagement.Areas.Admin.Pages.Guests.IndexModel
 @{
     ViewData["Title"] = "Quản Lý Khách Hàng";
@@ -114,6 +114,7 @@
 }' />
 
 <dialog id="delete_modal" class="modal modal-bottom sm:modal-middle backdrop-blur-md">
+    <!-- Hộp thoại xác nhận xóa hồ sơ khách -->
     <div class="modal-box bg-surface-1 border border-bdr-strong rounded-3xl shadow-2xl">
         <div class="flex items-center gap-4 text-error mb-6">
             <div class="p-4 bg-red-500/10 rounded-2xl">
@@ -128,6 +129,7 @@
             Bạn có chắc chắn muốn xóa hồ sơ của khách hàng <span id="delete_guest_name" class="font-bold text-content-primary decoration-primary decoration-2"></span>?
             Tất cả dữ liệu liên quan sẽ bị gỡ bỏ khỏi hệ thống.
         </p>
+        <!-- Nhóm nút hành động trong hộp thoại -->
         <div class="modal-action gap-3">
             <form method="dialog">
                 <button class="btn btn-ghost rounded-xl px-6 transition-all">Hủy bỏ</button>

@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +8,16 @@ using System.ComponentModel.DataAnnotations;
 namespace HotelManagement.Areas.Admin.Pages.Services;
 
 [Authorize(Roles = "Manager")]
+/// <summary>
+/// Xử lý chỉnh sửa dịch vụ hiện có và thao tác xóa dịch vụ từ trang quản trị.
+/// </summary>
 public class EditModel : PageModel
 {
     private readonly IServiceService _serviceService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ nghiệp vụ cho dịch vụ khách sạn.
+    /// </summary>
     public EditModel(IServiceService serviceService)
     {
         _serviceService = serviceService;
@@ -20,6 +26,9 @@ public class EditModel : PageModel
     [BindProperty]
     public ServiceInputModel Input { get; set; } = new();
 
+    /// <summary>
+    /// Mô hình dữ liệu nhập liệu cho màn hình chỉnh sửa dịch vụ.
+    /// </summary>
     public class ServiceInputModel
     {
         public int Id { get; set; }
@@ -38,6 +47,9 @@ public class EditModel : PageModel
         public bool IsActive { get; set; }
     }
 
+    /// <summary>
+    /// Nạp dữ liệu dịch vụ theo id và map sang model form.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var service = await _serviceService.GetByIdAsync(id);
@@ -58,6 +70,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu nhập và cập nhật lại thông tin dịch vụ.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -88,6 +103,9 @@ public class EditModel : PageModel
         return RedirectToPage("./Index");
     }
 
+    /// <summary>
+    /// Xóa dịch vụ theo id và phản hồi kết quả bằng thông báo TempData.
+    /// </summary>
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
         var (success, message) = await _serviceService.DeleteAsync(id);

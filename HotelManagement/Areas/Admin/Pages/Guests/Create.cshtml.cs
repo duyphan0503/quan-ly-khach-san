@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,10 +6,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelManagement.Areas.Admin.Pages.Guests;
 
+/// <summary>
+/// Xử lý tạo mới hồ sơ khách lưu trú từ form quản trị.
+/// </summary>
 public class CreateModel : PageModel
 {
     private readonly IGuestService _guestService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ quản lý khách.
+    /// </summary>
     public CreateModel(IGuestService guestService)
     {
         _guestService = guestService;
@@ -18,10 +24,16 @@ public class CreateModel : PageModel
     [BindProperty]
     public CreateGuestViewModel Input { get; set; } = new();
 
+    /// <summary>
+    /// Hiển thị form tạo khách.
+    /// </summary>
     public void OnGet()
     {
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu đầu vào và tạo hồ sơ khách mới.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -53,6 +65,9 @@ public class CreateModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Mô hình dữ liệu nhập liệu khi tạo khách.
+    /// </summary>
     public class CreateGuestViewModel
     {
         [Required(ErrorMessage = "Họ và tên là bắt buộc")]

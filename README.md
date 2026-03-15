@@ -1,189 +1,134 @@
-# Minh Quang Luxury Hotel Management System
+<div align="center">
+  <h1 align="center">🏨 Minh Quang Luxury Hotel Management</h1>
+  <p align="center">
+    <strong>Hệ thống Quản lý Khách sạn Chuyên nghiệp xây dựng trên nền tảng ASP.NET Core 10 Razor Pages và Kiến trúc N-Tier.</strong>
+  </p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/.NET-10.0-blue.svg?logo=dotnet" alt=".NET 10" />
+    <img src="https://img.shields.io/badge/EF%20Core-10.0-68217A.svg?logo=nuget" alt="EF Core 10" />
+    <img src="https://img.shields.io/badge/SQL_Server-2022-CC292B.svg?logo=microsoft-sql-server" alt="SQL Server" />
+    <img src="https://img.shields.io/badge/Architecture-N--Tier-brightgreen.svg" alt="N-Tier" />
+  </p>
+</div>
 
-Hệ thống quản lý khách sạn xây dựng bằng ASP.NET Core Razor Pages (.NET 10), phục vụ 2 luồng chính:
+---
 
-- vận hành nội bộ (Admin: lễ tân, quản lý),
-- cổng công khai (Public: khách xem phòng, gửi yêu cầu đặt phòng).
+## 📖 Giới thiệu (Overview)
 
-## 1) Tính năng chính
+**Minh Quang Luxury** là ứng dụng web toàn diện được thiết kế để xử lý trọn vẹn vòng đời nghiệp vụ vận hành khách sạn. Hệ thống phân chia rõ ràng hai khu vực:
 
-- Dashboard KPI: doanh thu, công suất, booking gần đây, tình trạng phòng.
-- Quản lý RoomType / Room / Guest / Service.
-- Quản lý booking theo vòng đời: tạo → check-in → check-out.
-- Quản lý invoice và chi tiết dịch vụ phát sinh.
-- Identity + phân quyền vai trò `Manager` và `Receptionist`.
-- Worker nền tự động xử lý no-show: `NoShowCancellationWorker`.
+- **Public Portal:** Dành cho khách hàng xem danh sách phòng, tham khảo dịch vụ và gửi yêu cầu đặt phòng (Booking Request).
+- **Admin Portal (Back-office):** Dành cho Lễ tân và Quản lý để vận hành mọi khía cạnh như nhận/trả phòng, dịch vụ phát sinh, xuất hóa đơn và theo dõi trực quan trạng thái khách sạn qua Dashboard.
 
-## 2) Tech stack
+Đặc biệt, dự án được xây dựng theo chuẩn **Kiến trúc N-Tier (Monolith)**, giúp tách biệt logic nghiệp vụ khỏi giao diện, tối ưu khả năng bảo trì và dễ dàng mở rộng trong tương lai.
 
-- .NET 10, ASP.NET Core Razor Pages
-- Entity Framework Core 10 + SQL Server
-- ASP.NET Core Identity
-- ChartJSCore
-- SixLabors.ImageSharp
+## ✨ Tính năng nổi bật (Key Features)
 
-## 3) Kiến trúc dự án
+### 📊 Phân hệ Quản trị (Admin)
 
-Monolith theo hướng N-Tier:
+- **Dashboard & Báo cáo:** Tóm tắt KPI (Doanh thu, Công suất phòng, Lịch sử Booking) qua biểu đồ trực quan mạnh mẽ (sử dụng _ChartJSCore_).
+- **Quản lý Danh mục (Catalog):** Quản trị linh hoạt các loại phòng (Room Type), danh sách phòng (Room), cấu hình dịch vụ (Service) và hồ sơ khách hàng (Guest).
+- **Vòng đời Đặt phòng:** Quản lý trọn luồng quy chuẩn: `Booking (Đặt trước) ➔ Check-in (Nhận phòng) ➔ Room Service (Phát sinh dịch vụ) ➔ Check-out & Invoice (Trả phòng và xuất hóa đơn)`.
+- **Identity & Phân quyền:** Quản lý tài khoản, định danh và phân quyền chặt chẽ cho vai trò `Manager` (Quản lý) và `Receptionist` (Lễ tân) thông qua thư viện _ASP.NET Core Identity_.
 
-- `Core`: model/domain/constants
-- `Infrastructure`: DbContext, repository, identity integration, seed
-- `Application`: service nghiệp vụ
-- `Areas` (UI): Razor Pages cho `Admin`, `Public`, `Identity`
+### 🌐 Phân hệ Khách hàng (Public)
 
-Luồng chuẩn:
+- **Danh mục phòng đa phương tiện:** Tra cứu chi tiết hạng phòng, lọc theo tiêu chí không gian, hình ảnh minh họa chân thực xử lý qua _SixLabors.ImageSharp_.
+- **Yêu cầu Booking:** Đặt phòng trực tuyến thông qua hệ thống giao diện tối giản và thân thiện.
 
-`PageModel -> Application Service -> Repository -> AppDbContext -> SQL Server`
+### ⚙️ Tính năng nền (Background Jobs)
 
-## 4) Cấu trúc thư mục hiện tại
+- **Bắt lỗi No-show tự động:** Tích hợp worker service `NoShowCancellationWorker` chạy ngầm để tự động quét và hủy các booking khách không đến `check-in` sau một thời gian cấu hình tùy chỉnh (`HotelSettings:NoShowThresholdHours`).
+
+## 🛠 Tech Stack (Công nghệ sử dụng)
+
+- **Framework:** .NET 10 (C# 14), ASP.NET Core Razor Pages
+- **Database / ORM:** SQL Server hiện đại, Entity Framework Core 10
+- **Security:** ASP.NET Core Identity (Authentication, Authorization & Password Hashing)
+- **UI / UX:** Flowbite / Tailwind CSS / DaisyUI (Giao diện đáp ứng)
+- **Thư viện bên thứ ba:** ChartJSCore (Biểu diễn thống kê), SixLabors.ImageSharp (Xử lý tập tin đồ họa)
+
+## 🏗 Kiến trúc dự án (Architecture)
+
+Kiến trúc Monolith tuân thủ nghiêm ngặt mô hình N-Tier, phân cấp rõ ràng trách nhiệm của từng layer.
+
+**Luồng dữ liệu cơ bản:**
+`UI (Razor Pages/PageModel) ➔ Application (Business Service) ➔ Infrastructure (Repository) ➔ EF DbContext ➔ Database`
 
 ```text
 quan-ly-khach-san/
 ├── HotelManagement/
-│   ├── Application/
-│   ├── Areas/
-│   ├── Core/
-│   ├── Infrastructure/
-│   │   ├── Data/
-│   │   │   ├── AppDbContext.cs
-│   │   │   └── SeedData.cs
-│   │   └── Repositories/
-│   ├── Program.cs
-│   ├── appsettings.json
-│   ├── appsettings.Production.json
-│   └── HotelManagement.csproj
-├── BI_KIP_GIAI_TRINH.md
-├── README.md
-└── quan-ly-khach-san.sln
+│   ├── Core/           (Models, Entities, Enums, Constants)
+│   ├── Infrastructure/ (DbContext, Repositories, Identity Integration, Data Seeders)
+│   ├── Application/    (Business Logic Services, Interfaces)
+│   ├── Areas/          (Razor Pages UI cho Admin, Public, Identity)
+│   ├── Program.cs      (Dependency Injection, Middleware pipeline, Configs)
+│   └── appsettings.json
+├── BI_KIP_GIAI_TRINH.md (Bí kíp bảo vệ đồ án / Bàn giao)
+└── README.md            (Tài liệu tổng quan này)
 ```
 
-## 5) Yêu cầu môi trường
+## 🚀 Hướng dẫn Cài đặt & Khởi chạy (Local Setup)
 
-- Windows 10/11 hoặc Windows Server
-- .NET SDK 10+
-- SQL Server (Express/Developer/Standard đều được)
+### Yêu cầu môi trường
 
-## 6) Chạy nhanh local
+- .NET SDK 10.0+
+- SQL Server (Express / Developer / Standard)
+- Git (Để clone mã nguồn)
 
-### Bước 1: Restore tool và package
+### Các bước triển khai
+
+**1. Clone dự án**
+
+```bash
+git clone <đường_dẫn_repo_của_bạn>
+cd quan-ly-khach-san
+```
+
+**2. Khôi phục packages & tools**
 
 ```bash
 dotnet tool restore
 dotnet restore
 ```
 
-### Bước 2: Cấu hình connection string
+**3. Thiết lập Database (Connection String)**
+Mở file `HotelManagement/appsettings.json` và cập nhật chuỗi kết nối `ConnectionStrings:DefaultConnection` trỏ tới Server SQL Server bạn đang dùng.
 
-Mặc định trong `HotelManagement/appsettings.json`:
+> _Mặc định:_ `"Server=.;Database=HotelManagementDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=False"`
 
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=.;Database=HotelManagementDB;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=False"
-}
-```
-
-Nếu dùng SQL Server instance khác, cập nhật lại giá trị `Server` cho phù hợp.
-
-### Bước 3: Run ứng dụng
+**4. Áp dụng Database Migrations**
+Hệ thống sử dụng EF Core công cụ Migration để tự động hóa sinh database schema. Chạy lệnh:
 
 ```bash
-dotnet run --project HotelManagement
-```
-
-`launchSettings.json` đã cố định profile local ở `http://localhost:5037`.
-
-### Bước 4: Truy cập
-
-- Public: `http://localhost:5037/`
-- Admin: `http://localhost:5037/admin`
-- Login: `http://localhost:5037/login`
-
-## 7) Database bootstrap thực tế khi startup
-
-Trong `Program.cs`, ứng dụng chạy theo thứ tự:
-
-1. `context.Database.MigrateAsync()`
-2. `SeedData.Initialize(...)`
-
-Nghĩa là:
-
-- schema được áp dụng từ EF migrations,
-- dữ liệu mẫu được seed bằng code C# (không dùng script SQL thủ công).
-
-## 8) Seed data và tài khoản mặc định
-
-`SeedData.cs` seed idempotent các nhóm dữ liệu:
-
-- role: `Manager`, `Receptionist`
-- user mặc định
-- room types, rooms, services, guests
-
-Tài khoản mặc định:
-
-- `manager@hotel.com` / `Hotel@123`
-- `le.reception@hotel.com` / `Hotel@123`
-
-> Khuyến nghị: đổi mật khẩu ngay khi triển khai thật.
-
-## 9) EF Core migrations
-
-Tool `dotnet-ef` đã khai báo trong `dotnet-tools.json`.
-
-Lệnh thường dùng:
-
-```bash
-dotnet ef migrations add <MigrationName> --project HotelManagement --startup-project HotelManagement
-dotnet ef database update --project HotelManagement --startup-project HotelManagement
-dotnet ef migrations list --project HotelManagement --startup-project HotelManagement
-```
-
-Nếu máy clone mới chưa có thư mục migrations trong working tree, hãy tạo migration đầu tiên trước khi chạy chính thức.
-
-## 10) Cấu hình quan trọng
-
-Trong `appsettings.json`:
-
-- `HotelSettings:NoShowThresholdHours`: ngưỡng xử lý no-show
-- `HotelSettings:CheckInTime`, `HotelSettings:CheckOutTime`
-- `WebsiteSettings:*`: thông tin branding và liên hệ website
-
-Trong `Program.cs`:
-
-- locale hệ thống chuẩn `vi-VN`
-- format tiền tệ VNĐ, không chữ số thập phân
-- định dạng ngày `dd/MM/yyyy`
-
-## 11) Build, kiểm thử, publish
-
-```bash
-dotnet build
-dotnet test
-dotnet publish HotelManagement/HotelManagement.csproj -c Release -o ./publish
-```
-
-> Hiện solution chưa tách test project riêng, nên `dotnet test` có thể không chạy test case nào.
-
-## 12) Troubleshooting nhanh
-
-### Không kết nối SQL Server
-
-- Kiểm tra SQL Server service đang chạy.
-- Kiểm tra lại `ConnectionStrings:DefaultConnection`.
-- Kiểm tra quyền truy cập DB của tài khoản chạy app.
-
-### Lỗi migration / schema chưa đúng
-
-```bash
-dotnet ef migrations list --project HotelManagement --startup-project HotelManagement
 dotnet ef database update --project HotelManagement --startup-project HotelManagement
 ```
 
-### Build warning NU1900/NU190x do mạng
+**5. Khởi chạy Ứng dụng**
 
-Nếu môi trường chặn truy cập metadata vulnerability từ NuGet, có thể thấy warning liên quan audit package. Đây thường là vấn đề mạng/repository feed.
+```bash
+dotnet run --project HotelManagement --urls "http://localhost:5037"
+```
 
-## 13) Ghi chú vận hành
+> **Lưu ý Seed Data:** Ứng dụng sẽ tự động kích hoạt tiến trình Seed (`SeedData.Initialize(...)`) để đổ dữ liệu mẫu sẵn có (Phòng, dịch vụ, tài khoản demo) mượt mà ngay lần chạy đầu tiên.
 
-- App đã cấu hình route lowercase và alias route cho Identity (`/login`, `/logout`, `/profile`, ...).
-- Có middleware bắt lỗi chưa xử lý và status code để chuyển hướng trang lỗi thân thiện.
-- Có worker nền no-show chạy theo HostedService.
+## 🔑 Tài khoản Demo (Default Accounts)
+
+Mật khẩu chung và bảo mật mặc định cho các tài khoản bên dưới là: **`Hotel@123`**
+
+- **Tài khoản Quản lý (Manager):** `manager@hotel.com`
+- **Tài khoản Lễ tân (Receptionist):** `le.reception@hotel.com`
+
+_(Lưu ý: Mật khẩu này được seed tự động và nên được thay đổi hoặc vô hiệu hóa khi di chuyển lên môi trường Production thực tế)._
+
+## 📚 Tài liệu bổ trợ (Dành cho Sinh viên/Bàn giao)
+
+Dự án có sẵn các cấu trúc tài liệu đi kèm rất cần thiết cho việc bảo vệ báo cáo trước hội đồng hoặc bàn giao dự án kĩ thuật:
+
+- [**BI_KIP_GIAI_TRINH.md**](./BI_KIP_GIAI_TRINH.md): Hướng dẫn trả lời câu hỏi phản biện chuyên sâu, cách chuẩn bị kịch bản demo sát thực tế, checklist các lỗi và luồng hoạt động.
+
+---
+
+<div align="center">
+  <i>Được xây dựng đảm bảo các chuẩn mực Coding, trải nghiệm ổn định và nền tảng mở rộng vững chắc!</i>
+</div>

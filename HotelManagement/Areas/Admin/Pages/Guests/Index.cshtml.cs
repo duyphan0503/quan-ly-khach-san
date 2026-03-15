@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +7,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace HotelManagement.Areas.Admin.Pages.Guests;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Cung cấp danh sách khách với tìm kiếm, phân trang và các thao tác quản trị liên quan hồ sơ.
+/// </summary>
 public class IndexModel : PageModel
 {
     private readonly IGuestService _guestService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ quản lý khách.
+    /// </summary>
     public IndexModel(IGuestService guestService)
     {
         _guestService = guestService;
@@ -28,6 +34,9 @@ public class IndexModel : PageModel
 
     public int PageSize { get; set; } = 5;
 
+    /// <summary>
+    /// Nạp danh sách khách theo bộ lọc tìm kiếm và phân trang hiện tại.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         if (PageNumber < 1) PageNumber = 1;
@@ -39,12 +48,18 @@ public class IndexModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Trả partial danh sách khách cho cơ chế tải thêm (infinite/load-more) trên giao diện.
+    /// </summary>
     public async Task<IActionResult> OnGetLoadMoreAsync(string? searchQuery, int pageNumber)
     {
         var result = await _guestService.GetPagedAsync(searchQuery, pageNumber, PageSize);
         return Partial("_GuestRows", result.Items);
     }
 
+    /// <summary>
+    /// Xóa hồ sơ khách theo id và phản hồi trạng thái bằng TempData.
+    /// </summary>
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
         var (success, message) = await _guestService.DeleteAsync(id);
@@ -60,6 +75,9 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
+    /// <summary>
+    /// Gộp các hồ sơ khách bị trùng theo UserId để chuẩn hóa dữ liệu lịch sử khách hàng.
+    /// </summary>
     public async Task<IActionResult> OnPostMergeDuplicatesAsync()
     {
         var guests = await _guestService.GetAllAsync();
@@ -103,3 +121,4 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 }
+

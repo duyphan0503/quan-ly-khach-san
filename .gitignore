@@ -62,6 +62,7 @@ Thumbs.db
 /test_*.cs
 /test_*.sql
 /bolog.txt
+/README_REPORT.md
 
 # ------------------------------
 # Dev/Internal-only artifacts (khong push cho khach hang)

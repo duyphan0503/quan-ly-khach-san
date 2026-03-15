@@ -1,4 +1,4 @@
-@page "/booking/{roomId:int?}"
+﻿@page "/booking/{roomId:int?}"
 @model HotelManagement.Areas.Public.Pages.Booking.RequestModel
 @using System.Globalization
 @{
@@ -95,6 +95,7 @@
                             <span class="w-8 h-8 rounded-lg bg-success/15 border border-success/40 text-success text-sm font-black grid place-items-center">03</span>
                             Chọn Phòng
                         </h2>
+                        <!-- Nhãn trạng thái trực quan cho từng bản ghi -->
                         <div id="selection-chip" class="badge h-8 px-3 rounded-full bg-primary/10 border border-primary/30 text-primary font-semibold">0 phòng đã chọn</div>
                     </div>
 
@@ -102,6 +103,7 @@
                         <div class="flex flex-wrap items-center gap-6 text-sm">
                             <div class="text-content-secondary">Tổng sức chứa: <span id="capacity-value" class="text-content-primary font-bold">0</span> khách</div>
                             <div class="text-content-secondary">Yêu cầu: <span id="required-value" class="text-content-primary font-bold">@Model.Input.NumberOfGuests</span> khách</div>
+                            <!-- Nhãn trạng thái trực quan cho từng bản ghi -->
                             <div id="capacity-status" class="badge h-7 px-3 rounded-full bg-danger/10 border border-danger/30 text-danger font-semibold">Chưa đủ chỗ</div>
                         </div>
                     </div>

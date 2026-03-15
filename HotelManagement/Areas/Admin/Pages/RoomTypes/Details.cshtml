@@ -1,4 +1,4 @@
-@page "/admin/room-types/details/{id:int}"
+﻿@page "/admin/room-types/details/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.RoomTypes.DetailsModel
 @{
     ViewData["Title"] = "Chi Tiết Loại Phòng";
@@ -22,7 +22,7 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-    <!-- Image Card -->
+    <!-- Cột trái: ảnh đại diện và mã loại phòng -->
     <div class="lg:col-span-5 flex flex-col gap-6">
         <div class="card bg-surface-2/30 border border-bdr-strong/50 shadow-2xl backdrop-blur-xl overflow-hidden rounded-3xl group">
             <div class="relative aspect-[3/2] overflow-hidden">
@@ -54,11 +54,11 @@
         </div>
     </div>
 
-    <!-- Info Detail Card -->
+    <!-- Cột phải: thông số giá, sức chứa, tiện nghi và mô tả -->
     <div class="lg:col-span-7">
         <div class="card bg-surface-2/30 border border-bdr-strong/50 shadow-2xl backdrop-blur-xl rounded-3xl h-full">
             <div class="card-body p-8 space-y-8">
-                <!-- Header Stats -->
+                <!-- Khối thông số chính để đối chiếu nhanh -->
                 <div class="grid grid-cols-2 gap-6 pb-8 border-b border-bdr-strong/30">
                     <div class="space-y-1">
                         <p class="text-xs text-content-muted uppercase tracking-widest font-bold">Giá Cơ Bản</p>
@@ -84,7 +84,7 @@
                     </div>
                 </div>
 
-                <!-- Content Sections -->
+                <!-- Nội dung chi tiết tiện nghi và mô tả loại phòng -->
                 <div class="space-y-6">
                     <div>
                         <div class="flex items-center gap-2 mb-3">
@@ -116,7 +116,7 @@
                     </div>
                 </div>
 
-                <!-- Action Footer -->
+                <!-- Phần cuối hiển thị thông tin cập nhật của trang -->
                 <div class="mt-auto pt-8 flex items-center justify-between gap-4">
                     <p class="text-[10px] text-content-muted uppercase tracking-tighter">Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
                     <div class="h-1 flex-1 border-b border-dashed border-bdr-strong mx-4"></div>

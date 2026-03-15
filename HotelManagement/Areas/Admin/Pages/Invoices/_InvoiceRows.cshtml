@@ -1,4 +1,4 @@
-@model List<HotelManagement.Core.Models.Invoice>
+﻿@model List<HotelManagement.Core.Models.Invoice>
 @using HotelManagement.Core.Models.Enums
 
 @foreach (var invoice in Model)
@@ -9,6 +9,7 @@
         </td>
         <td class="text-sm">@invoice.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</td>
         <td>
+            <!-- Cụm thông tin khách + phòng để nhận diện nhanh giao dịch -->
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-surface-3 flex items-center justify-center text-[10px] text-primary border border-primary/20 overflow-hidden shrink-0 shadow-lg">
                     @{

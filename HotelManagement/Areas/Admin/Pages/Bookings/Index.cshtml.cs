@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -8,10 +8,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace HotelManagement.Areas.Admin.Pages.Bookings
 {
     [Authorize(Roles = "Manager,Receptionist")]
+    /// <summary>
+    /// Cung cấp danh sách booking với tìm kiếm/lọc trạng thái và thao tác cập nhật trạng thái nhanh.
+    /// </summary>
     public class IndexModel : PageModel
     {
         private readonly IBookingService _bookingService;
 
+        /// <summary>
+        /// Khởi tạo PageModel với dịch vụ booking.
+        /// </summary>
         public IndexModel(IBookingService bookingService)
         {
             _bookingService = bookingService;
@@ -36,6 +42,9 @@ namespace HotelManagement.Areas.Admin.Pages.Bookings
         [BindProperty(SupportsGet = true)]
         public int PageNumber { get; set; } = 1;
 
+        /// <summary>
+        /// Nạp danh sách booking, ưu tiên hiển thị đơn Pending trước và áp dụng phân trang.
+        /// </summary>
         public async Task OnGetAsync()
         {
             List<Booking> source;
@@ -64,6 +73,9 @@ namespace HotelManagement.Areas.Admin.Pages.Bookings
                 .ToList();
         }
 
+        /// <summary>
+        /// Chuyển trạng thái booking sang Confirmed.
+        /// </summary>
         public async Task<IActionResult> OnPostConfirmAsync(int id)
         {
             var (success, message) = await _bookingService.UpdateStatusAsync(id, nameof(BookingStatus.Confirmed));
@@ -73,6 +85,9 @@ namespace HotelManagement.Areas.Admin.Pages.Bookings
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Hủy booking theo nghiệp vụ hủy đặt.
+        /// </summary>
         public async Task<IActionResult> OnPostCancelAsync(int id)
         {
             var (success, message) = await _bookingService.CancelAsync(id);
@@ -81,6 +96,9 @@ namespace HotelManagement.Areas.Admin.Pages.Bookings
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Chuyển trạng thái booking sang CheckedIn.
+        /// </summary>
         public async Task<IActionResult> OnPostCheckInAsync(int id)
         {
             var (success, message) = await _bookingService.UpdateStatusAsync(id, nameof(BookingStatus.CheckedIn));
@@ -89,6 +107,9 @@ namespace HotelManagement.Areas.Admin.Pages.Bookings
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Chuyển trạng thái booking sang CheckedOut.
+        /// </summary>
         public async Task<IActionResult> OnPostCheckOutAsync(int id)
         {
             var (success, message) = await _bookingService.UpdateStatusAsync(id, nameof(BookingStatus.CheckedOut));
@@ -98,3 +119,4 @@ namespace HotelManagement.Areas.Admin.Pages.Bookings
         }
     }
 }
+

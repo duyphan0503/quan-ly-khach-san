@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +9,18 @@ using System.Security.Claims;
 namespace HotelManagement.Areas.Admin.Pages.Bookings;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Xử lý tạo booking mới cho một hoặc nhiều phòng trong cùng một lần đặt.
+/// </summary>
 public class CreateModel : PageModel
 {
     private readonly IBookingService _bookingService;
     private readonly IRoomService _roomService;
     private readonly IGuestService _guestService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ booking, phòng và khách.
+    /// </summary>
     public CreateModel(IBookingService bookingService, IRoomService roomService, IGuestService guestService)
     {
         _bookingService = bookingService;
@@ -35,12 +41,18 @@ public class CreateModel : PageModel
     public List<Room> AvailableRooms { get; set; } = new();
     public SelectList Guests { get; set; } = default!;
 
+    /// <summary>
+    /// Nạp danh sách phòng/khách để hiển thị form tạo booking.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         await LoadSelectListsAsync();
         return Page();
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu nhập và tạo booking cho các phòng được chọn.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         ModelState.Remove("Booking.Room");
@@ -93,6 +105,9 @@ public class CreateModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Nạp dữ liệu lựa chọn cho form (danh sách phòng và khách).
+    /// </summary>
     private async Task LoadSelectListsAsync()
     {
         var rooms = await _roomService.GetAllAsync();

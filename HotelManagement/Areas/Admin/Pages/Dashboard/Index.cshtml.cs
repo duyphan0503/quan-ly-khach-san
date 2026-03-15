@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,10 +8,16 @@ using ChartJSCore.Helpers;
 namespace HotelManagement.Areas.Admin.Pages.Dashboard
 {
     [Authorize(Roles = "Manager,Receptionist")]
+    /// <summary>
+    /// PageModel xử lý trang quản trị 'Index.cshtml'.
+    /// </summary>
     public class IndexModel : PageModel
     {
         private readonly IDashboardService _dashboardService;
 
+        /// <summary>
+        /// Khởi tạo lớp IndexModel và nạp các dependency cần thiết.
+        /// </summary>
         public IndexModel(IDashboardService dashboardService)
         {
             _dashboardService = dashboardService;
@@ -21,6 +27,9 @@ namespace HotelManagement.Areas.Admin.Pages.Dashboard
         public Chart RevenueChart { get; set; } = null!;
         public Chart RoomTypeChart { get; set; } = null!;
 
+        /// <summary>
+        /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+        /// </summary>
         public async Task OnGetAsync()
         {
             Data = await _dashboardService.GetDashboardDataAsync();

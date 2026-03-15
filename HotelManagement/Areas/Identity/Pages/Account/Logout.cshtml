@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model LogoutModel
 @inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
 @{
@@ -13,13 +13,13 @@
 }
 
 <div class="min-h-[calc(100vh-80px)] pt-16 pb-12 flex items-center justify-center relative overflow-hidden bg-surface-1">
-    <!-- Fluid Decorative Blobs (Liquid Glass Core) -->
+    <!-- Nền thị giác nhẹ cho trạng thái xác nhận đăng xuất -->
     <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-danger/10 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
     <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-danger/5 rounded-full blur-[120px] animate-pulse pointer-events-none mq-auth-blob-delay"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
 
     <div class="relative z-10 w-full max-w-md px-6 py-12 text-center">
-        <!-- Brand Logo/Header -->
+        <!-- Khối thương hiệu giúp người dùng định vị đúng hệ thống -->
         <div class="text-center mb-8 animate-fade-in">
             <a asp-area="Public" asp-page="/Index" class="inline-flex items-center gap-4 mb-8 group">
                 <div class="relative">

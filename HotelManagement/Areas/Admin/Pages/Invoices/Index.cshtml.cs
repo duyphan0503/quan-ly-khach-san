@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -9,10 +9,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace HotelManagement.Areas.Admin.Pages.Invoices;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Cung cấp danh sách hóa đơn cho trang quản trị với tìm kiếm, lọc trạng thái/phương thức và phân trang.
+/// </summary>
 public class IndexModel : PageModel
 {
     private readonly IInvoiceService _invoiceService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ truy vấn hóa đơn.
+    /// </summary>
     public IndexModel(IInvoiceService invoiceService)
     {
         _invoiceService = invoiceService;
@@ -37,6 +43,9 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public PaymentMethod? PaymentMethodFilter { get; set; }
 
+    /// <summary>
+    /// Nạp dữ liệu danh sách và áp dụng toàn bộ bộ lọc GET trước khi tính phân trang.
+    /// </summary>
     public async Task OnGetAsync()
     {
         InvoiceStatusOptions = new List<SelectListItem>

@@ -1,4 +1,4 @@
-@page "/admin/bookings/edit/{id:int}"
+﻿@page "/admin/bookings/edit/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.Bookings.EditModel
 @using HotelManagement.Core.Models.Enums
 @{
@@ -6,7 +6,7 @@
 }
 
 <div class="px-4 py-8 max-w-5xl mx-auto min-h-screen">
-    <!-- Header: Refined Luxury -->
+    <!-- Phần đầu màn hình chỉnh sửa giao dịch -->
     <div class="mb-12 flex flex-col items-center text-center space-y-4">
         <a asp-page="./Index" class="inline-flex items-center gap-2 rounded-xl border border-bdr-strong/70 bg-surface-2/70 px-3 py-2 text-sm text-content-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-content-primary mb-2">
             <iconify-icon icon="solar:alt-arrow-left-bold-duotone" class="h-4 w-4"></iconify-icon>
@@ -33,7 +33,7 @@
         <div class="card bg-surface-2/30 border border-white/[0.03] shadow-2xl backdrop-blur-xl rounded-none p-8 lg:p-16 relative overflow-hidden group">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-12 relative z-10">
                 
-                <!-- Section 1: Itinerary -->
+                <!-- Khối lịch trình lưu trú -->
                 <div class="space-y-10">
                     <h2 class="text-3xl font-luxury text-content-primary border-b border-white/5 pb-6 flex items-center gap-4">
                         <iconify-icon icon="solar:route-linear" class="text-primary text-2xl"></iconify-icon>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                <!-- Section 2: Guest Details -->
+                <!-- Khối thông tin chủ thể booking -->
                 <div class="space-y-10">
                     <h2 class="text-3xl font-luxury text-content-primary border-b border-white/5 pb-6 flex items-center gap-4">
                         <iconify-icon icon="solar:shield-user-linear" class="text-primary text-2xl"></iconify-icon>
@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <!-- Section 3: Concierge Notes -->
+                <!-- Khối ghi chú vận hành / concierge -->
                 <div class="md:col-span-2 space-y-10">
                     <div class="relative group/field">
                         <label asp-for="Booking.Notes" class="block text-[10px] uppercase tracking-[0.2em] text-content-muted mb-3 font-sans font-bold group-focus-within/field:text-primary transition-colors">Yêu cầu Concierge đặc biệt</label>
@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            <!-- Total Amount Card -->
+            <!-- Khối tổng tiền dự kiến để đối chiếu trước khi lưu -->
             <div class="mt-16 p-8 bg-primary/[0.03] border border-primary/10 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -124,7 +124,7 @@
                 </div>
             </div>
 
-            <!-- Footer Actions -->
+            <!-- Nhóm hành động cuối form: hủy giao dịch hoặc lưu chỉnh sửa -->
             <div class="mt-20 pt-10 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-8 relative z-10">
                 <button type="submit" asp-page-handler="Delete" data-confirm-submit="Hủy giao dịch đặt phòng này? Quy trình hoàn tiền sẽ được áp dụng theo chính sách." class="group flex items-center gap-3 text-white/30 hover:text-error transition-all duration-500 py-3">
                     <iconify-icon icon="solar:trash-bin-minimalistic-linear" class="text-2xl group-hover:shake transition-all"></iconify-icon>

@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -8,11 +8,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace HotelManagement.Areas.Admin.Pages.Guests;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Hiển thị chi tiết hồ sơ khách và lịch sử lưu trú gần đây.
+/// </summary>
 public class DetailsModel : PageModel
 {
     private const int DefaultActivityPageSize = 8;
     private readonly IGuestService _guestService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ truy vấn khách.
+    /// </summary>
     public DetailsModel(IGuestService guestService)
     {
         _guestService = guestService;
@@ -23,6 +29,9 @@ public class DetailsModel : PageModel
     public int ActivityTotalCount { get; private set; }
     public int ActivityPageSize => DefaultActivityPageSize;
 
+    /// <summary>
+    /// Nạp thông tin khách và trang đầu tiên của lịch sử booking để hiển thị màn hình chi tiết.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var guest = await _guestService.GetByIdAsync(id);
@@ -44,6 +53,9 @@ public class DetailsModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Trả dữ liệu JSON cho chức năng "xem thêm" lịch sử hoạt động của khách.
+    /// </summary>
     public async Task<IActionResult> OnGetActivityPageAsync(int id, int pageNumber = 1)
     {
         if (pageNumber < 1)
@@ -103,3 +115,4 @@ public class DetailsModel : PageModel
         };
     }
 }
+

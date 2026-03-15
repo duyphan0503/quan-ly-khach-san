@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model EmailModel
 @{
     ViewData["Title"] = "Cài đặt Email";
@@ -15,7 +15,7 @@
     }
 
     <div class="space-y-8">
-        <!-- Current Email -->
+        <!-- Email hiện tại và trạng thái xác thực tài khoản -->
         <div class="space-y-3 text-left">
             <label asp-for="Email" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Email hiện tại</label>
             <div class="relative group">
@@ -40,7 +40,7 @@
             }
         </div>
 
-        <!-- New Email -->
+        <!-- Trường nhập email mới để yêu cầu cập nhật -->
         <div class="space-y-3 text-left">
             <label asp-for="Input.NewEmail" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Email mới</label>
             <div class="relative group/input">

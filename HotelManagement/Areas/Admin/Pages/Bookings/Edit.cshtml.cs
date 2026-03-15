@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +8,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace HotelManagement.Areas.Admin.Pages.Bookings;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Xử lý chỉnh sửa booking hiện có, bao gồm cập nhật thông tin lưu trú và xóa booking.
+/// </summary>
 public class EditModel : PageModel
 {
     private readonly IBookingService _bookingService;
     private readonly IRoomService _roomService;
     private readonly IGuestService _guestService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ booking, phòng và khách.
+    /// </summary>
     public EditModel(IBookingService bookingService, IRoomService roomService, IGuestService guestService)
     {
         _bookingService = bookingService;
@@ -28,6 +34,9 @@ public class EditModel : PageModel
     public SelectList Guests { get; set; } = default!;
     public Dictionary<int, decimal> RoomPrices { get; set; } = new();
 
+    /// <summary>
+    /// Nạp booking theo id và dữ liệu tham chiếu cho form chỉnh sửa.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int? id)
     {
         if (id == null) return NotFound();
@@ -40,6 +49,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu nhập và cập nhật booking.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         ModelState.Remove("Booking.Room");
@@ -71,6 +83,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Xóa booking theo id hiện tại và điều hướng phù hợp theo kết quả.
+    /// </summary>
     public async Task<IActionResult> OnPostDeleteAsync()
     {
         if (Booking.Id == 0) return NotFound();
@@ -86,6 +101,9 @@ public class EditModel : PageModel
         return RedirectToPage("./Edit", new { id = Booking.Id });
     }
 
+    /// <summary>
+    /// Nạp danh sách phòng/khách và bảng giá phòng để phục vụ form chỉnh sửa.
+    /// </summary>
     private async Task LoadSelectListsAsync()
     {
         var rooms = await _roomService.GetAllAsync();

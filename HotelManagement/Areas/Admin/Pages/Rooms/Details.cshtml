@@ -1,4 +1,4 @@
-@page "/admin/rooms/details/{id:int}"
+﻿@page "/admin/rooms/details/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.Rooms.DetailsModel
 @using HotelManagement.Core.Models.Enums
 @{
@@ -33,7 +33,7 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Hình Ảnh & Thông Tin Cơ Bản -->
+    <!-- Cột trái: nhận diện nhanh phòng và thông số nền -->
     <div class="lg:col-span-1">
         <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden backdrop-blur-md">
             <figure class="relative h-64 bg-surface-3">
@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    <!-- Thông tin chi tiết & Lịch sử -->
+    <!-- Cột phải: tiện ích, ghi chú vận hành và lịch sử đặt gần nhất -->
     <div class="lg:col-span-2 space-y-6">
         <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl backdrop-blur-md">
             <div class="card-body p-6">
@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        <!-- Placeholder for recent bookings of this room -->
+        <!-- Khối theo dõi lịch sử đặt phòng gần đây của phòng hiện tại -->
         <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl backdrop-blur-md">
             <div class="card-body p-6">
                 <h3 class="text-lg font-bold text-content-primary mb-4 flex items-center gap-2">

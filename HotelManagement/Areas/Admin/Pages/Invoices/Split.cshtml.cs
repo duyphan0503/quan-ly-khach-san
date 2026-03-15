@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +8,16 @@ using System.ComponentModel.DataAnnotations;
 namespace HotelManagement.Areas.Admin.Pages.Invoices;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Xử lý tách một phần dòng chi tiết từ hóa đơn gốc sang hóa đơn mới.
+/// </summary>
 public class SplitModel : PageModel
 {
     private readonly IInvoiceService _invoiceService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ hóa đơn.
+    /// </summary>
     public SplitModel(IInvoiceService invoiceService)
     {
         _invoiceService = invoiceService;
@@ -22,6 +28,9 @@ public class SplitModel : PageModel
     [BindProperty]
     public SplitInputModel Input { get; set; } = new();
 
+    /// <summary>
+    /// Dữ liệu người dùng chọn khi thực hiện tách chứng từ.
+    /// </summary>
     public class SplitInputModel
     {
         [Required]
@@ -31,6 +40,9 @@ public class SplitModel : PageModel
         public List<int> SelectedDetailIds { get; set; } = new();
     }
 
+    /// <summary>
+    /// Kiểm tra điều kiện tách (hóa đơn pending và có nhiều hơn một dòng chi tiết) trước khi hiển thị màn hình chọn dòng.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var invoice = await _invoiceService.GetByIdAsync(id);
@@ -50,6 +62,9 @@ public class SplitModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Thực thi tách chứng từ theo danh sách SelectedDetailIds và điều hướng về chi tiết hóa đơn mới.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (Input.SelectedDetailIds == null || Input.SelectedDetailIds.Count == 0)

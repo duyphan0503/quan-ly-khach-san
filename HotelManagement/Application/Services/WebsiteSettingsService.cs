@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
@@ -6,18 +6,27 @@ using System.Text.Json.Nodes;
 
 namespace HotelManagement.Application.Services;
 
+/// <summary>
+/// Cung cấp nghiệp vụ cho miền website settings.
+/// </summary>
 public class WebsiteSettingsService : IWebsiteSettingsService
 {
     private readonly IConfiguration _configuration;
     private readonly IWebHostEnvironment _environment;
     private readonly SemaphoreSlim _writeLock = new(1, 1);
 
+    /// <summary>
+    /// Khởi tạo lớp WebsiteSettingsService và nạp các dependency cần thiết.
+    /// </summary>
     public WebsiteSettingsService(IConfiguration configuration, IWebHostEnvironment environment)
     {
         _configuration = configuration;
         _environment = environment;
     }
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền website settings.
+    /// </summary>
     public async Task<WebsiteSettings> GetCurrentAsync()
     {
         await Task.CompletedTask;
@@ -87,3 +96,4 @@ public class WebsiteSettingsService : IWebsiteSettingsService
         return (true, "Đã cập nhật cài đặt website thành công.");
     }
 }
+

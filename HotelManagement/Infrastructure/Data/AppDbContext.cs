@@ -1,11 +1,17 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using HotelManagement.Core.Models;
 
 namespace HotelManagement.Infrastructure.Data;
 
+/// <summary>
+/// DbContext trung tâm: quản lý mapping EF Core và ràng buộc dữ liệu toàn hệ thống.
+/// </summary>
 public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
+    /// <summary>
+    /// Khởi tạo lớp AppDbContext và nạp các dependency cần thiết.
+    /// </summary>
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) { }
 
@@ -19,6 +25,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        // Luôn gọi base để Identity tự cấu hình đầy đủ bảng AspNetUsers/Roles/... trước.
         base.OnModelCreating(builder);
 
         // ── Room ──
@@ -65,6 +72,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .HasIndex(b => b.BookingGroupCode)
             .HasFilter("[BookingGroupCode] IS NOT NULL");
 
+        // Check constraint bảo vệ dữ liệu ở tầng DB (không phụ thuộc UI/Service).
         builder.Entity<Booking>().ToTable(t => t.HasCheckConstraint("CK_Booking_Dates", "[CheckOut] > [CheckIn]"));
 
         // ── Invoice ──

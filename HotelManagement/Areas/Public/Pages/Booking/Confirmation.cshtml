@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model HotelManagement.Areas.Public.Pages.Booking.ConfirmationModel
 @inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
 @{
@@ -31,7 +31,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <!-- Check-in Info -->
+                <!-- Khối thông tin thời điểm nhận phòng -->
                 <div class="bg-surface-3/50 p-6 rounded-3xl border border-white/5">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -43,7 +43,7 @@
                     <p class="text-sm text-content-muted mt-1 italic">Sau @Model.CheckInTimeText giờ</p>
                 </div>
 
-                <!-- Check-out Info -->
+                <!-- Khối thông tin thời điểm trả phòng -->
                 <div class="bg-surface-3/50 p-6 rounded-3xl border border-white/5">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">

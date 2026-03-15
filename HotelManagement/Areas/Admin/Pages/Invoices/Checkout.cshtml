@@ -1,4 +1,4 @@
-@page "/admin/invoices/checkout/{id:int?}"
+﻿@page "/admin/invoices/checkout/{id:int?}"
 @model HotelManagement.Areas.Admin.Pages.Invoices.CheckoutModel
 @using HotelManagement.Core.Models.Enums
 @{
@@ -23,6 +23,7 @@
 
 <partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
 
+<!-- Bố cục chính: trái là chi tiết hóa đơn, phải là khối tổng kết và thao tác thanh toán -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2">
         @if (Model.IsGroupCheckoutAvailable)
@@ -32,6 +33,7 @@
                 <p class="opacity-90">Nếu bật tùy chọn thanh toán nhóm, hệ thống sẽ thu tiền toàn bộ phòng đang lưu trú trong cùng đợt đặt và tự checkout đồng thời.</p>
             </div>
         }
+        <!-- Thẻ chi tiết hóa đơn nháp trước khi xác nhận thu tiền -->
         <div class="card overflow-hidden rounded-3xl bg-gradient-to-br from-surface-2 to-surface-2/85 border border-white/10 ring-1 ring-white/5 shadow-[0_18px_45px_rgba(5,10,30,0.35)] backdrop-blur-xl">
             <div class="card-body p-0">
                 <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.03]">
@@ -43,6 +45,7 @@
                     </h3>
                 </div>
                 
+                <!-- Bảng chi tiết các dòng dịch vụ/phòng trong hóa đơn -->
                 <div class="p-6 overflow-x-auto bg-gradient-to-b from-transparent to-black/5">
                     <table class="table w-full text-content-secondary">
                         <thead>
@@ -53,6 +56,7 @@
                                 <th class="text-right">Thành tiền</th>
                             </tr>
                         </thead>
+                        <!-- Mỗi dòng thể hiện một khoản phí phòng/dịch vụ sẽ được chốt khi thanh toán -->
                         <tbody>
                             @foreach (var detail in Model.DraftInvoice.InvoiceDetails)
                             {
@@ -74,6 +78,7 @@
                                 </tr>
                             }
                         </tbody>
+                        <!-- Tổng trước thuế/phụ thu/giảm giá để đối chiếu ở cột thanh toán -->
                         <tfoot>
                             <tr class="border-t-2 border-bdr-strong">
                                 <td colspan="3" class="text-right text-content-muted font-bold uppercase text-sm">Cộng tiền hàng:</td>
@@ -86,8 +91,10 @@
         </div>
     </div>
 
+    <!-- Cột phải: nhập thông số thanh toán và chốt hóa đơn -->
     <div class="lg:col-span-1">
-         <div class="card sticky top-24 overflow-hidden rounded-3xl bg-gradient-to-br from-surface-2 to-surface-2/85 border border-white/10 ring-1 ring-white/5 shadow-[0_18px_45px_rgba(5,10,30,0.35)] backdrop-blur-xl">
+            <!-- Thẻ tổng kết thanh toán: nhập thuế/giảm giá và xác nhận thu tiền -->
+            <div class="card sticky top-24 overflow-hidden rounded-3xl bg-gradient-to-br from-surface-2 to-surface-2/85 border border-white/10 ring-1 ring-white/5 shadow-[0_18px_45px_rgba(5,10,30,0.35)] backdrop-blur-xl">
             <div class="card-body p-6">
                 <h3 class="text-lg font-bold text-content-primary mb-4 border-b border-white/10 pb-2 flex items-center gap-2">
                     <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 border border-primary/30 shrink-0">
@@ -96,9 +103,11 @@
                     Tổng Kết & Thanh Toán
                 </h3>
 
+                <!-- Form thanh toán: cập nhật phụ thu, giảm giá, phương thức và chốt hóa đơn -->
                 <form method="post" id="checkoutForm">
                     <input type="hidden" asp-for="Input.BookingId" />
                     
+                    <!-- Khối thông số tính tiền đầu vào -->
                     <div class="space-y-4 rounded-2xl border border-white/5 bg-black/10 p-4">
                         <div class="form-control">
                             <label asp-for="Input.Tax" class="label text-content-muted font-medium text-sm pb-1 inline-flex items-center gap-2">
@@ -139,6 +148,7 @@
 
                     <div class="divider border-white/10"></div>
                     
+                    <!-- Khối hiển thị tổng thanh toán cuối cùng sau khi tính toán -->
                     <div class="flex justify-between items-end mb-6">
                         <span class="text-content-secondary font-bold uppercase tracking-wide">Thanh Toán</span>
                         <div class="text-right">
