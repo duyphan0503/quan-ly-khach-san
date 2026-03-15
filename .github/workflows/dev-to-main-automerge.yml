@@ -38,26 +38,67 @@ jobs:
     needs: validate
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Ensure PR from dev to main exists
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          PR_NUMBER=$(gh pr list --base main --head dev --state open --json number --jq '.[0].number')
+          set -euo pipefail
+
+          PR_NUMBER=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --base main \
+            --head dev \
+            --state open \
+            --json number \
+            --jq '.[0].number')
 
           if [ -z "$PR_NUMBER" ]; then
-            gh pr create \
+            set +e
+            CREATE_OUTPUT=$(gh pr create \
+              --repo "${{ github.repository }}" \
               --base main \
               --head dev \
               --title "chore: promote dev to main" \
-              --body "Automated promotion PR from dev to main after CI passed."
+              --body "Automated promotion PR from dev to main after CI passed." 2>&1)
+            CREATE_EXIT=$?
+            set -e
 
-            PR_NUMBER=$(gh pr list --base main --head dev --state open --json number --jq '.[0].number')
+            if [ "$CREATE_EXIT" -ne 0 ]; then
+              if echo "$CREATE_OUTPUT" | grep -q "not permitted to create or approve pull requests"; then
+                echo "::warning::GitHub Actions token không được phép tạo PR. Bật setting 'Allow GitHub Actions to create and approve pull requests' hoặc dùng PAT secret."
+                echo "PR_NUMBER=" >> "$GITHUB_ENV"
+                exit 0
+              fi
+
+              echo "$CREATE_OUTPUT"
+              exit "$CREATE_EXIT"
+            fi
+
+            PR_NUMBER=$(gh pr list \
+              --repo "${{ github.repository }}" \
+              --base main \
+              --head dev \
+              --state open \
+              --json number \
+              --jq '.[0].number')
           fi
 
           echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_ENV"
 
       - name: Enable auto merge
+        if: env.PR_NUMBER != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge "$PR_NUMBER" --auto --merge || true
+          gh pr merge "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --auto \
+            --merge || true
+
+      - name: Skip note when PR create is blocked
+        if: env.PR_NUMBER == ''
+        run: |
+          echo "Không có PR để auto-merge trong run này (token bị chặn tạo PR hoặc chưa có PR open)."

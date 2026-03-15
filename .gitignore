@@ -62,11 +62,13 @@ Thumbs.db
 /test_*.cs
 /test_*.sql
 /bolog.txt
+/README_REPORT.md
 
 # ------------------------------
 # Dev/Internal-only artifacts (khong push cho khach hang)
 # ------------------------------
 /AGENTS.md
+**/AGENTS.md
 /docs/
 /run-dev.sh
 /optimize-images.py
@@ -74,3 +76,4 @@ Thumbs.db
 /HotelManagement/appsettings.Development.json
 /HotelManagement/appsettings.*.local.json
 /HotelManagement/secrets*.json
+/HotelManagement/Infrastructure/Data/Migrations/
