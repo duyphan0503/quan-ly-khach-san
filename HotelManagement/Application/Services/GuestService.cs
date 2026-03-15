@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Infrastructure.Repositories.Interfaces;
 using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Infrastructure.Data;
@@ -6,23 +6,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagement.Application.Services;
 
+/// <summary>
+/// Service quản lý hồ sơ khách: chuẩn hóa dữ liệu, chống trùng, hỗ trợ gộp profile.
+/// </summary>
 public class GuestService : IGuestService
 {
     private readonly IGuestRepository _repo;
     private readonly AppDbContext _context;
 
+    /// <summary>
+    /// Khởi tạo lớp GuestService và nạp các dependency cần thiết.
+    /// </summary>
     public GuestService(IGuestRepository repo, AppDbContext context)
     {
         _repo = repo;
         _context = context;
     }
 
+    /// <summary>
+    /// Lấy toàn bộ dữ liệu guest.
+    /// </summary>
     public Task<List<Guest>> GetAllAsync() => _repo.GetAllAsync();
 
+    /// <summary>
+    /// Lấy thông tin guest theo mã định danh.
+    /// </summary>
     public Task<Guest?> GetByIdAsync(int id) => _repo.GetByIdAsync(id);
 
     public async Task<(bool Success, string Message)> CreateAsync(Guest guest)
     {
+        // Chuẩn hóa đầu vào trước khi validate unique.
         guest.PhoneNumber = NormalizePhone(guest.PhoneNumber);
         guest.CCCD = string.IsNullOrWhiteSpace(guest.CCCD) ? null : guest.CCCD.Trim();
 
@@ -64,6 +77,9 @@ public class GuestService : IGuestService
         return (true, $"Đã xóa khách hàng {guest.FullName} thành công.");
     }
 
+    /// <summary>
+    /// Tìm kiếm guest theo các bộ lọc đầu vào.
+    /// </summary>
     public async Task<Guest?> SearchByPhoneOrCCCDAsync(string query)
     {
         var safeQuery = query?.Trim() ?? string.Empty;
@@ -87,7 +103,13 @@ public class GuestService : IGuestService
         return null;
     }
 
+    /// <summary>
+    /// Lấy dữ liệu guest theo điều kiện chỉ định.
+    /// </summary>
     public Task<Guest?> GetByUserIdAsync(string userId) => _repo.GetByUserIdAsync(userId);
+    /// <summary>
+    /// Lấy toàn bộ dữ liệu guest.
+    /// </summary>
     public Task<List<Guest>> GetAllByUserIdAsync(string userId) => _repo.GetAllByUserIdAsync(userId);
 
     public async Task<(bool Success, string Message, Guest? PrimaryGuest)> ConsolidateGuestProfilesAsync(
@@ -102,6 +124,7 @@ public class GuestService : IGuestService
         var normalizedCccd = string.IsNullOrWhiteSpace(cccd) ? null : cccd.Trim();
         var normalizedEmail = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
 
+        // Tìm candidate theo nhiều khóa để bắt trùng mềm (userId/phone/cccd/email).
         var candidates = await _context.Guests
             .Where(g =>
                 (!string.IsNullOrWhiteSpace(userId) && g.UserId == userId) ||
@@ -157,7 +180,7 @@ public class GuestService : IGuestService
                 await _context.SaveChangesAsync();
             }
 
-            // Đồng bộ thông tin tốt nhất về hồ sơ chuẩn sau khi đã xóa hồ sơ trùng.
+            // Đồng bộ thông tin về hồ sơ chuẩn sau khi đã chuyển lịch sử + xóa hồ sơ trùng.
             if (string.IsNullOrWhiteSpace(primary.UserId))
             {
                 primary.UserId = userId;

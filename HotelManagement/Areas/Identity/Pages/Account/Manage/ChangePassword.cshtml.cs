@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -13,12 +13,18 @@ using Microsoft.Extensions.Logging;
 
 namespace HotelManagement.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// PageModel xử lý luồng tài khoản 'ChangePassword.cshtml'.
+    /// </summary>
     public class ChangePasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
 
+        /// <summary>
+        /// Khởi tạo lớp ChangePasswordModel và nạp các dependency cần thiết.
+        /// </summary>
         public ChangePasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -30,28 +36,28 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public class InputModel
         {
             /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
+            /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+            /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
             /// </summary>
             [Required(ErrorMessage = "Vui lòng nhập mật khẩu hiện tại.")]
             [DataType(DataType.Password)]
@@ -70,6 +76,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
             public string ConfirmPassword { get; set; }
         }
 
+        /// <summary>
+        /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -87,6 +96,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// Xử lý yêu cầu POST, kiểm tra dữ liệu đầu vào và lưu thay đổi.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -118,3 +130,8 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
     }
 }
+
+
+
+
+

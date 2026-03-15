@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,11 +6,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelManagement.Areas.Admin.Pages.Guests;
 
+/// <summary>
+/// Xử lý cập nhật thông tin khách, bao gồm upload avatar và lưu thay đổi hồ sơ.
+/// </summary>
 public class EditModel : PageModel
 {
     private readonly IGuestService _guestService;
     private readonly IWebHostEnvironment _environment;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ khách và môi trường web để lưu file avatar.
+    /// </summary>
     public EditModel(IGuestService guestService, IWebHostEnvironment environment)
     {
         _guestService = guestService;
@@ -22,6 +28,9 @@ public class EditModel : PageModel
 
     public Guest Guest { get; set; } = new();
 
+    /// <summary>
+    /// Nạp hồ sơ khách theo id và map sang view model để hiển thị form chỉnh sửa.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var guest = await _guestService.GetByIdAsync(id);
@@ -49,6 +58,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu, xử lý avatar mới (nếu có) và cập nhật hồ sơ khách.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -108,6 +120,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Mô hình dữ liệu nhập liệu khi chỉnh sửa hồ sơ khách.
+    /// </summary>
     public class EditGuestViewModel
     {
         public int Id { get; set; }

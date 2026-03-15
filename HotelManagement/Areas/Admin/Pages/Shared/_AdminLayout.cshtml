@@ -1,3 +1,4 @@
+﻿
 <!DOCTYPE html>
 <html lang="vi" data-theme="dark" class="mq-theme-dark">
 @inject HotelManagement.Application.Services.Interfaces.IWebsiteSettingsService WebsiteSettingsService
@@ -10,19 +11,19 @@
     var brandFullName = string.IsNullOrWhiteSpace(websiteSettings.BrandFullName) ? HotelManagement.Core.Constants.BrandingConstants.BrandFullName : websiteSettings.BrandFullName;
 }
 <head>
-    <!-- Iconify (solar bold-duotone icon set) -->
+    <!-- Nạp bộ icon Solar để dùng thống nhất cho giao diện quản trị -->
     <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js" defer></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Quản Trị @brandFullName</title>
     <link rel="icon" href="@logoUrl">
     
-    <!-- Google Fonts: Luxury Pairing -->
+    <!-- Cấu hình bộ font cho nhận diện thương hiệu và khả năng đọc tốt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- CSS: Tailwind, DaisyUI, Flowbite -->
+    <!-- Nạp lớp nền UI: Tailwind, DaisyUI, Flowbite và stylesheet nội bộ -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="~/js/layout/admin-tailwind-config.js" asp-append-version="true"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />

@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model IndexModel
 @{
     ViewData["Title"] = "Hồ sơ cá nhân";
@@ -10,9 +10,9 @@
     <div asp-validation-summary="ModelOnly" class="alert alert-error bg-danger/10 border-danger/20 text-danger text-sm p-3 rounded-xl mb-8" role="alert"></div>
 
     <div class="space-y-8">
-        <!-- Form Fields -->
+        <!-- Nhóm trường thông tin hồ sơ người dùng -->
         <div class="grid grid-cols-1 gap-8">
-                <!-- Username (Readonly) -->
+            <!-- Tên đăng nhập chỉ hiển thị, không cho chỉnh sửa -->
                 <div class="space-y-3 text-left">
                     <label asp-for="Username" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Tên đăng nhập</label>
                     <div class="relative group">
@@ -23,7 +23,7 @@
                     </div>
                 </div>
 
-                <!-- Full Name -->
+                <!-- Trường họ tên hiển thị trong hồ sơ và giao dịch -->
                 <div class="space-y-3 text-left">
                     <label asp-for="Input.FullName" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Họ và Tên</label>
                     <div class="relative group/input">
@@ -35,7 +35,7 @@
                     <span asp-validation-for="Input.FullName" class="text-[10px] text-danger font-bold ml-2"></span>
                 </div>
 
-                <!-- Phone Number -->
+                <!-- Trường số điện thoại phục vụ liên hệ xác nhận -->
                 <div class="space-y-3 text-left">
                     <label asp-for="Input.PhoneNumber" class="text-[10px] font-bold uppercase tracking-[0.2em] text-content-muted ml-2">Số điện thoại</label>
                     <div class="relative group/input">

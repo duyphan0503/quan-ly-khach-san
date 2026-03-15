@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +7,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace HotelManagement.Areas.Admin.Pages.Services;
 
 [Authorize(Roles = "Manager,Receptionist")]
+/// <summary>
+/// Cung cấp danh sách dịch vụ với tìm kiếm, lọc trạng thái hoạt động và phân trang.
+/// </summary>
 public class IndexModel : PageModel
 {
     private readonly IServiceService _serviceService;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ quản lý dịch vụ.
+    /// </summary>
     public IndexModel(IServiceService serviceService)
     {
         _serviceService = serviceService;
@@ -30,6 +36,9 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int PageNumber { get; set; } = 1;
 
+    /// <summary>
+    /// Nạp danh sách dịch vụ và áp dụng bộ lọc GET trước khi tính phân trang.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         var allServices = await _serviceService.GetAllAsync();

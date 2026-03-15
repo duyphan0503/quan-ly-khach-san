@@ -1,13 +1,19 @@
-using System.Collections.Frozen;
+﻿using System.Collections.Frozen;
 using Microsoft.AspNetCore.Identity;
 using HotelManagement.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagement.Infrastructure.Data;
 
+/// <summary>
+/// Seed dữ liệu khởi tạo cho môi trường mới: role, user mặc định và dữ liệu demo nền.
+/// </summary>
 public static class SeedData
 {
     // Hàm khởi tạo dữ liệu mẫu tổng: role, user và dữ liệu nghiệp vụ nền.
+    /// <summary>
+    /// Khởi tạo dữ liệu mặc định ban đầu cho hệ thống.
+    /// </summary>
     public static async Task Initialize(
         IServiceProvider serviceProvider,
         UserManager<ApplicationUser> userManager,

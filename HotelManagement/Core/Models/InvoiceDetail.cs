@@ -8,12 +8,14 @@ namespace HotelManagement.Core.Models;
 /// </summary>
 public class InvoiceDetail
 {
+    // Khóa chính chi tiết hóa đơn.
     public int Id { get; set; }
 
     [Display(Name = "Hóa đơn")]
     public int InvoiceId { get; set; }
 
     [Display(Name = "Dịch vụ")]
+    // Null khi dòng tiền không gắn service cụ thể (ví dụ: tiền phòng).
     public int? ServiceId { get; set; }
 
     [Required(ErrorMessage = "Mô tả không được để trống")]
@@ -31,6 +33,7 @@ public class InvoiceDetail
 
     [Column(TypeName = "decimal(18,2)")]
     [Display(Name = "Thành tiền")]
+    // LineTotal = Quantity * UnitPrice.
     public decimal LineTotal { get; set; }
 
     // Navigation

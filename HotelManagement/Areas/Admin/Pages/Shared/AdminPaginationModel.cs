@@ -1,5 +1,8 @@
-namespace HotelManagement.Areas.Admin.Pages.Shared;
+﻿namespace HotelManagement.Areas.Admin.Pages.Shared;
 
+/// <summary>
+/// PageModel xử lý trang quản trị 'AdminPaginationModel'.
+/// </summary>
 public sealed class AdminPaginationModel
 {
     public string AspPage { get; set; } = "./Index";

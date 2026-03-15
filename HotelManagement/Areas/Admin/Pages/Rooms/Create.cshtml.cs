@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -9,11 +9,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace HotelManagement.Areas.Admin.Pages.Rooms;
 
 [Authorize(Roles = "Manager")]
+/// <summary>
+/// Xử lý tạo mới phòng: nạp dữ liệu tham chiếu, nhận ảnh upload và lưu bản ghi phòng vào hệ thống.
+/// </summary>
 public class CreateModel : PageModel
 {
     private readonly IRoomService _roomService;
     private readonly IWebHostEnvironment _env;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ phòng và môi trường web để lưu ảnh vào wwwroot.
+    /// </summary>
     public CreateModel(IRoomService roomService, IWebHostEnvironment env)
     {
         _roomService = roomService;
@@ -29,6 +35,9 @@ public class CreateModel : PageModel
     public SelectList RoomTypes { get; set; } = default!;
     public IEnumerable<SelectListItem> RoomStatuses { get; private set; } = [];
 
+    /// <summary>
+    /// Nạp danh sách loại phòng và trạng thái để render form tạo mới.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         var types = await _roomService.GetRoomTypesAsync();
@@ -37,10 +46,12 @@ public class CreateModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu, lưu ảnh (nếu có) và tạo phòng mới.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
-        // ModelState validation fails on Room.RoomType because it's a navigation property.
-        // We only care about RoomTypeId for creation.
+        // Room.RoomType là navigation property chỉ phục vụ hiển thị; khi tạo mới chỉ cần RoomTypeId.
         ModelState.Remove("Room.RoomType");
         
         if (!ModelState.IsValid)

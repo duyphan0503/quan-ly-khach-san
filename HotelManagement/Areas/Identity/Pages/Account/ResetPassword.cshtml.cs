@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -15,25 +15,31 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace HotelManagement.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// PageModel xử lý luồng tài khoản 'ResetPassword.cshtml'.
+    /// </summary>
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
+        /// <summary>
+        /// Khởi tạo lớp ResetPasswordModel và nạp các dependency cần thiết.
+        /// </summary>
         public ResetPasswordModel(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public class InputModel
         {
@@ -56,6 +62,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account
             public string Code { get; set; }
         }
 
+        /// <summary>
+        /// Xử lý yêu cầu GET đồng bộ để hiển thị trang.
+        /// </summary>
         public IActionResult OnGet(string code = null)
         {
             if (code == null)
@@ -72,6 +81,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account
             }
         }
 
+        /// <summary>
+        /// Xử lý yêu cầu POST, kiểm tra dữ liệu đầu vào và lưu thay đổi.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -82,7 +94,7 @@ namespace HotelManagement.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                // Don't reveal that the user does not exist
+                // Không tiết lộ việc người dùng không tồn tại
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
@@ -100,3 +112,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account
         }
     }
 }
+
+
+
+
+
+

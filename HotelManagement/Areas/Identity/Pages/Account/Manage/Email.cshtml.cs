@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -16,12 +16,18 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace HotelManagement.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// PageModel xử lý luồng tài khoản 'Email.cshtml'.
+    /// </summary>
     public class EmailModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
+        /// <summary>
+        /// Khởi tạo lớp EmailModel và nạp các dependency cần thiết.
+        /// </summary>
         public EmailModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -33,40 +39,40 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public bool IsEmailConfirmed { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+        /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
         /// </summary>
         public class InputModel
         {
             /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
+            /// API này phục vụ hạ tầng giao diện mặc định của ASP.NET Core Identity.
+            /// Không khuyến nghị gọi trực tiếp từ mã nghiệp vụ và có thể thay đổi ở các phiên bản sau.
             /// </summary>
             [Required(ErrorMessage = "Vui lòng nhập Email mới.")]
             [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
@@ -87,6 +93,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
         }
 
+        /// <summary>
+        /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -99,6 +108,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// Thực hiện nghiệp vụ của miền input.
+        /// </summary>
         public async Task<IActionResult> OnPostChangeEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -137,6 +149,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Thực hiện nghiệp vụ của miền input.
+        /// </summary>
         public async Task<IActionResult> OnPostSendVerificationEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -170,3 +185,9 @@ namespace HotelManagement.Areas.Identity.Pages.Account.Manage
         }
     }
 }
+
+
+
+
+
+

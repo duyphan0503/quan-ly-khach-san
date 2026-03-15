@@ -1,15 +1,21 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 
 namespace HotelManagement.Areas.Admin.Pages.RoomTypes;
 
+/// <summary>
+/// Xử lý cập nhật loại phòng, bao gồm thay ảnh đại diện và thao tác xóa bản ghi.
+/// </summary>
 public class EditModel : PageModel
 {
     private readonly IRoomService _roomService;
     private readonly IWebHostEnvironment _env;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ phòng và môi trường web để quản lý file ảnh.
+    /// </summary>
     public EditModel(IRoomService roomService, IWebHostEnvironment env)
     {
         _roomService = roomService;
@@ -22,6 +28,9 @@ public class EditModel : PageModel
     [BindProperty]
     public IFormFile? UploadImage { get; set; }
 
+    /// <summary>
+    /// Nạp dữ liệu loại phòng theo id để hiển thị form chỉnh sửa.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var roomType = await _roomService.GetRoomTypeByIdAsync(id);
@@ -35,6 +44,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu, cập nhật thông tin loại phòng và xử lý thay ảnh nếu có upload mới.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -44,14 +56,14 @@ public class EditModel : PageModel
         if (existingRoomType == null)
             return NotFound();
 
-        // Update properties
+        // Cập nhật dữ liệu text/number trước khi xử lý ảnh.
         existingRoomType.Name = RoomType.Name;
         existingRoomType.BasePrice = RoomType.BasePrice;
         existingRoomType.MaxOccupancy = RoomType.MaxOccupancy;
         existingRoomType.Amenities = RoomType.Amenities;
         existingRoomType.Description = RoomType.Description;
 
-        // Xử lý upload ảnh mới
+        // Nếu có ảnh mới: xóa ảnh cũ (nếu tồn tại) rồi lưu ảnh mới.
         if (UploadImage != null)
         {
             var uploadDir = Path.Combine(_env.WebRootPath, "uploads", "roomtypes");
@@ -60,7 +72,7 @@ public class EditModel : PageModel
                 Directory.CreateDirectory(uploadDir);
             }
 
-            // Xóa ảnh cũ nếu có
+            // Dọn file ảnh cũ để tránh phát sinh file mồ côi trên ổ đĩa.
             if (!string.IsNullOrEmpty(existingRoomType.ImageUrl))
             {
                 var oldFilePath = Path.Combine(_env.WebRootPath, existingRoomType.ImageUrl.TrimStart('/'));
@@ -93,6 +105,9 @@ public class EditModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Xóa loại phòng theo id và phản hồi trạng thái bằng TempData.
+    /// </summary>
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
         var (success, message) = await _roomService.DeleteRoomTypeAsync(id);
@@ -107,3 +122,4 @@ public class EditModel : PageModel
         return RedirectToPage("./Index");
     }
 }
+

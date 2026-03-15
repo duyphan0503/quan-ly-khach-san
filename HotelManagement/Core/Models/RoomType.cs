@@ -8,6 +8,7 @@ namespace HotelManagement.Core.Models;
 /// </summary>
 public class RoomType
 {
+    // Khóa chính loại phòng.
     public int Id { get; set; }
 
     [Required(ErrorMessage = "Tên loại phòng không được để trống")]
@@ -18,6 +19,7 @@ public class RoomType
     [Column(TypeName = "decimal(18,2)")]
     [Range(0, double.MaxValue, ErrorMessage = "Giá phải lớn hơn 0")]
     [Display(Name = "Giá cơ bản (VNĐ/đêm)")]
+    // Giá niêm yết 1 đêm, chưa bao gồm dịch vụ phát sinh.
     public decimal BasePrice { get; set; }
 
     [StringLength(500)]
@@ -36,6 +38,6 @@ public class RoomType
     [Display(Name = "Đường dẫn ảnh")]
     public string? ImageUrl { get; set; }
 
-    // Navigation
+    // Một loại phòng có nhiều phòng vật lý.
     public ICollection<Room> Rooms { get; set; } = new List<Room>();
 }

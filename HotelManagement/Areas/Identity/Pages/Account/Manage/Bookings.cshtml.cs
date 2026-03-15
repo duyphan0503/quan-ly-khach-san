@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +6,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HotelManagement.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>
+/// PageModel xử lý luồng tài khoản 'Bookings.cshtml'.
+/// </summary>
 public class BookingsModel : PageModel
 {
     private readonly IBookingService _bookingService;
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>
+    /// Khởi tạo lớp BookingsModel và nạp các dependency cần thiết.
+    /// </summary>
     public BookingsModel(IBookingService bookingService, UserManager<ApplicationUser> userManager)
     {
         _bookingService = bookingService;
@@ -19,6 +25,9 @@ public class BookingsModel : PageModel
 
     public List<Booking> MyBookings { get; set; } = new();
 
+    /// <summary>
+    /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);

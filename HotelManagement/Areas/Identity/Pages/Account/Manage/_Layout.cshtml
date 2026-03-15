@@ -1,3 +1,4 @@
+﻿
 @{
     Layout = "/Areas/Public/Pages/Shared/_Layout.cshtml";
 }
@@ -8,18 +9,18 @@
 }
 
 <div class="min-h-[calc(100vh-80px)] pt-20 pb-12 bg-surface-1 relative overflow-x-hidden">
-    <!-- Fluid Decorative Blobs (Liquid Glass Core) -->
+    <!-- Nền hiệu ứng giúp khu vực quản lý tài khoản giữ cùng ngôn ngữ thị giác -->
     <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary/15 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
     <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-accent/15 rounded-full blur-[120px] animate-pulse pointer-events-none identity-manage-blob-delay"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="flex flex-col lg:flex-row gap-8 items-start">
-            <!-- Sidebar Nav -->
+            <!-- Cột điều hướng trái cho các tác vụ quản lý tài khoản -->
             <aside class="w-full lg:w-96 shrink-0">
                 <div class="bg-surface-2/30 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] transition-all duration-500 hover:border-white/20 relative overflow-hidden group/card h-fit sticky top-28">
                     
-                    <!-- Decorative inner glow -->
+                    <!-- Vệt sáng nội bộ để tạo chiều sâu cho cột điều hướng -->
                     <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[60px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-700"></div>
 
                     <div class="flex items-center gap-5 mb-10 px-4 mt-2">
@@ -29,10 +30,10 @@
                             var displayName = user?.FullName ?? User.Identity?.Name;
                         }
                         <div class="relative group/avatar">
-                            <!-- Decorative glow -->
+                            <!-- Vầng sáng nền cho cụm avatar -->
                             <div class="absolute inset-0 bg-primary/30 blur-xl rounded-full opacity-50 group-hover/avatar:opacity-100 transition-opacity duration-500"></div>
                             
-                            <!-- Main Avatar Circle -->
+                            <!-- Vùng hiển thị avatar hiện tại của người dùng -->
                             <div class="relative w-20 h-20 rounded-full overflow-hidden shadow-lg shadow-primary/20 border border-white/20 bg-surface-3">
                                 @if (!string.IsNullOrEmpty(avatarUrl))
                                 {
@@ -47,8 +48,8 @@
                                 }
                             </div>
                             
-                            <!-- Small Camera Button at Bottom Right -->
-                            <!-- This now points to the hidden input outside the main nav -->
+                            <!-- Nút camera mở bộ chọn tệp để cập nhật ảnh đại diện -->
+                            <!-- Nút này liên kết tới input file ẩn đặt ngoài khu vực nav -->
                             <label for="avatar-upload-global" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary hover:bg-primary-700 text-white flex items-center justify-center cursor-pointer border-2 border-surface-2 shadow-lg transition-all hover:scale-110 active:scale-95 z-20">
                                 <iconify-icon icon="solar:camera-bold-duotone" class="text-lg"></iconify-icon>
                             </label>
@@ -69,7 +70,7 @@
                 </div>
             </aside>
 
-            <!-- Main Content Area -->
+            <!-- Vùng nội dung chính của từng trang quản lý -->
             <main class="flex-1 w-full">
                 <div class="bg-surface-2/30 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 lg:p-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] transition-all duration-500 h-fit">
                     <div class="mb-10 relative flex items-center justify-between">
@@ -87,7 +88,7 @@
     </div>
 </div>
 
-<!-- Hidden Form for Avatar Upload (Available on all manage pages) -->
+<!-- Form ẩn dùng chung để upload avatar ở mọi trang Manage -->
 <form id="avatar-form-global" method="post" enctype="multipart/form-data" action="/profile" class="hidden">
     <input id="avatar-upload-global" type="file" name="Input.AvatarFile" accept="image/*" />
     @Html.AntiForgeryToken()

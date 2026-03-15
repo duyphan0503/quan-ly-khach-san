@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -9,10 +9,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace HotelManagement.Areas.Admin.Pages.Rooms
 {
     [Authorize(Roles = "Manager,Receptionist")]
+    /// <summary>
+    /// Cung cấp danh sách phòng cho màn hình quản trị với tìm kiếm, lọc theo trạng thái/loại phòng và phân trang.
+    /// </summary>
     public class IndexModel : PageModel
     {
         private readonly IRoomService _roomService;
 
+        /// <summary>
+        /// Khởi tạo PageModel với dịch vụ truy vấn phòng.
+        /// </summary>
         public IndexModel(IRoomService roomService)
         {
             _roomService = roomService;
@@ -36,6 +42,9 @@ namespace HotelManagement.Areas.Admin.Pages.Rooms
         [BindProperty(SupportsGet = true)]
         public int? RoomTypeId { get; set; }
 
+        /// <summary>
+        /// Nạp danh sách phòng, áp dụng bộ lọc GET và tính thông tin phân trang cho giao diện.
+        /// </summary>
         public async Task OnGetAsync()
         {
             var allRooms = (await _roomService.GetAllAsync())

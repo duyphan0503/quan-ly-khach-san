@@ -1,3 +1,4 @@
+﻿
 @model List<HotelManagement.Core.Models.Guest>
 
 @if (Model != null && Model.Any())
@@ -7,7 +8,7 @@
         var normalizedAvatarUrl = HotelManagement.Helpers.AvatarUrlHelper.ResolveOrDefault(guest.AvatarUrl);
 
         <tr class="group hover:bg-white/[0.03] transition-all duration-300 border-b border-white/5 last:border-0 h-24">
-            <!-- Guest Info -->
+            <!-- Thông tin nhận diện chính của khách -->
             <td class="py-5 pl-10">
                 <div class="flex items-center gap-4">
                     <div class="relative">
@@ -29,7 +30,7 @@
                 </div>
             </td>
 
-            <!-- Identification -->
+            <!-- Giấy tờ định danh (CCCD/Hộ chiếu) -->
             <td class="py-5 text-left">
                 @if (!string.IsNullOrEmpty(guest.CCCD))
                 {
@@ -46,7 +47,7 @@
                 }
             </td>
 
-            <!-- Contact Info -->
+            <!-- Kênh liên hệ chính -->
             <td class="py-5 text-left">
                 <div class="flex flex-col gap-1.5">
                     <div class="flex items-center gap-2 text-content-secondary group/contact">
@@ -67,7 +68,7 @@
                 </div>
             </td>
 
-            <!-- Join Date -->
+            <!-- Ngày tạo hồ sơ khách trong hệ thống -->
             <td class="py-5 text-left">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-xl border border-white/10 text-content-muted shadow-inner">
                     <iconify-icon icon="solar:calendar-date-bold-duotone" class="text-accent opacity-60"></iconify-icon>
@@ -75,10 +76,10 @@
                 </div>
             </td>
 
-            <!-- Actions -->
+            <!-- Thao tác nhanh trên từng hồ sơ -->
             <td class="py-5 text-right pr-10">
                 <div class="flex justify-end items-center">
-                    <!-- Premium Glass Action Capsule -->
+                    <!-- Cụm nút thao tác: xem, sửa, xóa -->
                     <div class="flex items-center gap-1 p-1 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl relative">
                         <a asp-page="./Details" asp-route-id="@guest.Id" 
                            class="btn btn-ghost btn-square btn-sm rounded-xl text-content-secondary hover:text-primary hover:bg-primary/10 transition-all duration-300"

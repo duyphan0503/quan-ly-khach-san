@@ -1,3 +1,4 @@
+﻿
 @model string
 
 @if (!string.IsNullOrEmpty(Model))
@@ -21,7 +22,7 @@
             </button>
         </div>
         
-        <!-- Progress bar timer -->
+        <!-- Thanh tiến trình tự đóng toast sau khoảng thời gian hiển thị -->
         <div class="absolute bottom-0 left-4 right-4 h-0.5 bg-white/5 rounded-full overflow-hidden">
             <div id="toast-progress" data-status-progress class="h-full @(isError ? "bg-danger" : "bg-primary") transition-all duration-[5000ms] linear w-full"></div>
         </div>

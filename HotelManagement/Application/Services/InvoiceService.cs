@@ -1,4 +1,4 @@
-using HotelManagement.Core.Models;
+﻿using HotelManagement.Core.Models;
 using HotelManagement.Core.Models.Enums;
 using HotelManagement.Infrastructure.Repositories.Interfaces;
 using HotelManagement.Application.Services.Interfaces;
@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagement.Application.Services;
 
+/// <summary>
+/// Service xử lý nghiệp vụ hóa đơn: tạo nháp, thêm dịch vụ, checkout và tách hóa đơn.
+/// </summary>
 public class InvoiceService : IInvoiceService
 {
     private readonly IInvoiceRepository _invoiceRepo;
@@ -16,6 +19,9 @@ public class InvoiceService : IInvoiceService
     private readonly AppDbContext _context;
     private readonly IRoomRepository _roomRepo;
 
+    /// <summary>
+    /// Khởi tạo lớp InvoiceService và nạp các dependency cần thiết.
+    /// </summary>
     public InvoiceService(
         IInvoiceRepository invoiceRepo,
         IBookingRepository bookingRepo,
@@ -30,14 +36,27 @@ public class InvoiceService : IInvoiceService
         _roomRepo = roomRepo;
     }
 
+    /// <summary>
+    /// Lấy toàn bộ dữ liệu invoice.
+    /// </summary>
     public Task<List<Invoice>> GetAllAsync() => _invoiceRepo.GetAllAsync();
 
+    /// <summary>
+    /// Lấy thông tin invoice theo mã định danh.
+    /// </summary>
     public Task<Invoice?> GetByIdAsync(int id) => _invoiceRepo.GetByIdAsync(id);
 
+    /// <summary>
+    /// Lấy dữ liệu invoice theo điều kiện chỉ định.
+    /// </summary>
     public Task<Invoice?> GetByBookingIdAsync(int bookingId) => _invoiceRepo.GetByBookingIdAsync(bookingId);
 
+    /// <summary>
+    /// Thực hiện nghiệp vụ của miền invoice.
+    /// </summary>
     public async Task<Invoice> GetOrCreateDraftInvoiceAsync(int bookingId, string? userId = null)
     {
+        // Ưu tiên tái sử dụng draft đang có để tránh tạo trùng hóa đơn cho cùng booking.
         var existing = await _invoiceRepo.GetByBookingIdAsync(bookingId);
         if (existing is not null) return existing;
 
@@ -58,6 +77,7 @@ public class InvoiceService : IInvoiceService
 
         decimal roomPrice = booking.Room?.RoomType?.BasePrice ?? booking.TotalAmount / Math.Max(1, nights);
 
+        // Dòng mặc định của hóa đơn: tiền phòng theo số đêm.
         invoice.InvoiceDetails.Add(new InvoiceDetail
         {
             Description = $"Tiền phòng ({nights} đêm)",
@@ -171,6 +191,7 @@ public class InvoiceService : IInvoiceService
         bool checkoutWholeGroup,
         string? userId = null)
     {
+        // Checkout là thao tác đa bảng (invoice + booking + room), cần transaction toàn phần.
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
@@ -212,6 +233,7 @@ public class InvoiceService : IInvoiceService
             var clampedTax = Math.Max(0, tax);
             var clampedDiscount = Math.Clamp(discount, 0, totalSubTotal + clampedTax);
 
+            // Phân bổ discount/tax theo tỷ lệ subtotal từng hóa đơn để công bằng khi checkout nhóm.
             var paidInvoices = new List<Invoice>();
             var remainingTax = clampedTax;
             var remainingDiscount = clampedDiscount;
@@ -298,6 +320,7 @@ public class InvoiceService : IInvoiceService
             return (false, "Vui lòng chọn ít nhất một dòng chi tiết để tách.", null);
         }
 
+        // Tách hóa đơn cần transaction để giữ nhất quán số liệu hai phía (nguồn/đích).
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
@@ -385,7 +408,14 @@ public class InvoiceService : IInvoiceService
         }
     }
 
+    /// <summary>
+    /// Tính tổng doanh thu dựa trên các hóa đơn đã thanh toán.
+    /// </summary>
     public Task<decimal> GetTotalRevenueAsync() => _invoiceRepo.GetTotalRevenueAsync();
 
+    /// <summary>
+    /// Tổng hợp dữ liệu doanh thu theo tháng để hiển thị biểu đồ.
+    /// </summary>
     public Task<List<decimal>> GetMonthlyRevenueChartAsync(int year) => _invoiceRepo.GetMonthlyRevenueChartAsync(year);
 }
+

@@ -1,4 +1,4 @@
-@page "/admin/invoices"
+﻿@page "/admin/invoices"
 @model HotelManagement.Areas.Admin.Pages.Invoices.IndexModel
 @using HotelManagement.Core.Models.Enums
 @{
@@ -16,6 +16,7 @@
     }' />
 </div>
 
+<!-- Khu vực bộ lọc và tìm kiếm danh sách hóa đơn -->
 <div class="w-full mb-6">
     <form method="get" class="flex min-w-0 flex-wrap items-center gap-2">
         <div class="relative group">
@@ -46,8 +47,10 @@
     </form>
 </div>
 
+<!-- Khu vực bảng dữ liệu hóa đơn và phân trang -->
 <div class="card bg-surface-2 border border-bdr-strong/50 shadow-xl overflow-hidden backdrop-blur-md">
     <div class="overflow-x-auto">
+        <!-- Bảng danh sách hóa đơn: hiển thị thông tin tổng quan và thao tác nhanh -->
         <table class="table table-zebra w-full text-content-secondary mq-row-fade">
             <thead>
                 <tr class="text-content-muted border-bdr-strong bg-surface-1/50">
@@ -89,6 +92,7 @@
                     </th>
                 </tr>
             </thead>
+            <!-- Render danh sách hóa đơn; nếu trống thì hiển thị empty-state nhất quán toàn admin -->
             <tbody>
                 @if (Model.Invoices != null && Model.Invoices.Any())
                 {
@@ -108,6 +112,7 @@
         </table>
     </div>
 
+    @* Khối phân trang giữ nguyên bộ lọc hiện tại qua RouteValues *@
     <partial name="~/Areas/Admin/Pages/Shared/_AdminPagination.cshtml" model='new HotelManagement.Areas.Admin.Pages.Shared.AdminPaginationModel
     {
         AspPage = "./Index",

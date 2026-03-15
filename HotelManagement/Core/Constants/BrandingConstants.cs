@@ -1,5 +1,8 @@
 namespace HotelManagement.Core.Constants;
 
+/// <summary>
+/// Hằng số thương hiệu dùng ở nhiều nơi để tránh hard-code lặp lại.
+/// </summary>
 public static class BrandingConstants
 {
     public const string BrandMain = "MINH QUANG";

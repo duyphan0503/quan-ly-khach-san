@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,11 +6,17 @@ using Microsoft.Extensions.Options;
 
 namespace HotelManagement.Areas.Public.Pages.Booking;
 
+/// <summary>
+/// PageModel xử lý trang công khai 'Confirmation.cshtml'.
+/// </summary>
 public class ConfirmationModel : PageModel
 {
     private readonly IBookingService _bookingService;
     private readonly HotelSettings _hotelSettings;
 
+    /// <summary>
+    /// Khởi tạo lớp ConfirmationModel và nạp các dependency cần thiết.
+    /// </summary>
     public ConfirmationModel(IBookingService bookingService, IOptions<HotelSettings> hotelSettings)
     {
         _bookingService = bookingService;
@@ -28,6 +34,9 @@ public class ConfirmationModel : PageModel
     public int NoShowThresholdHours { get; set; } = 6;
     public DateTime NoShowCancelDeadline { get; set; }
 
+    /// <summary>
+    /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var booking = await _bookingService.GetByIdAsync(id);

@@ -9,13 +9,16 @@ namespace HotelManagement.Core.Models;
 /// </summary>
 public class Invoice
 {
+    // Khóa chính hóa đơn.
     public int Id { get; set; }
 
     [Display(Name = "Đặt phòng")]
+    // FK về Booking.Id.
     public int BookingId { get; set; }
 
     [StringLength(20)]
     [Display(Name = "Số hóa đơn")]
+    // Mã hóa đơn hiển thị cho người dùng, thường sinh theo quy tắc riêng.
     public string InvoiceNumber { get; set; } = string.Empty;
 
     [Display(Name = "Ngày lập hóa đơn")]
@@ -35,6 +38,7 @@ public class Invoice
 
     [Column(TypeName = "decimal(18,2)")]
     [Display(Name = "Tổng cộng")]
+    // GrandTotal = SubTotal + Tax - Discount.
     public decimal GrandTotal { get; set; }
 
     [Display(Name = "Phương thức thanh toán")]
@@ -44,6 +48,7 @@ public class Invoice
     public InvoiceStatus Status { get; set; } = InvoiceStatus.Pending;
 
     [StringLength(450)]
+    // User tạo hóa đơn (FK AspNetUsers.Id).
     public string? CreatedByUserId { get; set; }
 
     // Navigation

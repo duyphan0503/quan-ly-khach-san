@@ -7,6 +7,7 @@ namespace HotelManagement.Core.Models;
 /// </summary>
 public class Guest
 {
+    // Khóa chính của bảng Guest.
     public int Id { get; set; }
 
     [Required(ErrorMessage = "Họ tên không được để trống")]
@@ -23,6 +24,7 @@ public class Guest
     [Phone]
     [Display(Name = "Số điện thoại")]
     [System.ComponentModel.DataAnnotations.Schema.Column("Phone")]
+    // Mapping về cột "Phone" để tương thích schema SQL hiện tại.
     public string PhoneNumber { get; set; } = string.Empty;
 
     [StringLength(100)]
@@ -49,8 +51,10 @@ public class Guest
     public DateTime? DateOfBirth { get; set; }
 
     [Display(Name = "Mã người dùng Identity")]
+    // Nếu khách hàng có tài khoản đăng nhập hệ thống thì map tới AspNetUsers.Id.
     public string? UserId { get; set; }
 
+    // Mốc tạo hồ sơ khách.
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     // Navigation

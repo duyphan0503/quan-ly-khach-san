@@ -1,15 +1,21 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using HotelManagement.Core.Models;
 using HotelManagement.Application.Services.Interfaces;
 
 namespace HotelManagement.Areas.Admin.Pages.RoomTypes;
 
+/// <summary>
+/// Xử lý tạo mới loại phòng và lưu ảnh đại diện (nếu được tải lên).
+/// </summary>
 public class CreateModel : PageModel
 {
     private readonly IRoomService _roomService;
     private readonly IWebHostEnvironment _env;
 
+    /// <summary>
+    /// Khởi tạo PageModel với dịch vụ phòng và môi trường web để thao tác thư mục upload.
+    /// </summary>
     public CreateModel(IRoomService roomService, IWebHostEnvironment env)
     {
         _roomService = roomService;
@@ -22,10 +28,16 @@ public class CreateModel : PageModel
     [BindProperty]
     public IFormFile? UploadImage { get; set; }
 
+    /// <summary>
+    /// Hiển thị form tạo loại phòng.
+    /// </summary>
     public void OnGet()
     {
     }
 
+    /// <summary>
+    /// Kiểm tra dữ liệu nhập, lưu file ảnh và tạo loại phòng mới.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)

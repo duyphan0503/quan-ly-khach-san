@@ -1,4 +1,4 @@
-@page "/admin/bookings/details/{id:int}"
+﻿@page "/admin/bookings/details/{id:int}"
 @model HotelManagement.Areas.Admin.Pages.Bookings.DetailsModel
 @using HotelManagement.Core.Models.Enums
 @{
@@ -16,7 +16,7 @@
 }
 
 <div class="animate-fade-up">
-    <!-- Header Section -->
+    <!-- Phần đầu màn hình: thông tin đặt phòng và hành động nhanh theo trạng thái -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
             <div class="flex items-center gap-3 mb-2">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- Quick Actions Bar -->
+        <!-- Thanh thao tác trạng thái: xác nhận, hủy, nhận phòng, thanh toán/trả phòng -->
         <div class="flex flex-wrap gap-3">
             @if (Model.Booking.Status == BookingStatus.Pending)
             {
@@ -84,10 +84,10 @@
     <partial name="~/Areas/Admin/Pages/Shared/_AdminFlashMessages.cshtml" />
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <!-- Main Content (Left Col) -->
+        <!-- Cột trái: thông tin lưu trú và dịch vụ phát sinh -->
         <div class="lg:col-span-8 space-y-8">
             
-            <!-- Reservation Details Card -->
+            <!-- Khối thông tin lưu trú chính -->
             <div class="glass-card overflow-hidden">
                 <div class="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                     <h3 class="text-xl font-bold font-outfit uppercase tracking-widest flex items-center gap-3">
@@ -100,9 +100,9 @@
                 </div>
                 <div class="p-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <!-- Dates -->
+                        <!-- Timeline ngày nhận/trả phòng -->
                         <div class="relative pl-10">
-                            <!-- Timeline visual -->
+                            <!-- Trục dọc trực quan cho mốc nhận phòng/trả phòng -->
                             <div class="absolute left-[19px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-emerald-400 via-accent to-rose-400 opacity-20"></div>
                             
                             <div class="space-y-12">
@@ -121,7 +121,7 @@
                             </div>
                         </div>
 
-                        <!-- Room and Guests -->
+                        <!-- Thông tin phòng và số khách lưu trú -->
                         <div class="space-y-8">
                             <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-colors">
                                 <p class="text-[10px] uppercase tracking-[0.2em] text-content-muted font-bold mb-4">Hạng phòng & Số phòng</p>
@@ -151,7 +151,7 @@
                 </div>
             </div>
 
-            <!-- Services Section (Only if Checked-in) -->
+            <!-- Chỉ hiển thị khi đã nhận phòng: quản lý dịch vụ phát sinh và hóa đơn nháp -->
             @if (Model.Booking.Status == BookingStatus.CheckedIn && Model.DraftInvoice != null)
             {
                 <div class="glass-card overflow-hidden">
@@ -213,7 +213,7 @@
                         </div>
                     </div>
 
-                    <!-- Add Service Footer -->
+                    <!-- Form thêm nhanh dịch vụ vào hóa đơn nháp -->
                     <div class="p-8 bg-white/[0.02] border-t border-white/5">
                         <form method="post" asp-page-handler="AddService" asp-route-id="@Model.Booking.Id" data-service-total-form class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
                             <div class="form-control md:col-span-5">
@@ -253,12 +253,12 @@
             }
         </div>
 
-        <!-- Sidebar Content (Right Col) -->
+        <!-- Cột phải: hồ sơ khách và tổng kết tài chính -->
         <div class="lg:col-span-4 space-y-8">
             
-            <!-- Guest Profile Card -->
+            <!-- Thẻ hồ sơ khách lưu trú -->
             <div class="glass-card p-8 text-center relative overflow-hidden group">
-                <!-- Decorative element -->
+                <!-- Lớp nền trang trí nhẹ để tạo chiều sâu thị giác -->
                 <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl -mr-10 -mt-10 group-hover:bg-accent/10 transition-colors"></div>
                 
                 <div class="relative z-10">
@@ -307,11 +307,11 @@
                 </div>
             </div>
 
-            <!-- Financial Summary Card -->
+            <!-- Thẻ tổng kết tài chính / liên kết tới màn hình checkout -->
             @if (Model.DraftInvoice != null)
             {
                 <div class="glass-card bg-gradient-to-br from-indigo-900 via-brand to-brand border-white/10 p-8 shadow-2xl relative overflow-hidden group">
-                    <!-- Mesh gradients -->
+                    <!-- Gradient nền giúp phân tách khối tổng tiền với nội dung còn lại -->
                     <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.15),transparent)]"></div>
                     <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(205,168,115,0.1),transparent)]"></div>
                     

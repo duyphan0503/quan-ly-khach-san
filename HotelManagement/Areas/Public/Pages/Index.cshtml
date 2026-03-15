@@ -1,10 +1,10 @@
-@page "/"
+﻿@page "/"
 @model IndexModel
 @{
     ViewData["Title"] = "Trang Chủ";
 }
 
-<!-- HERO SECTION -->
+<!-- Khối hero mở đầu với thông điệp thương hiệu và bộ lọc tìm phòng nhanh -->
 <div class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
         <picture>
@@ -62,7 +62,7 @@
     </div>
 </div>
 
-<!-- ABOUT SECTION -->
+<!-- Khối giới thiệu định vị câu chuyện và phong cách khách sạn -->
 <section class="py-24 bg-surface-1">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -95,7 +95,7 @@
     </div>
 </section>
 
-<!-- FEATURED ROOMS SECTION -->
+<!-- Khối phòng nổi bật để dẫn khách vào hành trình đặt phòng -->
 <section id="rooms" class="py-24 bg-surface-2">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16 reveal-up">
@@ -155,7 +155,7 @@
     </div>
 </section>
 
-<!-- SERVICES HIGHLIGHT -->
+<!-- Khối dịch vụ trọng điểm giúp tăng nhận diện giá trị trải nghiệm -->
 <section id="services" class="py-24 bg-surface-1 relative overflow-hidden">
     <div class="absolute right-0 top-0 w-1/2 h-full bg-surface-2/20 transform skew-x-12"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -165,7 +165,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- S1: Spa -->
+            <!-- Dịch vụ 1: spa thư giãn và phục hồi năng lượng -->
             <div class="h-[450px] group relative overflow-hidden rounded-3xl border border-white/5 shadow-2xl reveal-up stagger-1">
                 <picture>
                     <source srcset="/images/service_spa.webp" type="image/webp">
@@ -188,7 +188,7 @@
                 </div>
             </div>
 
-            <!-- S2: Restaurant -->
+            <!-- Dịch vụ 2: ẩm thực cao cấp tại nhà hàng nội khu -->
             <div class="h-[450px] group relative overflow-hidden rounded-3xl border border-white/5 shadow-2xl reveal-up stagger-2">
                 <picture>
                     <source srcset="/images/service_restaurant.webp" type="image/webp">
@@ -211,7 +211,7 @@
                 </div>
             </div>
 
-            <!-- S3: Pool -->
+            <!-- Dịch vụ 3: hồ bơi vô cực phục vụ thư giãn và nhận phòng trải nghiệm -->
             <div class="h-[450px] group relative overflow-hidden rounded-3xl border border-white/5 shadow-2xl reveal-up stagger-3">
                 <picture>
                     <source srcset="/images/service_pool.webp" type="image/webp">

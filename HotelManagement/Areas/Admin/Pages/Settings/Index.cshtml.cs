@@ -1,4 +1,4 @@
-using HotelManagement.Application.Services.Interfaces;
+﻿using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace HotelManagement.Areas.Admin.Pages.Settings;
 
 [Authorize(Roles = "Manager")]
+/// <summary>
+/// PageModel xử lý trang quản trị 'Index.cshtml'.
+/// </summary>
 public class IndexModel : PageModel
 {
     private readonly IWebsiteSettingsService _websiteSettingsService;
     private readonly IWebHostEnvironment _environment;
 
+    /// <summary>
+    /// Khởi tạo lớp IndexModel và nạp các dependency cần thiết.
+    /// </summary>
     public IndexModel(IWebsiteSettingsService websiteSettingsService, IWebHostEnvironment environment)
     {
         _websiteSettingsService = websiteSettingsService;
@@ -30,11 +36,17 @@ public class IndexModel : PageModel
     [TempData]
     public string? ErrorMessage { get; set; }
 
+    /// <summary>
+    /// Xử lý yêu cầu GET để nạp dữ liệu và hiển thị trang.
+    /// </summary>
     public async Task OnGetAsync()
     {
         Input = await _websiteSettingsService.GetCurrentAsync();
     }
 
+    /// <summary>
+    /// Xử lý yêu cầu POST, kiểm tra dữ liệu đầu vào và lưu thay đổi.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)

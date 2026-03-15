@@ -1,4 +1,4 @@
-@page "/admin/rooms"
+﻿@page "/admin/rooms"
 @model HotelManagement.Areas.Admin.Pages.Rooms.IndexModel
 @{
     ViewData["Title"] = "Quản lý Phòng";
@@ -53,7 +53,7 @@
     </div>
 </div>
 
-<!-- ── Room Grid ── -->
+<!-- Lưới hiển thị danh sách phòng -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
     @if (Model.Rooms.Any())
     {
