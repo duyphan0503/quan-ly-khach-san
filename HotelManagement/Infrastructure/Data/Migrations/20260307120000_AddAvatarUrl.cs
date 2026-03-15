@@ -10,19 +10,13 @@ namespace HotelManagement.Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "AvatarUrl",
-                table: "AspNetUsers",
-                type: "nvarchar(max)",
-                nullable: true);
+            // No-op: cột AvatarUrl đã được tạo sẵn trong InitialCreate để DB mới đầy đủ ngay từ đầu.
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "AvatarUrl",
-                table: "AspNetUsers");
+            // No-op.
         }
     }
 }

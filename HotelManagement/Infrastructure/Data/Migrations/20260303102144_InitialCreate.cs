@@ -39,6 +39,7 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
@@ -63,6 +64,10 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Nationality = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -79,6 +84,7 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     MaxOccupancy = table.Column<int>(type: "int", nullable: false),
                     Amenities = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
@@ -242,6 +248,7 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                     GuestId = table.Column<int>(type: "int", nullable: false),
                     RoomId = table.Column<int>(type: "int", nullable: false),
                     CreatedByUserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    BookingGroupCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     CheckIn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CheckOut = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NumberOfGuests = table.Column<int>(type: "int", nullable: false),
@@ -393,11 +400,23 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_BookingGroupCode",
+                table: "Bookings",
+                column: "BookingGroupCode",
+                filter: "[BookingGroupCode] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Guests_CCCD",
                 table: "Guests",
                 column: "CCCD",
                 unique: true,
                 filter: "[CCCD] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Guests_Phone",
+                table: "Guests",
+                column: "Phone",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceDetails_InvoiceId",
@@ -412,8 +431,7 @@ namespace HotelManagement.Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_BookingId",
                 table: "Invoices",
-                column: "BookingId",
-                unique: true);
+                column: "BookingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_CreatedByUserId",
