@@ -119,15 +119,7 @@ Mật khẩu chung và bảo mật mặc định cho các tài khoản bên dư�
 - **Tài khoản Quản lý (Manager):** `manager@hotel.com`
 - **Tài khoản Lễ tân (Receptionist):** `le.reception@hotel.com`
 
-_(Lưu ý: Mật khẩu này được seed tự động và nên được thay đổi hoặc vô hiệu hóa khi di chuyển lên môi trường Production thực tế)._
-
-## 📚 Tài liệu bổ trợ (Dành cho Sinh viên/Bàn giao)
-
-Dự án có sẵn các cấu trúc tài liệu đi kèm rất cần thiết cho việc bảo vệ báo cáo trước hội đồng hoặc bàn giao dự án kĩ thuật:
-
-- [**BI_KIP_GIAI_TRINH.md**](./BI_KIP_GIAI_TRINH.md): Hướng dẫn trả lời câu hỏi phản biện chuyên sâu, cách chuẩn bị kịch bản demo sát thực tế, checklist các lỗi và luồng hoạt động.
-
----
+## _(Lưu ý: Mật khẩu này được seed tự động và nên được thay đổi hoặc vô hiệu hóa khi di chuyển lên môi trường Production thực tế)._
 
 <div align="center">
   <i>Được xây dựng đảm bảo các chuẩn mực Coding, trải nghiệm ổn định và nền tảng mở rộng vững chắc!</i>
