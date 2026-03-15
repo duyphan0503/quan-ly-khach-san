@@ -184,119 +184,18 @@ static async Task InitializeDatabaseAndSeedAsync(IServiceProvider rootServices)
     {
         var context = services.GetRequiredService<AppDbContext>();
 
-        // Áp các bản vá dữ liệu/cấu trúc nhỏ để tương thích dữ liệu cũ.
-        await ApplyDatabaseCompatibilityPatchesAsync(context);
-
-        // Luôn đảm bảo schema mới nhất trước khi seed.
+        // 1. Luôn đảm bảo schema cơ bản từ Migrations được áp dụng trước.
         await context.Database.MigrateAsync();
 
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        
+        // 2. Khởi tạo dữ liệu mẫu.
         await SeedData.Initialize(services, userManager, roleManager);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Lỗi khi khởi tạo database và seed dữ liệu.");
-    }
-}
-
-static async Task ApplyDatabaseCompatibilityPatchesAsync(AppDbContext context)
-{
-    var sqlPatches = new[]
-    {
-        "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Guests]') AND name = 'AvatarUrl') ALTER TABLE [Guests] ADD [AvatarUrl] nvarchar(max) NULL;",
-        "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Bookings]') AND name = 'BookingGroupCode') ALTER TABLE [Bookings] ADD [BookingGroupCode] nvarchar(50) NULL;",
-        @"
-            IF EXISTS (
-                SELECT 1
-                FROM sys.indexes
-                WHERE name = 'IX_Invoices_BookingId'
-                  AND object_id = OBJECT_ID('Invoices')
-                  AND is_unique = 1
-            )
-            DROP INDEX [IX_Invoices_BookingId] ON [Invoices];
-        ",
-        @"
-            IF NOT EXISTS (
-                SELECT 1
-                FROM sys.indexes
-                WHERE name = 'IX_Invoices_BookingId'
-                  AND object_id = OBJECT_ID('Invoices')
-            )
-            CREATE INDEX [IX_Invoices_BookingId] ON [Invoices]([BookingId]);
-        ",
-        @"
-            UPDATE [Guests]
-            SET [AvatarUrl] = '/' + LTRIM(RTRIM([AvatarUrl]))
-            WHERE [AvatarUrl] IS NOT NULL
-              AND LTRIM(RTRIM([AvatarUrl])) <> ''
-              AND [AvatarUrl] NOT LIKE '/%'
-              AND [AvatarUrl] NOT LIKE 'http%';
-        ",
-        @"
-            UPDATE [AspNetUsers]
-            SET [AvatarUrl] = '/' + LTRIM(RTRIM([AvatarUrl]))
-            WHERE [AvatarUrl] IS NOT NULL
-              AND LTRIM(RTRIM([AvatarUrl])) <> ''
-              AND [AvatarUrl] NOT LIKE '/%'
-              AND [AvatarUrl] NOT LIKE 'http%';
-        ",
-        @"
-            UPDATE G
-            SET G.AvatarUrl = U.AvatarUrl
-            FROM Guests G
-            JOIN AspNetUsers U ON G.UserId = U.Id
-            WHERE U.AvatarUrl IS NOT NULL
-              AND (G.AvatarUrl IS NULL OR G.AvatarUrl != U.AvatarUrl);
-        ",
-        @"
-            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Bookings_BookingGroupCode' AND object_id = OBJECT_ID('Bookings'))
-            CREATE INDEX [IX_Bookings_BookingGroupCode] ON [Bookings]([BookingGroupCode]) WHERE [BookingGroupCode] IS NOT NULL;
-        ",
-        @"
-            IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Guests_Phone' AND object_id = OBJECT_ID('Guests'))
-            AND NOT EXISTS (
-                SELECT [Phone]
-                FROM [Guests]
-                WHERE [Phone] IS NOT NULL
-                GROUP BY [Phone]
-                HAVING COUNT(*) > 1
-            )
-            CREATE UNIQUE INDEX [IX_Guests_Phone] ON [Guests]([Phone]);
-        ",
-        @"
-            UPDATE G
-            SET G.UserId = U.Id
-            FROM Guests G
-            JOIN AspNetUsers U ON G.[Phone] = U.PhoneNumber
-            WHERE G.UserId IS NULL
-              AND G.[Phone] IS NOT NULL
-              AND U.PhoneNumber IS NOT NULL;
-        ",
-        @"
-            UPDATE G
-            SET G.AvatarUrl = U.AvatarUrl
-            FROM Guests G
-            JOIN AspNetUsers U ON G.UserId = U.Id
-            WHERE U.AvatarUrl IS NOT NULL
-              AND (G.AvatarUrl IS NULL OR G.AvatarUrl != U.AvatarUrl);
-        ",
-        "UPDATE Guests SET AvatarUrl = '/uploads/avatars/an.jpg' WHERE FullName = N'Nguyễn Văn An' AND (AvatarUrl IS NULL OR AvatarUrl = 'uploads/avatars/an.jpg' OR AvatarUrl = '/uploads/avatars/an.jpg');",
-        "UPDATE Guests SET AvatarUrl = '/uploads/avatars/bich.jpg' WHERE FullName = N'Trần Thị Bích' AND (AvatarUrl IS NULL OR AvatarUrl = 'uploads/avatars/bich.jpg' OR AvatarUrl = '/uploads/avatars/bich.jpg');",
-        "UPDATE Guests SET AvatarUrl = '/uploads/avatars/cuong.jpg' WHERE FullName = N'Lê Minh Cường' AND (AvatarUrl IS NULL OR AvatarUrl = 'uploads/avatars/cuong.jpg' OR AvatarUrl = '/uploads/avatars/cuong.jpg');",
-        "UPDATE Guests SET AvatarUrl = '/uploads/avatars/john.jpg' WHERE FullName = 'John Smith' AND (AvatarUrl IS NULL OR AvatarUrl = 'uploads/avatars/john.jpg' OR AvatarUrl = '/uploads/avatars/john.jpg');"
-    };
-
-    foreach (var sql in sqlPatches)
-    {
-        try
-        {
-            await context.Database.ExecuteSqlRawAsync(sql);
-        }
-        catch
-        {
-            // Bỏ qua bản vá lỗi để app vẫn có thể chạy, chi tiết xem log migration/DB.
-        }
+        logger.LogError(ex, "Lỗi nghiêm trọng khi khởi tạo database hoặc seed dữ liệu mẫu.");
     }
 }

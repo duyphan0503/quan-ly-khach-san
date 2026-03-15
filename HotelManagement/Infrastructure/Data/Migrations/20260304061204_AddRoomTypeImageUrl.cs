@@ -10,20 +10,13 @@ namespace HotelManagement.Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ImageUrl",
-                table: "RoomTypes",
-                type: "nvarchar(500)",
-                maxLength: 500,
-                nullable: true);
+            // No-op: cột ImageUrl đã được tạo sẵn trong InitialCreate để DB mới đầy đủ ngay từ đầu.
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ImageUrl",
-                table: "RoomTypes");
+            // No-op.
         }
     }
 }

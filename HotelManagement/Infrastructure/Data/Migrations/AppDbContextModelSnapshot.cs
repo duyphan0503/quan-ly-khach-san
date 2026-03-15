@@ -116,6 +116,10 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("BookingGroupCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("GuestId")
                         .HasColumnType("int");
 
@@ -142,6 +146,9 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                     b.HasIndex("GuestId");
 
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("BookingGroupCode")
+                        .HasFilter("[BookingGroupCode] IS NOT NULL");
 
                     b.ToTable("Bookings", t =>
                         {
@@ -206,6 +213,9 @@ namespace HotelManagement.Infrastructure.Data.Migrations
                         .IsUnique()
                         .HasFilter("[CCCD] IS NOT NULL");
 
+                    b.HasIndex("Phone")
+                        .IsUnique();
+
                     b.ToTable("Guests");
                 });
 
@@ -252,8 +262,7 @@ namespace HotelManagement.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId")
-                        .IsUnique();
+                    b.HasIndex("BookingId");
 
                     b.HasIndex("CreatedByUserId");
 
