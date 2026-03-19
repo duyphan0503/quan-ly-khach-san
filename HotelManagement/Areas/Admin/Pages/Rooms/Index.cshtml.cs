@@ -10,7 +10,7 @@ namespace HotelManagement.Areas.Admin.Pages.Rooms
 {
     [Authorize(Roles = "Manager,Receptionist")]
     /// <summary>
-    /// Cung cấp danh sách phòng cho màn hình quản trị với tìm kiếm, lọc theo trạng thái/loại phòng và phân trang.
+    /// Cung cấp danh sách phòng cho màn hình quản trị với tìm kiếm và lọc theo trạng thái/loại phòng.
     /// </summary>
     public class IndexModel : PageModel
     {
@@ -27,11 +27,6 @@ namespace HotelManagement.Areas.Admin.Pages.Rooms
         public List<Room> Rooms { get; private set; } = new();
         public List<SelectListItem> RoomTypeOptions { get; private set; } = new();
         public int TotalCount { get; private set; }
-        public int TotalPages { get; private set; }
-        public const int PageSize = 5;
-
-        [BindProperty(SupportsGet = true)]
-        public int PageNumber { get; set; } = 1;
 
         [BindProperty(SupportsGet = true)]
         public string? SearchQuery { get; set; }
@@ -43,7 +38,7 @@ namespace HotelManagement.Areas.Admin.Pages.Rooms
         public int? RoomTypeId { get; set; }
 
         /// <summary>
-        /// Nạp danh sách phòng, áp dụng bộ lọc GET và tính thông tin phân trang cho giao diện.
+        /// Nạp danh sách phòng và áp dụng các bộ lọc GET cho giao diện.
         /// </summary>
         public async Task OnGetAsync()
         {
@@ -82,14 +77,8 @@ namespace HotelManagement.Areas.Admin.Pages.Rooms
                     .ToList();
             }
 
-            TotalCount = allRooms.Count;
-            TotalPages = Math.Max(1, (int)Math.Ceiling((double)TotalCount / PageSize));
-            PageNumber = Math.Clamp(PageNumber, 1, TotalPages);
-
-            Rooms = allRooms
-                .Skip((PageNumber - 1) * PageSize)
-                .Take(PageSize)
-                .ToList();
+            Rooms = allRooms;
+            TotalCount = Rooms.Count;
         }
     }
 }

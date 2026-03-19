@@ -159,63 +159,67 @@ public class GuestService : IGuestService
             return (false, "Phát hiện hồ sơ trùng đang thuộc tài khoản khác, vui lòng xử lý thủ công.", null);
         }
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        var strategy = _context.Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(async () =>
         {
-            if (duplicates.Count > 0)
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var duplicateIds = duplicates.Select(g => g.Id).ToList();
-
-                // Chuyển toàn bộ lịch sử booking sang hồ sơ chuẩn.
-                var bookings = await _context.Bookings
-                    .Where(b => duplicateIds.Contains(b.GuestId))
-                    .ToListAsync();
-                foreach (var booking in bookings)
+                if (duplicates.Count > 0)
                 {
-                    booking.GuestId = primary.Id;
+                    var duplicateIds = duplicates.Select(g => g.Id).ToList();
+
+                    // Chuyển toàn bộ lịch sử booking sang hồ sơ chuẩn.
+                    var bookings = await _context.Bookings
+                        .Where(b => duplicateIds.Contains(b.GuestId))
+                        .ToListAsync();
+                    foreach (var booking in bookings)
+                    {
+                        booking.GuestId = primary.Id;
+                    }
+                    await _context.SaveChangesAsync();
+
+                    _context.Guests.RemoveRange(duplicates);
+                    await _context.SaveChangesAsync();
                 }
+
+                // Đồng bộ thông tin về hồ sơ chuẩn sau khi đã chuyển lịch sử + xóa hồ sơ trùng.
+                if (string.IsNullOrWhiteSpace(primary.UserId))
+                {
+                    primary.UserId = userId;
+                }
+                if (!string.IsNullOrWhiteSpace(normalizedPhone))
+                {
+                    primary.PhoneNumber = normalizedPhone;
+                }
+                if (string.IsNullOrWhiteSpace(primary.CCCD) && !string.IsNullOrWhiteSpace(normalizedCccd))
+                {
+                    primary.CCCD = normalizedCccd;
+                }
+                if (string.IsNullOrWhiteSpace(primary.Email) && !string.IsNullOrWhiteSpace(normalizedEmail))
+                {
+                    primary.Email = normalizedEmail;
+                }
+                if (string.IsNullOrWhiteSpace(primary.FullName) && !string.IsNullOrWhiteSpace(fullName))
+                {
+                    primary.FullName = fullName.Trim();
+                }
+                if (string.IsNullOrWhiteSpace(primary.AvatarUrl) && !string.IsNullOrWhiteSpace(avatarUrl))
+                {
+                    primary.AvatarUrl = avatarUrl;
+                }
+
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-                _context.Guests.RemoveRange(duplicates);
-                await _context.SaveChangesAsync();
+                return (true, duplicates.Count > 0 ? $"Đã gộp {duplicates.Count} hồ sơ khách trùng." : "Không có hồ sơ trùng cần gộp.", primary);
             }
-
-            // Đồng bộ thông tin về hồ sơ chuẩn sau khi đã chuyển lịch sử + xóa hồ sơ trùng.
-            if (string.IsNullOrWhiteSpace(primary.UserId))
+            catch
             {
-                primary.UserId = userId;
+                await transaction.RollbackAsync();
+                throw;
             }
-            if (!string.IsNullOrWhiteSpace(normalizedPhone))
-            {
-                primary.PhoneNumber = normalizedPhone;
-            }
-            if (string.IsNullOrWhiteSpace(primary.CCCD) && !string.IsNullOrWhiteSpace(normalizedCccd))
-            {
-                primary.CCCD = normalizedCccd;
-            }
-            if (string.IsNullOrWhiteSpace(primary.Email) && !string.IsNullOrWhiteSpace(normalizedEmail))
-            {
-                primary.Email = normalizedEmail;
-            }
-            if (string.IsNullOrWhiteSpace(primary.FullName) && !string.IsNullOrWhiteSpace(fullName))
-            {
-                primary.FullName = fullName.Trim();
-            }
-            if (string.IsNullOrWhiteSpace(primary.AvatarUrl) && !string.IsNullOrWhiteSpace(avatarUrl))
-            {
-                primary.AvatarUrl = avatarUrl;
-            }
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-
-            return (true, duplicates.Count > 0 ? $"Đã gộp {duplicates.Count} hồ sơ khách trùng." : "Không có hồ sơ trùng cần gộp.", primary);
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
     }
 
     public Task<(List<Guest> Items, int TotalCount)> GetPagedAsync(string? searchQuery, int pageIndex, int pageSize)

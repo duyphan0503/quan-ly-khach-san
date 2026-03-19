@@ -63,19 +63,12 @@ public class BookingService : IBookingService
         booking.CreatedAt = DateTime.Now;
 
         // Transaction đảm bảo booking và trạng thái phòng luôn nhất quán.
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        await ExecuteInTransactionAsync(async () =>
         {
             await _bookingRepo.AddAsync(booking);
             room.Status = RoomStatus.Reserved;
             await _roomRepo.UpdateAsync(room);
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
 
         return (true, $"Đã tạo đặt phòng thành công. Tổng tiền: {booking.TotalAmount:N0}₫");
     }
@@ -157,8 +150,7 @@ public class BookingService : IBookingService
             });
         }
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        await ExecuteInTransactionAsync(async () =>
         {
             foreach (var booking in bookingsToCreate)
             {
@@ -175,14 +167,7 @@ public class BookingService : IBookingService
                 };
                 await _roomRepo.UpdateAsync(room);
             }
-
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
 
         var primaryBookingId = bookingsToCreate
             .OrderBy(b => b.Id)
@@ -206,8 +191,7 @@ public class BookingService : IBookingService
         var room = await _roomRepo.GetByIdAsync(booking.RoomId);
 
         // Trạng thái booking thay đổi kéo theo trạng thái phòng tương ứng.
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        await ExecuteInTransactionAsync(async () =>
         {
             booking.Status = status;
             await _bookingRepo.UpdateAsync(booking);
@@ -225,14 +209,7 @@ public class BookingService : IBookingService
                 };
                 await _roomRepo.UpdateAsync(room);
             }
-            
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
 
         var statusVn = status switch
         {
@@ -271,8 +248,7 @@ public class BookingService : IBookingService
         existingBooking.Status = booking.Status;
         existingBooking.Notes = booking.Notes;
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        await ExecuteInTransactionAsync(async () =>
         {
             await _bookingRepo.UpdateAsync(existingBooking);
 
@@ -284,13 +260,7 @@ public class BookingService : IBookingService
                 _                        => RoomStatus.Reserved
             };
             await _roomRepo.UpdateAsync(room);
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
 
         return (true, "Đã cập nhật thông tin đặt phòng.");
     }
@@ -300,11 +270,10 @@ public class BookingService : IBookingService
         var booking = await _bookingRepo.GetByIdAsync(id);
         if (booking == null) return (false, "Không tìm thấy thông tin đặt phòng.");
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        await ExecuteInTransactionAsync(async () =>
         {
             await _bookingRepo.DeleteAsync(id);
-            
+
             if (booking.Status == BookingStatus.CheckedIn || booking.Status == BookingStatus.Confirmed)
             {
                 var room = await _roomRepo.GetByIdAsync(booking.RoomId);
@@ -314,13 +283,7 @@ public class BookingService : IBookingService
                     await _roomRepo.UpdateAsync(room);
                 }
             }
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
         return (true, "Đã xóa đơn đặt phòng.");
     }
 
@@ -382,28 +345,47 @@ public class BookingService : IBookingService
             return (true, "Không có booking no-show cần tự động hủy.", 0);
         }
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            foreach (var booking in bookingsToCancel)
+            await ExecuteInTransactionAsync(async () =>
             {
-                booking.Status = BookingStatus.Cancelled;
-                if (booking.Room is not null)
+                foreach (var booking in bookingsToCancel)
                 {
-                    booking.Room.Status = RoomStatus.Available;
+                    booking.Status = BookingStatus.Cancelled;
+                    if (booking.Room is not null)
+                    {
+                        booking.Room.Status = RoomStatus.Available;
+                    }
                 }
-            }
 
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
+                await _context.SaveChangesAsync();
+            });
 
             return (true, $"Đã tự động hủy {bookingsToCancel.Count} booking no-show.", bookingsToCancel.Count);
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
             return (false, $"Lỗi khi tự động hủy booking no-show: {ex.Message}", 0);
         }
+    }
+
+    private async Task ExecuteInTransactionAsync(Func<Task> operation)
+    {
+        var strategy = _context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                await operation();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
     }
 }
 

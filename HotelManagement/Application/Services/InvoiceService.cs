@@ -4,6 +4,7 @@ using HotelManagement.Infrastructure.Repositories.Interfaces;
 using HotelManagement.Application.Services.Interfaces;
 using HotelManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace HotelManagement.Application.Services;
 
@@ -57,46 +58,52 @@ public class InvoiceService : IInvoiceService
     public async Task<Invoice> GetOrCreateDraftInvoiceAsync(int bookingId, string? userId = null)
     {
         // Ưu tiên tái sử dụng draft đang có để tránh tạo trùng hóa đơn cho cùng booking.
-        var existing = await _invoiceRepo.GetByBookingIdAsync(bookingId);
-        if (existing is not null) return existing;
-
-        var booking = await _bookingRepo.GetByIdAsync(bookingId);
-        if (booking == null) throw new Exception("Không tìm thấy thông tin đặt phòng khi tạo hóa đơn nháp.");
-
-        var invoice = new Invoice
+        // Dùng SERIALIZABLE cho nhánh tạo mới để giảm race condition khi nhiều request đến cùng lúc.
+        return await ExecuteInTransactionAsync(async () =>
         {
-            BookingId = bookingId,
-            InvoiceNumber = await _invoiceRepo.GenerateInvoiceNumberAsync(),
-            InvoiceDate = DateTime.Now,
-            Status = InvoiceStatus.Pending,
-            CreatedByUserId = userId
-        };
+            var existing = await _invoiceRepo.GetByBookingIdAsync(bookingId);
+            if (existing is not null)
+            {
+                return existing;
+            }
 
-        int nights = (booking.CheckOut - booking.CheckIn).Days;
-        if (nights <= 0) nights = 1;
+            var booking = await _bookingRepo.GetByIdAsync(bookingId);
+            if (booking == null) throw new Exception("Không tìm thấy thông tin đặt phòng khi tạo hóa đơn nháp.");
 
-        decimal roomPrice = booking.Room?.RoomType?.BasePrice ?? booking.TotalAmount / Math.Max(1, nights);
+            var invoice = new Invoice
+            {
+                BookingId = bookingId,
+                InvoiceNumber = await _invoiceRepo.GenerateInvoiceNumberAsync(),
+                InvoiceDate = DateTime.Now,
+                Status = InvoiceStatus.Pending,
+                CreatedByUserId = userId
+            };
 
-        // Dòng mặc định của hóa đơn: tiền phòng theo số đêm.
-        invoice.InvoiceDetails.Add(new InvoiceDetail
-        {
-            Description = $"Tiền phòng ({nights} đêm)",
-            Quantity = nights,
-            UnitPrice = roomPrice,
-            LineTotal = roomPrice * nights
-        });
+            int nights = (booking.CheckOut - booking.CheckIn).Days;
+            if (nights <= 0) nights = 1;
 
-        invoice.SubTotal = invoice.InvoiceDetails.Sum(d => d.LineTotal);
-        invoice.GrandTotal = invoice.SubTotal;
+            decimal roomPrice = booking.Room?.RoomType?.BasePrice ?? booking.TotalAmount / Math.Max(1, nights);
 
-        await _invoiceRepo.AddAsync(invoice);
-        return invoice;
+            // Dòng mặc định của hóa đơn: tiền phòng theo số đêm.
+            invoice.InvoiceDetails.Add(new InvoiceDetail
+            {
+                Description = $"Tiền phòng ({nights} đêm)",
+                Quantity = nights,
+                UnitPrice = roomPrice,
+                LineTotal = roomPrice * nights
+            });
+
+            invoice.SubTotal = invoice.InvoiceDetails.Sum(d => d.LineTotal);
+            invoice.GrandTotal = invoice.SubTotal;
+
+            await _invoiceRepo.AddAsync(invoice);
+            return invoice;
+        }, IsolationLevel.Serializable);
     }
 
     public async Task<(bool Success, string Message)> AddServiceToInvoiceAsync(int bookingId, int serviceId, int quantity)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        return await ExecuteInTransactionAsync(async () =>
         {
             var draft = await GetOrCreateDraftInvoiceAsync(bookingId);
             if (draft.Status != InvoiceStatus.Pending) return (false, "Hóa đơn đã xử lý, không thể thêm dịch vụ.");
@@ -126,22 +133,14 @@ public class InvoiceService : IInvoiceService
             draft.GrandTotal = draft.SubTotal + draft.Tax - draft.Discount;
 
             await _invoiceRepo.UpdateAsync(draft);
-            
-            await transaction.CommitAsync();
-            
+
             return (true, $"Đã thêm {quantity}x {svc.Name} vào hóa đơn đặt phòng.");
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
     }
 
     public async Task<(bool Success, string Message)> RemoveInvoiceDetailAsync(int invoiceId, int detailId)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        return await ExecuteInTransactionAsync(async () =>
         {
             var draft = await _invoiceRepo.GetByIdAsync(invoiceId);
             if (draft == null || draft.Status != InvoiceStatus.Pending)
@@ -157,15 +156,9 @@ public class InvoiceService : IInvoiceService
             draft.GrandTotal = draft.SubTotal + draft.Tax - draft.Discount;
 
             await _invoiceRepo.UpdateAsync(draft);
-            
-            await transaction.CommitAsync();
+
             return (true, "Đã xóa mục thành công.");
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
     }
 
     public async Task<(bool Success, string Message, Invoice? Invoice)> FinalizeInvoiceAsync(int bookingId, decimal discount, decimal tax, PaymentMethod method, string? userId = null)
@@ -192,12 +185,11 @@ public class InvoiceService : IInvoiceService
         string? userId = null)
     {
         // Checkout là thao tác đa bảng (invoice + booking + room), cần transaction toàn phần.
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        return await ExecuteInTransactionAsync(async () =>
         {
             var rootBooking = await _bookingRepo.GetByIdAsync(bookingId);
             if (rootBooking == null)
-                return (false, "Không tìm thấy đơn đặt phòng cần thanh toán.", []);
+                return (false, "Không tìm thấy đơn đặt phòng cần thanh toán.", new List<Invoice>());
 
             var targetBookings = new List<Booking> { rootBooking };
 
@@ -211,11 +203,11 @@ public class InvoiceService : IInvoiceService
             }
             else if (rootBooking.Status != BookingStatus.CheckedIn)
             {
-                return (false, "Đơn đặt phòng này chưa ở trạng thái đang lưu trú để checkout.", []);
+                return (false, "Đơn đặt phòng này chưa ở trạng thái đang lưu trú để checkout.", new List<Invoice>());
             }
 
             if (targetBookings.Count == 0)
-                return (false, "Không có phòng nào trong nhóm đang lưu trú để checkout.", []);
+                return (false, "Không có phòng nào trong nhóm đang lưu trú để checkout.", new List<Invoice>());
 
             var drafts = new List<Invoice>();
             foreach (var booking in targetBookings)
@@ -223,7 +215,7 @@ public class InvoiceService : IInvoiceService
                 var draft = await GetOrCreateDraftInvoiceAsync(booking.Id, userId);
                 if (draft.Status != InvoiceStatus.Pending)
                 {
-                    return (false, $"Hóa đơn của phòng {booking.Room?.RoomNumber} đã thanh toán hoặc bị khóa.", []);
+                    return (false, $"Hóa đơn của phòng {booking.Room?.RoomNumber} đã thanh toán hoặc bị khóa.", new List<Invoice>());
                 }
 
                 drafts.Add(draft);
@@ -294,20 +286,13 @@ public class InvoiceService : IInvoiceService
 
             await _context.SaveChangesAsync();
 
-            await transaction.CommitAsync();
-
             if (paidInvoices.Count == 1)
             {
                 return (true, "Thanh toán thành công.", paidInvoices);
             }
 
             return (true, $"Thanh toán thành công {paidInvoices.Count} phòng trong cùng đợt checkout.", paidInvoices);
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
     }
 
     public async Task<(bool Success, string Message, Invoice? NewInvoice)> SplitInvoiceAsync(
@@ -321,18 +306,17 @@ public class InvoiceService : IInvoiceService
         }
 
         // Tách hóa đơn cần transaction để giữ nhất quán số liệu hai phía (nguồn/đích).
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        return await ExecuteInTransactionAsync<(bool Success, string Message, Invoice? NewInvoice)>(async () =>
         {
             var source = await _invoiceRepo.GetByIdAsync(sourceInvoiceId);
             if (source == null)
             {
-                return (false, "Không tìm thấy hóa đơn nguồn.", null);
+                return (false, "Không tìm thấy hóa đơn nguồn.", (Invoice?)null);
             }
 
             if (source.Status != InvoiceStatus.Pending)
             {
-                return (false, "Chỉ có thể tách chứng từ khi hóa đơn đang ở trạng thái chờ thanh toán.", null);
+                return (false, "Chỉ có thể tách chứng từ khi hóa đơn đang ở trạng thái chờ thanh toán.", (Invoice?)null);
             }
 
             var selectedIds = detailIds.Distinct().ToHashSet();
@@ -342,12 +326,12 @@ public class InvoiceService : IInvoiceService
 
             if (selectedDetails.Count == 0)
             {
-                return (false, "Không tìm thấy dòng chi tiết hợp lệ để tách.", null);
+                return (false, "Không tìm thấy dòng chi tiết hợp lệ để tách.", (Invoice?)null);
             }
 
             if (selectedDetails.Count >= source.InvoiceDetails.Count)
             {
-                return (false, "Không thể tách toàn bộ dòng chi tiết. Vui lòng để lại ít nhất một dòng ở hóa đơn gốc.", null);
+                return (false, "Không thể tách toàn bộ dòng chi tiết. Vui lòng để lại ít nhất một dòng ở hóa đơn gốc.", (Invoice?)null);
             }
 
             var originalSubTotal = source.SubTotal;
@@ -398,14 +382,8 @@ public class InvoiceService : IInvoiceService
             _context.Invoices.Update(newInvoice);
             await _context.SaveChangesAsync();
 
-            await transaction.CommitAsync();
             return (true, $"Đã tách {selectedDetails.Count} dòng chi tiết sang hóa đơn #{newInvoice.InvoiceNumber}.", newInvoice);
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        });
     }
 
     /// <summary>
@@ -417,5 +395,30 @@ public class InvoiceService : IInvoiceService
     /// Tổng hợp dữ liệu doanh thu theo tháng để hiển thị biểu đồ.
     /// </summary>
     public Task<List<decimal>> GetMonthlyRevenueChartAsync(int year) => _invoiceRepo.GetMonthlyRevenueChartAsync(year);
+
+    private async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation, IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+    {
+        if (_context.Database.CurrentTransaction is not null)
+        {
+            return await operation();
+        }
+
+        var strategy = _context.Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync(isolationLevel);
+            try
+            {
+                var result = await operation();
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
+    }
 }
 
